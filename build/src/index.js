@@ -15,12 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const env_1 = __importDefault(require("../env"));
+// swagger api doc
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const routes_1 = require("./routes");
 const error_controller_1 = __importDefault(require("./controllers/error.controller"));
 const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
+require("./models/sequelize.config");
+// import { authenticate } from "./controllers/middleWare";
+// import { rateLimit } from "express-rate-limit";
 const app = (0, express_1.default)();
 const PORT = +env_1.default.PORT || 3000;
+// Middleware setup
 app.use((0, cors_1.default)({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
@@ -29,11 +34,18 @@ app.use(express_1.default.json({ limit: "16kb" }));
 app.get("/", (req, res) => {
     res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
 });
+// API Doc endpoint
 app.use("/api/docs", swagger_ui_express_1.default.serve);
 app.get("/api/docs", swagger_ui_express_1.default.setup(swagger_config_1.default));
+// auth route
 app.use("/api/auth", routes_1.authRoute);
+// user route
 app.use("/api/user", routes_1.userRoute);
+// admin route
 app.use("/api/admin", routes_1.adminRoute);
+// authenticate secured routes
+// app.use(authenticate);
+// error handler
 app.use(error_controller_1.default);
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Serving at ${env_1.default.BASE_URL}`);

@@ -8,14 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const bcrypt_1 = __importDefault(require("bcrypt"));
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    const salt = bcrypt_1.default.genSaltSync(10);
-    const hashedPassword = yield bcrypt_1.default.hashSync("password", salt);
+// test1();
+// test2();
+/* (async () => {
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = await bcrypt.hashSync("password", salt);
     console.log(hashedPassword);
+})();
+ */
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    // const user = await User.create({ name: "", isOnline: "sdm" });
 }))();
 //# sourceMappingURL=index.js.map

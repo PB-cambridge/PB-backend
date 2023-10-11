@@ -11,6 +11,11 @@ const envSchema = zod_1.z.object({
     BASE_URL: zod_1.z.string(),
     DATABASE_URL: zod_1.z.string(),
     DEV_ENV: zod_1.z.string(),
+    // HASH_SECRET: z.string(),
+    // MAIL_USER: z.string(),
+    // MAIL_PASSWORD: z.string(),
+    // MAIL_HOST: z.string(),
+    // MAIL_PORT: z.string(),
     CORS_ORIGIN: zod_1.z.string(),
 });
 const env = envSchema.parse(process.env);

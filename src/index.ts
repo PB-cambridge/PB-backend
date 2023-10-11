@@ -7,6 +7,7 @@ import swaggerUI from "swagger-ui-express";
 import { adminRoute, authRoute, userRoute } from "./routes";
 import errorController from "./controllers/error.controller";
 import swaggerConfig from "./api-doc/swagger-config";
+import "./models/sequelize.config";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
@@ -48,5 +49,4 @@ app.use(errorController);
 
 app.listen(PORT, async () => {
 	console.log(`Serving at ${env.BASE_URL}`);
-	// await prisma.$connect();
 });
