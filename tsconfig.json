@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"outDir": "./build",
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"strict": true,
+		"moduleResolution": "node",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+		// Generate d.ts files
+		// "declaration": true,
+		// This compiler run should
+		// only output d.ts files
+		// "emitDeclarationOnly": true
+		"removeComments": true,
+		// "baseUrl": "./",
+		"paths": {}
+	},
+	"include": ["src/**/*" /*  "prisma/index.ts", "prisma/seed.ts", "index.ts" */]
+}

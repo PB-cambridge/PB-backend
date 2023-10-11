@@ -3,7 +3,12 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
-	"scripts": {},
+	"scripts": {
+		"start": "node build/src",
+		"test": "ts-node src/test",
+		"dev": "tsc && node build/src",
+		"build": "npx tsc"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",

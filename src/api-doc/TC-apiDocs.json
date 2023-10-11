@@ -1,0 +1,92 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "PB-Cambridge-api-docs",
+    "dateExported": "2023-10-11T14:48:50.666Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "8f30b18f-a0ca-42a9-b44d-8c7dadef9842",
+            "name": "authentication",
+            "containerId": "",
+            "created": "2023-10-11T14:20:22.417Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "admin",
+            "containerId": "",
+            "created": "2023-10-11T14:39:21.662Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "3b4e78c6-4ba3-430d-9dce-06eba1dded2b",
+            "name": "users",
+            "containerId": "",
+            "created": "2023-10-11T14:39:38.962Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "c2fb0314-4f87-489c-975b-c47880f4fd81",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "3b4e78c6-4ba3-430d-9dce-06eba1dded2b",
+            "name": "index",
+            "url": "/api/user",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-10-11T14:43:24.654Z",
+            "modified": "2023-10-11T14:48:24.277Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "3866b2dc-2134-49be-a60c-3bcdb21e688a",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "index",
+            "url": "/api/admin",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-10-11T14:47:06.991Z",
+            "modified": "2023-10-11T14:47:06.991Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "6202ae00-b1d2-4d0a-b83f-a1a9db3821da",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "8f30b18f-a0ca-42a9-b44d-8c7dadef9842",
+            "name": "user login",
+            "url": "/api/auth/login",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-10-11T14:20:36.431Z",
+            "modified": "2023-10-11T14:34:42.519Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e5454c9f-668f-4c7d-9cb7-4f99249ee82e",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "8f30b18f-a0ca-42a9-b44d-8c7dadef9842",
+            "name": "user register",
+            "url": "/api/auth/signup",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-10-11T14:27:44.076Z",
+            "modified": "2023-10-11T14:34:49.553Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://127.0.0.1:50"
+        }
+    }
+}
