@@ -1,8 +1,0 @@
-npm i typescript @types/express @types/bcrypt @types/dotenv @types/jsonwebtoken @types/nodemailer @types/swagger-ui-dist @types/swagger-ui-express @faker-js/faker @types/cors @types/express @types/node ts-node ts-node-dev typescript --save-dev 
-
-
-
-
-
-
-npm i express zod sequelize-typescript sequelize jsonwebtoken cors dotenv express jsonwebtoken nodemailer swagger-ui-express zod
