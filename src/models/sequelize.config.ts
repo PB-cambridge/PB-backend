@@ -19,4 +19,5 @@ sequelize.addModels([User, Admin, Event, Announcement, UserResult]);
 
 sequelize.sync({
 	// force: true,
+	// alter: true,
 });

@@ -22,5 +22,6 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
 exports.sequelize.addModels([user_model_1.default, admin_model_1.default, event_model_1.default, announcement_model_1.default, result_model_1.default]);
 exports.sequelize.sync({
 // force: true,
+// alter: true,
 });
 //# sourceMappingURL=sequelize.config.js.map

@@ -6,6 +6,9 @@ interface UserAttributes {
 	id: string;
 	firstName: string;
 	lastName: string;
+	email: string;
+	phoneNumber: string;
+	password: string;
 	address: string;
 	schoolName: string;
 	className: "Junior" | "Senior" | "Graduated";
@@ -13,8 +16,6 @@ interface UserAttributes {
 	hasPassport: boolean;
 	course: string;
 	results: UserResult[];
-	contactPhone: string;
-	contactEmail: string;
 	registrationFee: number;
 	whatsappNumber: string;
 	registrationNumber: string;
@@ -41,6 +42,15 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
 	declare lastName: typeof user.lastName;
 
 	@Column({ type: DataType.STRING, allowNull: false })
+	declare email: typeof user.email;
+
+	@Column({ type: DataType.STRING, allowNull: false })
+	declare phoneNumber: typeof user.phoneNumber;
+
+	@Column({ type: DataType.STRING, allowNull: false })
+	declare password: typeof user.password;
+
+	@Column({ type: DataType.STRING, allowNull: false })
 	declare address: typeof user.address;
 
 	@Column({ type: DataType.STRING, allowNull: false })
@@ -63,12 +73,6 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
 
 	@HasMany(() => UserResult)
 	declare results: UserResult[];
-
-	@Column({ type: DataType.STRING, allowNull: false })
-	declare contactPhone: typeof user.contactPhone;
-
-	@Column({ type: DataType.STRING, allowNull: false })
-	declare contactEmail: typeof user.contactEmail;
 
 	@Column({ type: DataType.DECIMAL, allowNull: false })
 	declare registrationFee: typeof user.registrationFee;

@@ -19,7 +19,7 @@ export const resCode = {
 	BAD_GATEWAY: 502,
 	SERVICE_UNAVAILABLE: 503,
 	GATEWAY_TIMEOUT: 504,
-};
+} as const;
 
 export const errMsgEnum = {
 	OK: "OK",
@@ -37,7 +37,7 @@ export const errMsgEnum = {
 	BAD_GATEWAY: "Bad Gateway",
 	SERVICE_UNAVAILABLE: "Service Unavailable",
 	GATEWAY_TIMEOUT: "Gateway Timeout",
-};
+} as const;
 
 export default function errorController(
 	error: any,
