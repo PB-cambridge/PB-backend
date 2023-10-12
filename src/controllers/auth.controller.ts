@@ -8,8 +8,9 @@ import AppError from "./AppError";
 import User from "../models/user.model";
 import { loginReqSchema } from "../validation/reqSchemas";
 import env from "../../env";
+import Admin from "../models/admin.model";
 
-export const userLogin = async (req: Request, res: Response) => {
+export const adminLogin = async (req: Request, res: Response) => {
 	const safe = loginReqSchema.safeParse(req.body);
 	if (!safe.success)
 		throw new AppError(
@@ -21,31 +22,31 @@ export const userLogin = async (req: Request, res: Response) => {
 	const { email, password } = safe.data;
 
 	// authenticate here
-	const user = await User.findOne({ where: { email } });
+	const admin = await Admin.findOne({ where: { email } });
 
 	// findFirst({
 	// 	where: { email },
 	// 	select: { id: true, username: true, email: true, password: true },
 	// });
 
-	if (!user) throw new AppError("Incorrect email", resCode.UNAUTHORIZED);
+	if (!admin) throw new AppError("Incorrect email", resCode.UNAUTHORIZED);
 
-	const authorised = await bcrypt.compareSync(password, user.password);
+	const authorised = await bcrypt.compareSync(password, admin.password);
 
 	if (!authorised)
 		throw new AppError("Incorrect password", resCode.UNAUTHORIZED);
 
 	const token = jwt.sign(
-		{ id: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 },
+		{ id: admin.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 },
 		env.HASH_SECRET + ""
 	);
 
-	const { password: pass, ...userData } = user;
+	const { password: pass, ...adminData } = admin;
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "ready to handle login request",
-		data: userData,
+		data: adminData,
 	});
 };
 

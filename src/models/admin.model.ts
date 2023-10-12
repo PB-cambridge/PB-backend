@@ -3,7 +3,8 @@ import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 interface AdminAttributes {
 	id: string;
-	name: string;
+	email: string;
+	password: string;
 	photo: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -12,7 +13,10 @@ interface AdminAttributes {
 const admin: AdminAttributes = {} as AdminAttributes;
 
 interface AdminCreationAttributes
-	extends Optional<AdminAttributes, "id" | "createdAt" | "updatedAt"> {}
+	extends Optional<
+		AdminAttributes,
+		"id" | "createdAt" | "updatedAt" | "photo"
+	> {}
 
 @Table({ modelName: "Admin" })
 class Admin extends Model<AdminAttributes, AdminCreationAttributes> {
@@ -24,7 +28,10 @@ class Admin extends Model<AdminAttributes, AdminCreationAttributes> {
 	declare id: typeof admin.id;
 
 	@Column({ type: DataType.STRING, allowNull: false })
-	declare name: typeof admin.name;
+	declare email: typeof admin.email;
+
+	@Column({ type: DataType.STRING, allowNull: false })
+	declare password: typeof admin.password;
 
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare photo: typeof admin.photo;

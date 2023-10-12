@@ -5,12 +5,12 @@ import { SuccessResponse } from "../types";
 import {
 	registerUser,
 	sendOTP,
-	userLogin,
+	adminLogin,
 } from "../controllers/auth.controller";
 
 const authRoute = Router();
 
-authRoute.post("/login", tryCatchWapper(userLogin));
+authRoute.post("/admin-login", tryCatchWapper(adminLogin));
 
 authRoute.post("/signup", tryCatchWapper(registerUser));
 

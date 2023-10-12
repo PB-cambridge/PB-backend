@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const result_model_1 = __importDefault(require("./result.model"));
+const school_model_1 = __importDefault(require("./school.model"));
 const user = {};
 let User = class User extends sequelize_typescript_1.Model {
 };
@@ -40,46 +41,39 @@ __decorate([
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "phoneNumber", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
-    __metadata("design:type", Object)
-], User.prototype, "password", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
-    __metadata("design:type", Object)
 ], User.prototype, "address", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "schoolName", void 0);
+], User.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
+    sequelize_typescript_1.Column,
+    __metadata("design:type", String)
+], User.prototype, "shoolId", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => school_model_1.default),
+    __metadata("design:type", school_model_1.default)
+], User.prototype, "school", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.ENUM("Junior", "Senior", "Graduated"),
         allowNull: false,
     }),
     __metadata("design:type", Object)
-], User.prototype, "className", void 0);
+], User.prototype, "level", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.ENUM("Science", "Art"), allowNull: false }),
     __metadata("design:type", Object)
 ], User.prototype, "scienceOrArt", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.BOOLEAN, allowNull: false }),
-    __metadata("design:type", Object)
-], User.prototype, "hasPassport", void 0);
-__decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "course", void 0);
+], User.prototype, "passport", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => result_model_1.default),
     __metadata("design:type", Array)
 ], User.prototype, "results", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.DECIMAL, allowNull: false }),
-    __metadata("design:type", Object)
-], User.prototype, "registrationFee", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)

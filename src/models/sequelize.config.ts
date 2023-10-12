@@ -5,6 +5,7 @@ import Admin from "./admin.model";
 import Event from "./event.model";
 import Announcement from "./announcement.model";
 import UserResult from "./result.model";
+import School from "./school.model";
 
 export const sequelize = new Sequelize({
 	database: "PBC_db",
@@ -15,9 +16,9 @@ export const sequelize = new Sequelize({
 	models: [__dirname + "./"],
 });
 
-sequelize.addModels([User, Admin, Event, Announcement, UserResult]);
+sequelize.addModels([User, Admin, Event, Announcement, UserResult, School]);
 
 sequelize.sync({
-	// force: true,
+	force: true,
 	// alter: true,
 });

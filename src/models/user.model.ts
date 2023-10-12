@@ -1,22 +1,32 @@
 import { Optional } from "sequelize";
-import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import {
+	BelongsTo,
+	Column,
+	DataType,
+	ForeignKey,
+	HasMany,
+	Model,
+	Table,
+} from "sequelize-typescript";
 import UserResult from "./result.model";
+import School from "./school.model";
 
 interface UserAttributes {
 	id: string;
 	firstName: string;
 	lastName: string;
 	email: string;
-	phoneNumber: string;
-	password: string;
 	address: string;
-	schoolName: string;
-	className: "Junior" | "Senior" | "Graduated";
+	phoneNumber: string;
+
+	school: School;
+	schoolId: string;
+
+	level: "Junior" | "Senior" | "Graduated";
 	scienceOrArt: "Science" | "Art";
-	hasPassport: boolean;
-	course: string;
+	passport: string;
+
 	results: UserResult[];
-	registrationFee: number;
 	whatsappNumber: string;
 	registrationNumber: string;
 	acknowledgementSent: boolean;
@@ -45,37 +55,32 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
 	declare email: typeof user.email;
 
 	@Column({ type: DataType.STRING, allowNull: false })
-	declare phoneNumber: typeof user.phoneNumber;
-
-	@Column({ type: DataType.STRING, allowNull: false })
-	declare password: typeof user.password;
-
-	@Column({ type: DataType.STRING, allowNull: false })
 	declare address: typeof user.address;
 
 	@Column({ type: DataType.STRING, allowNull: false })
-	declare schoolName: typeof user.schoolName;
+	declare phoneNumber: typeof user.phoneNumber;
+
+	@ForeignKey(() => School)
+	@Column
+	declare shoolId: string;
+
+	@BelongsTo(() => School)
+	declare school: School;
 
 	@Column({
 		type: DataType.ENUM("Junior", "Senior", "Graduated"),
 		allowNull: false,
 	})
-	declare className: typeof user.className;
+	declare level: typeof user.level;
 
 	@Column({ type: DataType.ENUM("Science", "Art"), allowNull: false })
 	declare scienceOrArt: typeof user.scienceOrArt;
 
-	@Column({ type: DataType.BOOLEAN, allowNull: false })
-	declare hasPassport: typeof user.hasPassport;
-
 	@Column({ type: DataType.STRING, allowNull: false })
-	declare course: typeof user.course;
+	declare passport: typeof user.passport;
 
 	@HasMany(() => UserResult)
 	declare results: UserResult[];
-
-	@Column({ type: DataType.DECIMAL, allowNull: false })
-	declare registrationFee: typeof user.registrationFee;
 
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare whatsappNumber: typeof user.whatsappNumber;
