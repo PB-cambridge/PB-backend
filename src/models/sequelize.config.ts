@@ -1,6 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import env from "../../env";
 import User from "./user.model";
+import Admin from "./admin.model";
+import Event from "./event.model";
+import Announcement from "./announcement.model";
+import UserResult from "./result.model";
 
 export const sequelize = new Sequelize({
 	database: "PBC_db",
@@ -11,7 +15,7 @@ export const sequelize = new Sequelize({
 	models: [__dirname + "./"],
 });
 
-sequelize.addModels([User]);
+sequelize.addModels([User, Admin, Event, Announcement, UserResult]);
 
 sequelize.sync({
 	// force: true,
