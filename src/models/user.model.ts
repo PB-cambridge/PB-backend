@@ -6,6 +6,7 @@ import {
 	ForeignKey,
 	HasMany,
 	Model,
+	PrimaryKey,
 	Table,
 } from "sequelize-typescript";
 import UserResult from "./result.model";
@@ -19,14 +20,14 @@ interface UserAttributes {
 	address: string;
 	phoneNumber: string;
 
-	school: School;
+	school?: School;
 	schoolId: string;
 
 	level: "Junior" | "Senior" | "Graduated";
 	scienceOrArt: "Science" | "Art";
 	passport: string;
 
-	results: UserResult[];
+	// results: UserResult[];
 	whatsappNumber: string;
 	registrationNumber: string;
 	acknowledgementSent: boolean;
@@ -34,7 +35,16 @@ interface UserAttributes {
 
 const user: UserAttributes = {} as UserAttributes;
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserCreationAttributes
+	extends Optional<
+		UserAttributes,
+		| "id"
+		| "acknowledgementSent"
+		| "email"
+		| "registrationNumber"
+		// | "results"
+		| "whatsappNumber"
+	> {}
 
 @Table({ modelName: "User" })
 class User extends Model<UserAttributes, UserCreationAttributes> {
@@ -51,13 +61,13 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare lastName: typeof user.lastName;
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({ type: DataType.STRING })
 	declare email: typeof user.email;
 
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare address: typeof user.address;
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({ type: DataType.STRING })
 	declare phoneNumber: typeof user.phoneNumber;
 
 	@ForeignKey(() => School)
@@ -79,16 +89,20 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare passport: typeof user.passport;
 
-	@HasMany(() => UserResult)
-	declare results: UserResult[];
+	// @HasMany(() => UserResult)
+	// declare results: UserResult[];
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({ type: DataType.STRING })
 	declare whatsappNumber: typeof user.whatsappNumber;
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({
+		type: DataType.STRING,
+		allowNull: false,
+		defaultValue: DataType.UUIDV1,
+	})
 	declare registrationNumber: typeof user.registrationNumber;
 
-	@Column({ type: DataType.BOOLEAN, allowNull: false })
+	@Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
 	declare acknowledgementSent: typeof user.acknowledgementSent;
 }
 

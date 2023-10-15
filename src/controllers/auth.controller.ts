@@ -24,14 +24,9 @@ export const adminLogin = async (req: Request, res: Response) => {
 	// authenticate here
 	const admin = await Admin.findOne({ where: { email } });
 
-	// findFirst({
-	// 	where: { email },
-	// 	select: { id: true, username: true, email: true, password: true },
-	// });
-
 	if (!admin) throw new AppError("Incorrect email", resCode.UNAUTHORIZED);
 
-	const authorised = await bcrypt.compareSync(password, admin.password);
+	const authorised = bcrypt.compareSync(password, admin.password);
 
 	if (!authorised)
 		throw new AppError("Incorrect password", resCode.UNAUTHORIZED);
@@ -45,8 +40,9 @@ export const adminLogin = async (req: Request, res: Response) => {
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
-		message: "ready to handle login request",
+		message: "Login successfull",
 		data: adminData,
+		token,
 	});
 };
 

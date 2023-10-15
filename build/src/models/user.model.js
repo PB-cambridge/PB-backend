@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const result_model_1 = __importDefault(require("./result.model"));
 const school_model_1 = __importDefault(require("./school.model"));
 const user = {};
 let User = class User extends sequelize_typescript_1.Model {
@@ -35,7 +34,7 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "lastName", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
 ], User.prototype, "email", void 0);
 __decorate([
@@ -43,7 +42,7 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "address", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
 ], User.prototype, "phoneNumber", void 0);
 __decorate([
@@ -71,19 +70,19 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "passport", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => result_model_1.default),
-    __metadata("design:type", Array)
-], User.prototype, "results", void 0);
-__decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
 ], User.prototype, "whatsappNumber", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
+        defaultValue: sequelize_typescript_1.DataType.UUIDV1,
+    }),
     __metadata("design:type", Object)
 ], User.prototype, "registrationNumber", void 0);
 __decorate([
-    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.BOOLEAN, allowNull: false }),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.BOOLEAN, allowNull: false, defaultValue: false }),
     __metadata("design:type", Object)
 ], User.prototype, "acknowledgementSent", void 0);
 User = __decorate([

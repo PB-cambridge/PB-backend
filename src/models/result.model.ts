@@ -11,13 +11,13 @@ import User from "./user.model";
 import School from "./school.model";
 
 interface UserResultAttributes {
-	id: number;
+	id: string;
 
-	studentId: string;
-	student: User;
+	studentName: string;
+	// student?: User;
 
-	school: School;
-	schoolId: number;
+	school?: School;
+	schoolId: string;
 
 	reading: number;
 	writing: number;
@@ -37,21 +37,25 @@ class UserResult extends Model<
 	UserResultAttributes,
 	UserResultCreationAttributes
 > {
-	@Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
+	@Column({
+		type: DataType.UUID,
+		primaryKey: true,
+		defaultValue: DataType.UUIDV4,
+	})
 	declare id: typeof userResult.id;
 
-	@ForeignKey(() => User)
-	@Column({ type: DataType.UUID })
-	declare studentId: typeof userResult.studentId;
+	// @ForeignKey(() => User)
+	@Column({ type: DataType.STRING, allowNull: false })
+	declare studentName: typeof userResult.studentName;
 
-	@BelongsTo(() => User)
-	declare student: User;
+	// @BelongsTo(() => User)
+	// declare student: User;
 
 	@ForeignKey(() => School)
 	@Column({ type: DataType.UUID })
 	declare schoolId: typeof userResult.schoolId;
 
-	@BelongsTo(() => User)
+	@BelongsTo(() => School)
 	declare school: School;
 
 	@Column({ type: DataType.NUMBER })

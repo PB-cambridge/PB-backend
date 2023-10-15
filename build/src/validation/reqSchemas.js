@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = void 0;
+exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getStringValidation = void 0;
 const zod_1 = require("zod");
 // custome validation function
 const getStringValidation = (key) => zod_1.z
@@ -9,10 +9,12 @@ const getStringValidation = (key) => zod_1.z
     invalid_type_error: `'${key}' must be a string`,
 })
     .min(3, { message: `'${key}' must be 3 or more characters` });
+exports.getStringValidation = getStringValidation;
 const getNumberValidation = (key) => zod_1.z.number({
     required_error: `'${key}' is required`,
     invalid_type_error: `'${key}' must be a number`,
 });
+exports.getNumberValidation = getNumberValidation;
 exports.phoneNumberSchema = zod_1.z
     .string()
     .regex(/^\+(?:[0-9] ?){6,14}[0-9]$/, { message: "Invalid phone number" })
@@ -25,6 +27,6 @@ exports.emailSchema = zod_1.z
 // route Request validators
 exports.loginReqSchema = zod_1.z.object({
     email: exports.emailSchema,
-    password: getStringValidation("password"),
+    password: (0, exports.getStringValidation)("password"),
 });
 //# sourceMappingURL=reqSchemas.js.map

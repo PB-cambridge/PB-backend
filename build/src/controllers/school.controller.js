@@ -12,17 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bcrypt_1 = __importDefault(require("bcrypt"));
-// test1();
-// test2();
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    const salt = bcrypt_1.default.genSaltSync(10);
-    const hashedPassword = yield bcrypt_1.default.hashSync("password", salt);
-    console.log(hashedPassword);
-}))();
-/*
- */
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    // const user = await User.create({ name: "", isOnline: "sdm" });
-}))();
-//# sourceMappingURL=index.js.map
+exports.getSchools = void 0;
+const school_model_1 = __importDefault(require("../models/school.model"));
+const error_controller_1 = require("./error.controller");
+const getSchools = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const schools = yield school_model_1.default.findAll();
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "schools ",
+        data: schools,
+    });
+});
+exports.getSchools = getSchools;
+//# sourceMappingURL=school.controller.js.map

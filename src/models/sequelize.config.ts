@@ -19,6 +19,21 @@ export const sequelize = new Sequelize({
 sequelize.addModels([User, Admin, Event, Announcement, UserResult, School]);
 
 sequelize.sync({
-	force: true,
+	logging: false,
+	// force: true,
 	// alter: true,
 });
+
+async () => {
+	const id = "64221a1b-5262-4c41-b384-fc6eafe75eac";
+
+	const data = await School.findOne({ where: { id }, include: [User] });
+
+	const res = await UserResult.findOne({
+		where: { studentName: "CHRISTABEL ANYIAM" },
+		attributes: { exclude: ["updatedAt", "createdAt", "id"] },
+		include: [],
+	});
+
+	console.log(JSON.stringify(res, null, 2));
+};

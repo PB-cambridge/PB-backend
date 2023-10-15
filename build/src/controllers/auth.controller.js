@@ -38,21 +38,18 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { email, password } = safe.data;
     // authenticate here
     const admin = yield admin_model_1.default.findOne({ where: { email } });
-    // findFirst({
-    // 	where: { email },
-    // 	select: { id: true, username: true, email: true, password: true },
-    // });
     if (!admin)
         throw new AppError_1.default("Incorrect email", error_controller_1.resCode.UNAUTHORIZED);
-    const authorised = yield bcrypt_1.default.compareSync(password, admin.password);
+    const authorised = bcrypt_1.default.compareSync(password, admin.password);
     if (!authorised)
         throw new AppError_1.default("Incorrect password", error_controller_1.resCode.UNAUTHORIZED);
     const token = jsonwebtoken_1.default.sign({ id: admin.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 }, env_1.default.HASH_SECRET + "");
     const { password: pass } = admin, adminData = __rest(admin, ["password"]);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
-        message: "ready to handle login request",
+        message: "Login successfull",
         data: adminData,
+        token,
     });
 });
 exports.adminLogin = adminLogin;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // custome validation function
-const getStringValidation = (key: string) =>
+export const getStringValidation = (key: string) =>
 	z
 		.string({
 			required_error: `'${key}' is required`,
@@ -9,7 +9,7 @@ const getStringValidation = (key: string) =>
 		})
 		.min(3, { message: `'${key}' must be 3 or more characters` });
 
-const getNumberValidation = (key: string) =>
+export const getNumberValidation = (key: string) =>
 	z.number({
 		required_error: `'${key}' is required`,
 		invalid_type_error: `'${key}' must be a number`,

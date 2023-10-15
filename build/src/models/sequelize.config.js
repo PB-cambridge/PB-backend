@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22,7 +31,18 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
 });
 exports.sequelize.addModels([user_model_1.default, admin_model_1.default, event_model_1.default, announcement_model_1.default, result_model_1.default, school_model_1.default]);
 exports.sequelize.sync({
-    force: true,
+    logging: false,
+    // force: true,
     // alter: true,
+});
+() => __awaiter(void 0, void 0, void 0, function* () {
+    const id = "64221a1b-5262-4c41-b384-fc6eafe75eac";
+    const data = yield school_model_1.default.findOne({ where: { id }, include: [user_model_1.default] });
+    const res = yield result_model_1.default.findOne({
+        where: { studentName: "CHRISTABEL ANYIAM" },
+        attributes: { exclude: ["updatedAt", "createdAt", "id"] },
+        include: [],
+    });
+    console.log(JSON.stringify(res, null, 2));
 });
 //# sourceMappingURL=sequelize.config.js.map

@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 
 import { resCode, tryCatchWapper } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
+import { uploadResultFile } from "../controllers/admin.controller";
 
 const adminRoute = Router();
 
@@ -12,5 +13,7 @@ adminRoute.get("/", (req: Request, res: Response) => {
 		data: {},
 	});
 });
+
+adminRoute.post("/upload-results", tryCatchWapper(uploadResultFile));
 
 export default adminRoute;
