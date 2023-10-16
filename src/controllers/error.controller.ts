@@ -71,12 +71,7 @@ export default function errorController(
 }
 
 export const tryCatchWapper =
-	(
-		controller: (
-			req: Request,
-			res: Response
-		) => Promise<Response<any, Record<string, any>>>
-	) =>
+	(controller: (req: Request, res: Response) => Promise<any>) =>
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			await controller(req, res);

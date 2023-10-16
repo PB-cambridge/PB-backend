@@ -1,5 +1,6 @@
 import { Optional } from "sequelize";
 import { Column, DataType, Model, Table } from "sequelize-typescript";
+import School from "./school.model";
 
 interface EventAttributes {
 	id: string;
@@ -7,6 +8,9 @@ interface EventAttributes {
 	description: string;
 	bannerImage: string;
 	location: string;
+
+	school: School;
+
 	dateTime: Date;
 	createdAt: Date;
 	updatedAt: Date;

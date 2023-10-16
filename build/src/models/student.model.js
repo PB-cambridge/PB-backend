@@ -16,8 +16,8 @@ exports.generateRegistrationNumber = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const result_model_1 = __importDefault(require("./result.model"));
 const school_model_1 = __importDefault(require("./school.model"));
-const user = {};
-let User = class User extends sequelize_typescript_1.Model {
+const student = {};
+let Student = class Student extends sequelize_typescript_1.Model {
 };
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -25,59 +25,59 @@ __decorate([
         defaultValue: sequelize_typescript_1.DataType.UUIDV4,
     }),
     __metadata("design:type", Object)
-], User.prototype, "id", void 0);
+], Student.prototype, "id", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "firstName", void 0);
+], Student.prototype, "firstName", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "lastName", void 0);
+], Student.prototype, "lastName", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
-], User.prototype, "email", void 0);
+], Student.prototype, "email", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "address", void 0);
+], Student.prototype, "address", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
-], User.prototype, "phoneNumber", void 0);
+], Student.prototype, "phoneNumber", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
-], User.prototype, "schoolId", void 0);
+], Student.prototype, "schoolId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => school_model_1.default),
     __metadata("design:type", school_model_1.default)
-], User.prototype, "school", void 0);
+], Student.prototype, "school", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.ENUM("Junior", "Senior", "Graduated"),
         allowNull: false,
     }),
     __metadata("design:type", Object)
-], User.prototype, "level", void 0);
+], Student.prototype, "level", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.ENUM("Science", "Art"), allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "scienceOrArt", void 0);
+], Student.prototype, "scienceOrArt", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], User.prototype, "passport", void 0);
+], Student.prototype, "passport", void 0);
 __decorate([
     (0, sequelize_typescript_1.HasMany)(() => result_model_1.default),
     __metadata("design:type", Array)
-], User.prototype, "results", void 0);
+], Student.prototype, "results", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
-], User.prototype, "whatsappNumber", void 0);
+], Student.prototype, "whatsappNumber", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.STRING,
@@ -86,15 +86,15 @@ __decorate([
         primaryKey: true,
     }),
     __metadata("design:type", Object)
-], User.prototype, "registrationNumber", void 0);
+], Student.prototype, "registrationNumber", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.BOOLEAN, allowNull: false, defaultValue: false }),
     __metadata("design:type", Object)
-], User.prototype, "acknowledgementSent", void 0);
-User = __decorate([
-    (0, sequelize_typescript_1.Table)({ modelName: "User" })
-], User);
-exports.default = User;
+], Student.prototype, "acknowledgementSent", void 0);
+Student = __decorate([
+    (0, sequelize_typescript_1.Table)({ modelName: "Student" })
+], Student);
+exports.default = Student;
 function generateRegistrationNumber() {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const numbers = "0123456789";
@@ -112,4 +112,4 @@ function generateRegistrationNumber() {
     return registrationNumber;
 }
 exports.generateRegistrationNumber = generateRegistrationNumber;
-//# sourceMappingURL=user.model.js.map
+//# sourceMappingURL=student.model.js.map

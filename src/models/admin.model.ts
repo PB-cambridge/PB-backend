@@ -33,7 +33,7 @@ class Admin extends Model<AdminAttributes, AdminCreationAttributes> {
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare password: typeof admin.password;
 
-	@Column({ type: DataType.STRING, allowNull: false })
+	@Column({ type: DataType.STRING })
 	declare photo: typeof admin.photo;
 
 	declare readonly createdAt: Date;

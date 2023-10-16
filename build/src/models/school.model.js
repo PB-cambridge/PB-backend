@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const user_model_1 = __importDefault(require("./user.model"));
+const student_model_1 = __importDefault(require("./student.model"));
 const result_model_1 = __importDefault(require("./result.model"));
 const school = {};
 let School = class School extends sequelize_typescript_1.Model {
@@ -35,7 +35,7 @@ __decorate([
     __metadata("design:type", Array)
 ], School.prototype, "results", void 0);
 __decorate([
-    (0, sequelize_typescript_1.HasMany)(() => user_model_1.default),
+    (0, sequelize_typescript_1.HasMany)(() => student_model_1.default),
     __metadata("design:type", Array)
 ], School.prototype, "students", void 0);
 School = __decorate([

@@ -7,14 +7,14 @@ import {
 	Model,
 	Table,
 } from "sequelize-typescript";
-import User from "./user.model";
+import Student from "./student.model";
 import School from "./school.model";
 
-interface UserResultAttributes {
+interface StudentResultAttributes {
 	id: string;
 
-	studentName: string;
-	// student?: User;
+	studentRegNo: string;
+	student?: Student;
 
 	school?: School;
 	schoolId: string;
@@ -27,15 +27,18 @@ interface UserResultAttributes {
 	year: string;
 }
 
-const userResult: UserResultAttributes = {} as UserResultAttributes;
+const userResult: StudentResultAttributes = {} as StudentResultAttributes;
 
-interface UserResultCreationAttributes
-	extends Optional<UserResultAttributes, "id"> {}
+interface StudentResultCreationAttributes
+	extends Optional<
+		StudentResultAttributes,
+		"id" | "mathematics" | "position" | "reading" | "total" | "writing"
+	> {}
 
-@Table({ modelName: "UserResult" })
-class UserResult extends Model<
-	UserResultAttributes,
-	UserResultCreationAttributes
+@Table({ modelName: "StudentResult" })
+class StudentResult extends Model<
+	StudentResultAttributes,
+	StudentResultCreationAttributes
 > {
 	@Column({
 		type: DataType.UUID,
@@ -44,12 +47,12 @@ class UserResult extends Model<
 	})
 	declare id: typeof userResult.id;
 
-	// @ForeignKey(() => User)
+	@ForeignKey(() => Student)
 	@Column({ type: DataType.STRING, allowNull: false })
-	declare studentName: typeof userResult.studentName;
+	declare studentRegNo: typeof userResult.studentRegNo;
 
-	// @BelongsTo(() => User)
-	// declare student: User;
+	@BelongsTo(() => Student)
+	declare student: Student;
 
 	@ForeignKey(() => School)
 	@Column({ type: DataType.UUID })
@@ -77,4 +80,4 @@ class UserResult extends Model<
 	declare year: typeof userResult.year;
 }
 
-export default UserResult;
+export default StudentResult;

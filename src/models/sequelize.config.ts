@@ -1,11 +1,15 @@
+import fs from "fs";
+import xlsx from "xlsx";
 import { Sequelize } from "sequelize-typescript";
 import env from "../../env";
-import User from "./user.model";
+import Student, { generateRegistrationNumber } from "./student.model";
 import Admin from "./admin.model";
 import Event from "./event.model";
 import Announcement from "./announcement.model";
-import UserResult from "./result.model";
+import StudentResult from "./result.model";
 import School from "./school.model";
+import { findIndexContainingString } from "../controllers/admin.controller";
+import { resultFile } from "../routes/user.route";
 
 export const sequelize = new Sequelize({
 	database: "PBC_db",
@@ -16,24 +20,81 @@ export const sequelize = new Sequelize({
 	models: [__dirname + "./"],
 });
 
-sequelize.addModels([User, Admin, Event, Announcement, UserResult, School]);
+sequelize.addModels([
+	Student,
+	Admin,
+	Event,
+	Announcement,
+	StudentResult,
+	School,
+]);
 
-sequelize.sync({
-	logging: false,
-	// force: true,
-	// alter: true,
+Student.beforeCreate(({ registrationNumber }) => {
+	registrationNumber = generateRegistrationNumber();
 });
 
-async () => {
-	const id = "64221a1b-5262-4c41-b384-fc6eafe75eac";
+Student.afterCreate(({ registrationNumber, schoolId }) => {
+	StudentResult.create({
+		studentRegNo: registrationNumber,
+		schoolId,
+		year: "2023",
+	});
+});
 
-	const data = await School.findOne({ where: { id }, include: [User] });
-
-	const res = await UserResult.findOne({
-		where: { studentName: "CHRISTABEL ANYIAM" },
-		attributes: { exclude: ["updatedAt", "createdAt", "id"] },
-		include: [],
+sequelize
+	.sync({
+		logging: false,
+		force: true,
+		// alter: true,
+	})
+	.then(() => {
+		const { email, password } = {
+			email: "teatadmin@gmail.com",
+			password: "$2b$10$NN5LxOgYnjnNEu3u6adxfOafHYrxa50VpxWqtNrOz4h9HLwxM.URS",
+		};
+		Admin.create({ email, password }).then((_) => console.log("created"));
 	});
 
-	console.log(JSON.stringify(res, null, 2));
+async () => {
+	const excelData = Buffer.from(resultFile, "base64");
+
+	// Write the Excel data to a temporary file
+	const tempFilePath = "temp.xlsx";
+	fs.writeFileSync(tempFilePath, excelData);
+
+	// Parse the Excel file
+	const workbook = xlsx.readFile(tempFilePath);
+	const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+	// Convert the worksheet to JSON
+	const jsonData: string[][] = xlsx.utils.sheet_to_json(worksheet, {
+		header: 1,
+	});
+
+	// Delete the temporary file
+	fs.unlinkSync(tempFilePath);
+
+	jsonData[1] = jsonData[1].map((d) => d.replace(/[^a-zA-Z]/g, ""));
+
+	const resultData: any[] = [];
+
+	const indexTotal =
+		findIndexContainingString(jsonData, "MARKS OBTAINABLE") || 0;
+
+	for (let i = 2; i < indexTotal; i++) {
+		resultData.push({
+			studentName: jsonData[i][1],
+			reading: jsonData[i][2],
+			writing: jsonData[i][3],
+			mathematics: jsonData[i][4],
+			total: jsonData[i][5],
+			position: jsonData[i][6],
+			schoolName: jsonData[0][0],
+			// schoolId: school.id,
+			year: "2023",
+		});
+	}
+
+	// result = await UserResult.bulkCreate(resultData);
+	console.log(jsonData);
 };

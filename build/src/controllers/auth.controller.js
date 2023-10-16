@@ -44,7 +44,7 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (!authorised)
         throw new AppError_1.default("Incorrect password", error_controller_1.resCode.UNAUTHORIZED);
     const token = jsonwebtoken_1.default.sign({ id: admin.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 }, env_1.default.HASH_SECRET + "");
-    const { password: pass } = admin, adminData = __rest(admin, ["password"]);
+    const _a = admin.dataValues, { password: pass } = _a, adminData = __rest(_a, ["password"]);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Login successfull",

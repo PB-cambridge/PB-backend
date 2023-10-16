@@ -13,9 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
+const student_model_1 = __importDefault(require("./student.model"));
 const school_model_1 = __importDefault(require("./school.model"));
 const userResult = {};
-let UserResult = class UserResult extends sequelize_typescript_1.Model {
+let StudentResult = class StudentResult extends sequelize_typescript_1.Model {
 };
 __decorate([
     (0, sequelize_typescript_1.Column)({
@@ -24,46 +25,51 @@ __decorate([
         defaultValue: sequelize_typescript_1.DataType.UUIDV4,
     }),
     __metadata("design:type", Object)
-], UserResult.prototype, "id", void 0);
+], StudentResult.prototype, "id", void 0);
 __decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => student_model_1.default),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: false }),
     __metadata("design:type", Object)
-], UserResult.prototype, "studentName", void 0);
+], StudentResult.prototype, "studentRegNo", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => student_model_1.default),
+    __metadata("design:type", student_model_1.default)
+], StudentResult.prototype, "student", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.UUID }),
     __metadata("design:type", Object)
-], UserResult.prototype, "schoolId", void 0);
+], StudentResult.prototype, "schoolId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => school_model_1.default),
     __metadata("design:type", school_model_1.default)
-], UserResult.prototype, "school", void 0);
+], StudentResult.prototype, "school", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.NUMBER }),
     __metadata("design:type", Object)
-], UserResult.prototype, "reading", void 0);
+], StudentResult.prototype, "reading", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.NUMBER }),
     __metadata("design:type", Object)
-], UserResult.prototype, "writing", void 0);
+], StudentResult.prototype, "writing", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.NUMBER }),
     __metadata("design:type", Object)
-], UserResult.prototype, "mathematics", void 0);
+], StudentResult.prototype, "mathematics", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.NUMBER }),
     __metadata("design:type", Object)
-], UserResult.prototype, "total", void 0);
+], StudentResult.prototype, "total", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.NUMBER }),
     __metadata("design:type", Object)
-], UserResult.prototype, "position", void 0);
+], StudentResult.prototype, "position", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING }),
     __metadata("design:type", Object)
-], UserResult.prototype, "year", void 0);
-UserResult = __decorate([
-    (0, sequelize_typescript_1.Table)({ modelName: "UserResult" })
-], UserResult);
-exports.default = UserResult;
+], StudentResult.prototype, "year", void 0);
+StudentResult = __decorate([
+    (0, sequelize_typescript_1.Table)({ modelName: "StudentResult" })
+], StudentResult);
+exports.default = StudentResult;
 //# sourceMappingURL=result.model.js.map

@@ -5,7 +5,7 @@ import { SuccessResponse } from "../types";
 import jwt from "jsonwebtoken";
 import { resCode } from "./error.controller";
 import AppError from "./AppError";
-import User from "../models/user.model";
+import Student from "../models/student.model";
 import { loginReqSchema } from "../validation/reqSchemas";
 import env from "../../env";
 import Admin from "../models/admin.model";
@@ -36,7 +36,7 @@ export const adminLogin = async (req: Request, res: Response) => {
 		env.HASH_SECRET + ""
 	);
 
-	const { password: pass, ...adminData } = admin;
+	const { password: pass, ...adminData } = admin.dataValues;
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,

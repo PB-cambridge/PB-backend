@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const school_model_1 = __importDefault(require("./school.model"));
 const faker_1 = require("@faker-js/faker");
-const user_model_1 = __importDefault(require("./user.model"));
+const student_model_1 = __importDefault(require("./student.model"));
 const result_model_1 = __importDefault(require("./result.model"));
 const error_controller_1 = require("../controllers/error.controller");
 const NUM_OF = {
@@ -24,8 +24,8 @@ const NUM_OF = {
 };
 const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const schools = yield seedSchool();
-    const users = yield seedUser();
-    yield seedResult();
+    const student = yield seedStudent();
+    // await seedResult();
     function seedSchool() {
         return __awaiter(this, void 0, void 0, function* () {
             const schools = [];
@@ -38,16 +38,17 @@ const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return schools;
         });
     }
-    function seedUser() {
+    function seedStudent() {
         return __awaiter(this, void 0, void 0, function* () {
             const users = [];
             for (let i = 0; i < NUM_OF.USER; i++) {
-                const user = yield user_model_1.default.create({
+                const user = yield student_model_1.default.create({
                     firstName: faker_1.faker.person.firstName(),
                     email: faker_1.faker.internet.email(),
                     lastName: faker_1.faker.person.lastName(),
                     address: faker_1.faker.location.streetAddress(),
-                    schoolId: schools[faker_1.faker.number.int({ max: 3 })].id,
+                    schoolId: schools[1].id,
+                    // school: schools[1],
                     phoneNumber: faker_1.faker.phone.number(),
                     level: "Junior",
                     scienceOrArt: "Science",
@@ -67,7 +68,7 @@ const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     mathematics: faker_1.faker.number.int({ max: 100 }),
                     position: faker_1.faker.number.int({ max: 100 }),
                     writing: faker_1.faker.number.int({ max: 100 }),
-                    studentName: users[i].firstName + users[i].lastName,
+                    studentRegNo: student[i].registrationNumber,
                     reading: faker_1.faker.number.int({ max: 100 }),
                     total: faker_1.faker.number.int({ max: 100 }),
                 });

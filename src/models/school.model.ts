@@ -1,13 +1,13 @@
 import { Optional } from "sequelize";
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import User from "./user.model";
-import UserResult from "./result.model";
+import Student from "./student.model";
+import StudentResult from "./result.model";
 
 interface SchoolAttributes {
 	id: string;
 	name: string;
-	results: UserResult[];
-	students: User[];
+	results: StudentResult[];
+	students: Student[];
 }
 
 const school: SchoolAttributes = {} as SchoolAttributes;
@@ -27,11 +27,11 @@ class School extends Model<SchoolAttributes, SchoolCreationAttributes> {
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare name: typeof school.name;
 
-	@HasMany(() => UserResult)
-	declare results: UserResult[];
+	@HasMany(() => StudentResult)
+	declare results: StudentResult[];
 
-	@HasMany(() => User)
-	declare students: User[];
+	@HasMany(() => Student)
+	declare students: Student[];
 
 	declare readonly createdAt: Date;
 	declare readonly updatedAt: Date;

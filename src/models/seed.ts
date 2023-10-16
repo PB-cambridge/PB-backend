@@ -1,8 +1,8 @@
 import School from "./school.model";
 import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
-import User from "./user.model";
-import UserResult from "./result.model";
+import Student from "./student.model";
+import StudentResult from "./result.model";
 import { resCode } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
 
@@ -14,8 +14,8 @@ const NUM_OF = {
 
 const seedDB = async (req: Request, res: Response) => {
 	const schools = await seedSchool();
-	const users = await seedUser();
-	await seedResult();
+	const student = await seedStudent();
+	// await seedResult();
 
 	async function seedSchool() {
 		const schools = [];
@@ -27,15 +27,16 @@ const seedDB = async (req: Request, res: Response) => {
 		}
 		return schools;
 	}
-	async function seedUser() {
+	async function seedStudent() {
 		const users = [];
 		for (let i = 0; i < NUM_OF.USER; i++) {
-			const user = await User.create({
+			const user = await Student.create({
 				firstName: faker.person.firstName(),
 				email: faker.internet.email(),
 				lastName: faker.person.lastName(),
 				address: faker.location.streetAddress(),
-				schoolId: schools[faker.number.int({ max: 3 })].id,
+				schoolId: schools[1].id,
+				// school: schools[1],
 				phoneNumber: faker.phone.number(),
 				level: "Junior",
 				scienceOrArt: "Science",
@@ -48,13 +49,13 @@ const seedDB = async (req: Request, res: Response) => {
 
 	async function seedResult() {
 		for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
-			const results = await UserResult.create({
+			const results = await StudentResult.create({
 				schoolId: schools[faker.number.int({ max: 3 })].id,
 				year: "2022",
 				mathematics: faker.number.int({ max: 100 }),
 				position: faker.number.int({ max: 100 }),
 				writing: faker.number.int({ max: 100 }),
-				studentName: users[i].firstName + users[i].lastName,
+				studentRegNo: student[i].registrationNumber,
 				reading: faker.number.int({ max: 100 }),
 				total: faker.number.int({ max: 100 }),
 			});

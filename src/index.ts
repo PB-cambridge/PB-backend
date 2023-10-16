@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import express, { Application } from "express";
 import cors from "cors";
 import env from "../env";
@@ -16,6 +17,7 @@ import seedDB from "./models/seed";
 import { getSchools } from "./controllers/school.controller";
 import { resultFile } from "./routes/user.route";
 import { findIndexContainingString } from "./controllers/admin.controller";
+import Admin from "./models/admin.model";
 // import timeout from "connect-timeout"
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
