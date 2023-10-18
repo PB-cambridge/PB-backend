@@ -13,7 +13,7 @@ import errorController, {
 } from "./controllers/error.controller";
 import swaggerConfig from "./api-doc/swagger-config";
 import "./models/sequelize.config";
-import seedDB from "./models/seed";
+import seedDB from "../prisma/seed";
 import { getSchools } from "./controllers/school.controller";
 import { resultFile } from "./routes/user.route";
 import { findIndexContainingString } from "./controllers/admin.controller";
@@ -56,7 +56,7 @@ app.use("/api/admin", adminRoute);
 // authenticate secured routes
 // app.use(authenticate);
 
-app.get("/api/seed", tryCatchWapper(seedDB));
+// app.get("/api/seed", tryCatchWapper());
 app.get("/api/schools", tryCatchWapper(getSchools));
 
 // error handler

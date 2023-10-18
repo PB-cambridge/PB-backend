@@ -8,12 +8,16 @@
 		"test": "ts-node src/test",
 		"seed": "ts-node src/models/seed",
 		"dev": "tsc && node build/src",
-		"build": "npx tsc"
+		"build": "npx tsc",
+		"db:seed": "ts-node prisma/seed",
+		"db:sync": "npx prisma db push",
+		"db:view": "npx prisma studio"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@prisma/client": "^5.4.2",
 		"bcrypt": "^5.1.1",
 		"connect-timeout": "^1.9.0",
 		"cors": "^2.8.5",
