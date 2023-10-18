@@ -48,6 +48,7 @@ const result_model_1 = __importDefault(require("./result.model"));
 const school_model_1 = __importDefault(require("./school.model"));
 const admin_controller_1 = require("../controllers/admin.controller");
 const user_route_1 = require("../routes/user.route");
+const schoolEvent_model_1 = __importDefault(require("./schoolEvent.model"));
 exports.sequelize = new sequelize_typescript_1.Sequelize({
     database: "PBC_db",
     dialect: "sqlite",
@@ -63,29 +64,42 @@ exports.sequelize.addModels([
     announcement_model_1.default,
     result_model_1.default,
     school_model_1.default,
+    schoolEvent_model_1.default,
 ]);
 student_model_1.default.beforeCreate(({ registrationNumber }) => {
     registrationNumber = (0, student_model_1.generateRegistrationNumber)();
 });
-student_model_1.default.afterCreate(({ registrationNumber, schoolId }) => {
+student_model_1.default.afterCreate(({ registrationNumber, schoolId, eventId }) => {
     result_model_1.default.create({
         studentRegNo: registrationNumber,
         schoolId,
-        year: "2023",
+        eventId,
     });
 });
 exports.sequelize
     .sync({
     logging: false,
-    force: true,
+    // force: true,
     // alter: true,
 })
     .then(() => {
-    const { email, password } = {
-        email: "teatadmin@gmail.com",
-        password: "$2b$10$NN5LxOgYnjnNEu3u6adxfOafHYrxa50VpxWqtNrOz4h9HLwxM.URS",
-    };
-    admin_model_1.default.create({ email, password }).then((_) => console.log("created"));
+    // const { email, password } = {
+    // 	email: "teatadmin@gmail.com",
+    // 	password: "$2b$10$NN5LxOgYnjnNEu3u6adxfOafHYrxa50VpxWqtNrOz4h9HLwxM.URS",
+    // };
+    // Admin.create({ email, password }).then((_) => console.log("created"));
+    // Student.create({
+    // 	firstName: faker.person.firstName(),
+    // 	email: faker.internet.email(),
+    // 	lastName: faker.person.lastName(),
+    // 	address: faker.location.streetAddress(),
+    // 	schoolId: "d2fb02fb-c7f0-45a3-9040-2c7506188db9",
+    // 	eventId: "f3688bac-f7ed-4e96-be20-8174f2a8f829",
+    // 	phoneNumber: faker.phone.number(),
+    // 	level: "Junior",
+    // 	scienceOrArt: "Science",
+    // 	passport: faker.image.avatar(),
+    // });
 });
 () => __awaiter(void 0, void 0, void 0, function* () {
     const excelData = Buffer.from(user_route_1.resultFile, "base64");

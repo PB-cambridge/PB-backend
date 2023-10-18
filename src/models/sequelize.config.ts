@@ -10,6 +10,8 @@ import StudentResult from "./result.model";
 import School from "./school.model";
 import { findIndexContainingString } from "../controllers/admin.controller";
 import { resultFile } from "../routes/user.route";
+import SchoolEvent from "./schoolEvent.model";
+import { faker } from "@faker-js/faker";
 
 export const sequelize = new Sequelize({
 	database: "PBC_db",
@@ -27,32 +29,45 @@ sequelize.addModels([
 	Announcement,
 	StudentResult,
 	School,
+	SchoolEvent,
 ]);
 
 Student.beforeCreate(({ registrationNumber }) => {
 	registrationNumber = generateRegistrationNumber();
 });
 
-Student.afterCreate(({ registrationNumber, schoolId }) => {
+Student.afterCreate(({ registrationNumber, schoolId, eventId }) => {
 	StudentResult.create({
 		studentRegNo: registrationNumber,
 		schoolId,
-		year: "2023",
+		eventId,
 	});
 });
 
 sequelize
 	.sync({
 		logging: false,
-		force: true,
+		// force: true,
 		// alter: true,
 	})
 	.then(() => {
-		const { email, password } = {
-			email: "teatadmin@gmail.com",
-			password: "$2b$10$NN5LxOgYnjnNEu3u6adxfOafHYrxa50VpxWqtNrOz4h9HLwxM.URS",
-		};
-		Admin.create({ email, password }).then((_) => console.log("created"));
+		// const { email, password } = {
+		// 	email: "teatadmin@gmail.com",
+		// 	password: "$2b$10$NN5LxOgYnjnNEu3u6adxfOafHYrxa50VpxWqtNrOz4h9HLwxM.URS",
+		// };
+		// Admin.create({ email, password }).then((_) => console.log("created"));
+		// Student.create({
+		// 	firstName: faker.person.firstName(),
+		// 	email: faker.internet.email(),
+		// 	lastName: faker.person.lastName(),
+		// 	address: faker.location.streetAddress(),
+		// 	schoolId: "d2fb02fb-c7f0-45a3-9040-2c7506188db9",
+		// 	eventId: "f3688bac-f7ed-4e96-be20-8174f2a8f829",
+		// 	phoneNumber: faker.phone.number(),
+		// 	level: "Junior",
+		// 	scienceOrArt: "Science",
+		// 	passport: faker.image.avatar(),
+		// });
 	});
 
 async () => {

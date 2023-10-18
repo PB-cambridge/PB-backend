@@ -16,6 +16,7 @@ exports.generateRegistrationNumber = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const result_model_1 = __importDefault(require("./result.model"));
 const school_model_1 = __importDefault(require("./school.model"));
+const event_model_1 = __importDefault(require("./event.model"));
 const student = {};
 let Student = class Student extends sequelize_typescript_1.Model {
 };
@@ -47,14 +48,23 @@ __decorate([
     __metadata("design:type", Object)
 ], Student.prototype, "phoneNumber", void 0);
 __decorate([
-    (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
-    sequelize_typescript_1.Column,
-    __metadata("design:type", String)
-], Student.prototype, "schoolId", void 0);
+    (0, sequelize_typescript_1.BelongsTo)(() => event_model_1.default),
+    __metadata("design:type", event_model_1.default)
+], Student.prototype, "event", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => event_model_1.default),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.UUID }),
+    __metadata("design:type", Object)
+], Student.prototype, "eventId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => school_model_1.default),
     __metadata("design:type", school_model_1.default)
 ], Student.prototype, "school", void 0);
+__decorate([
+    (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.UUID }),
+    __metadata("design:type", Object)
+], Student.prototype, "schoolId", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.ENUM("Junior", "Senior", "Graduated"),

@@ -17,21 +17,42 @@ const faker_1 = require("@faker-js/faker");
 const student_model_1 = __importDefault(require("./student.model"));
 const result_model_1 = __importDefault(require("./result.model"));
 const error_controller_1 = require("../controllers/error.controller");
+const event_model_1 = __importDefault(require("./event.model"));
 const NUM_OF = {
     SCHOOL: 5,
     USER: 5,
     USER_RESULT: 2,
+    EVENTS: 2,
 };
 const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const events = yield seedEvent();
     const schools = yield seedSchool();
     const student = yield seedStudent();
     // await seedResult();
+    function seedEvent() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const events = [];
+            for (let i = 0; i < NUM_OF.EVENTS; i++) {
+                const event = yield event_model_1.default.create({
+                    title: faker_1.faker.internet.displayName(),
+                    bannerImage: faker_1.faker.internet.avatar(),
+                    dateTime: faker_1.faker.date.future(),
+                    description: faker_1.faker.lorem.sentence(),
+                    location: faker_1.faker.location.secondaryAddress(),
+                    registrationFee: +faker_1.faker.commerce.price({ dec: 2 }),
+                });
+                events.push(event);
+            }
+            return events;
+        });
+    }
     function seedSchool() {
         return __awaiter(this, void 0, void 0, function* () {
             const schools = [];
             for (let i = 0; i < NUM_OF.SCHOOL; i++) {
                 const school = yield school_model_1.default.create({
                     name: faker_1.faker.internet.displayName(),
+                    events: [events[0]],
                 });
                 schools.push(school);
             }
@@ -48,7 +69,7 @@ const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     lastName: faker_1.faker.person.lastName(),
                     address: faker_1.faker.location.streetAddress(),
                     schoolId: schools[1].id,
-                    // school: schools[1],
+                    eventId: events[0].id,
                     phoneNumber: faker_1.faker.phone.number(),
                     level: "Junior",
                     scienceOrArt: "Science",
@@ -64,9 +85,9 @@ const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
                 const results = yield result_model_1.default.create({
                     schoolId: schools[faker_1.faker.number.int({ max: 3 })].id,
-                    year: "2022",
                     mathematics: faker_1.faker.number.int({ max: 100 }),
                     position: faker_1.faker.number.int({ max: 100 }),
+                    eventId: "",
                     writing: faker_1.faker.number.int({ max: 100 }),
                     studentRegNo: student[i].registrationNumber,
                     reading: faker_1.faker.number.int({ max: 100 }),

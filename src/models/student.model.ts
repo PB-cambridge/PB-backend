@@ -11,7 +11,32 @@ import {
 } from "sequelize-typescript";
 import StudentResult from "./result.model";
 import School from "./school.model";
+import Event from "./event.model";
 
+/* 
+  id                  String          @id @default(uuid())
+  firstName           String
+  lastName            String
+  email               String
+  address             String
+  phoneNumber         String
+
+  event               Event           @relation(fields: [eventId], references: [id])
+  eventId             String
+  
+  school              School          @relation(fields: [schoolId], references: [id])
+  schoolId            String
+  
+  level               String
+  scienceOrArt        String
+  passport            String
+  
+  results             StudentResult[]
+  
+  whatsappNumber      String
+  registrationNumber  String          @unique
+  acknowledgementSent Boolean
+*/
 interface StudentAttributes {
 	id: string;
 	firstName: string;
@@ -20,14 +45,18 @@ interface StudentAttributes {
 	address: string;
 	phoneNumber: string;
 
-	school?: School;
-	schoolId?: string;
+	event?: Event; // @relation(fields: [eventId], references: [id])
+	eventId: string;
+
+	school?: School; //  @relation(fields: [schoolId], references: [id])
+	schoolId: string;
 
 	level: "Junior" | "Senior" | "Graduated";
 	scienceOrArt: "Science" | "Art";
 	passport: string;
 
-	results?: StudentResult[];
+	results: StudentResult[];
+
 	whatsappNumber: string;
 	registrationNumber: string;
 	acknowledgementSent: boolean;
@@ -43,6 +72,7 @@ interface StudentCreationAttributes
 		| "email"
 		| "registrationNumber"
 		// | "schoolId	"
+		| "results"
 		| "whatsappNumber"
 	> {}
 
@@ -53,6 +83,22 @@ class Student extends Model<StudentAttributes, StudentCreationAttributes> {
 		defaultValue: DataType.UUIDV4,
 	})
 	declare id: typeof student.id;
+
+	// event               Event           @relation(fields: [eventId], references: [id])
+	// eventId             String
+
+	// school              School          @relation(fields: [schoolId], references: [id])
+	// schoolId            String
+
+	// level               String
+	// scienceOrArt        String
+	// passport            String
+
+	// results             StudentResult[]
+
+	// whatsappNumber      String
+	// registrationNumber  String          @unique
+	// acknowledgementSent Boolean
 
 	@Column({ type: DataType.STRING, allowNull: false })
 	declare firstName: typeof student.firstName;
@@ -69,12 +115,19 @@ class Student extends Model<StudentAttributes, StudentCreationAttributes> {
 	@Column({ type: DataType.STRING })
 	declare phoneNumber: typeof student.phoneNumber;
 
-	@ForeignKey(() => School)
-	@Column
-	declare schoolId: string;
+	@BelongsTo(() => Event)
+	declare event: Event;
+
+	@ForeignKey(() => Event)
+	@Column({ type: DataType.UUID })
+	declare eventId: typeof student.eventId;
 
 	@BelongsTo(() => School)
 	declare school: School;
+
+	@ForeignKey(() => School)
+	@Column({ type: DataType.UUID })
+	declare schoolId: typeof student.schoolId;
 
 	@Column({
 		type: DataType.ENUM("Junior", "Senior", "Graduated"),

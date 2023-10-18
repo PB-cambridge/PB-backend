@@ -20,7 +20,7 @@ adminRoute.get("/", (req: Request, res: Response) => {
 adminRoute.post("/upload-results", tryCatchWapper(uploadResultFile));
 
 adminRoute.get(
-	"/results-template/:schoolId/:year",
+	"/results-template/:schoolId/:eventId",
 	tryCatchWapper(downloadResultTemp)
 );
 

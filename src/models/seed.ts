@@ -5,23 +5,42 @@ import Student from "./student.model";
 import StudentResult from "./result.model";
 import { resCode } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
+import Event from "./event.model";
 
 const NUM_OF = {
 	SCHOOL: 5,
 	USER: 5,
 	USER_RESULT: 2,
+	EVENTS: 2,
 } as const;
 
 const seedDB = async (req: Request, res: Response) => {
+	const events = await seedEvent();
 	const schools = await seedSchool();
 	const student = await seedStudent();
 	// await seedResult();
 
+	async function seedEvent() {
+		const events = [];
+		for (let i = 0; i < NUM_OF.EVENTS; i++) {
+			const event = await Event.create({
+				title: faker.internet.displayName(),
+				bannerImage: faker.internet.avatar(),
+				dateTime: faker.date.future(),
+				description: faker.lorem.sentence(),
+				location: faker.location.secondaryAddress(),
+				registrationFee: +faker.commerce.price({ dec: 2 }),
+			});
+			events.push(event);
+		}
+		return events;
+	}
 	async function seedSchool() {
 		const schools = [];
 		for (let i = 0; i < NUM_OF.SCHOOL; i++) {
 			const school = await School.create({
 				name: faker.internet.displayName(),
+				events: [events[0]],
 			});
 			schools.push(school);
 		}
@@ -36,7 +55,7 @@ const seedDB = async (req: Request, res: Response) => {
 				lastName: faker.person.lastName(),
 				address: faker.location.streetAddress(),
 				schoolId: schools[1].id,
-				// school: schools[1],
+				eventId: events[0].id,
 				phoneNumber: faker.phone.number(),
 				level: "Junior",
 				scienceOrArt: "Science",
@@ -51,9 +70,9 @@ const seedDB = async (req: Request, res: Response) => {
 		for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
 			const results = await StudentResult.create({
 				schoolId: schools[faker.number.int({ max: 3 })].id,
-				year: "2022",
 				mathematics: faker.number.int({ max: 100 }),
 				position: faker.number.int({ max: 100 }),
+				eventId: "",
 				writing: faker.number.int({ max: 100 }),
 				studentRegNo: student[i].registrationNumber,
 				reading: faker.number.int({ max: 100 }),

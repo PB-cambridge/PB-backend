@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const student_model_1 = __importDefault(require("./student.model"));
 const result_model_1 = __importDefault(require("./result.model"));
+const event_model_1 = __importDefault(require("./event.model"));
+const schoolEvent_model_1 = __importDefault(require("./schoolEvent.model"));
 const school = {};
 let School = class School extends sequelize_typescript_1.Model {
 };
@@ -38,6 +40,10 @@ __decorate([
     (0, sequelize_typescript_1.HasMany)(() => student_model_1.default),
     __metadata("design:type", Array)
 ], School.prototype, "students", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsToMany)(() => event_model_1.default, () => schoolEvent_model_1.default),
+    __metadata("design:type", Array)
+], School.prototype, "events", void 0);
 School = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "School" })
 ], School);

@@ -12,6 +12,6 @@ adminRoute.get("/", (req, res) => {
     });
 });
 adminRoute.post("/upload-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
-adminRoute.get("/results-template/:schoolId/:year", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
+adminRoute.get("/results-template/:schoolId/:eventId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;
 //# sourceMappingURL=admin.route.js.map

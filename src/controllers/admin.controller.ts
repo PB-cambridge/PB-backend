@@ -112,7 +112,7 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 	const safe = z
 		.object({
 			schoolId: getStringValidation("schoolId"),
-			year: getStringValidation("year"),
+			eventId: getStringValidation("eventId"),
 		})
 		.safeParse(req.params);
 
@@ -123,64 +123,55 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 			safe.error
 		);
 
-	const { schoolId: id, year } = safe.data;
+	const { schoolId, eventId } = safe.data;
 
-	const school = await School.findOne({
-		where: { id },
-		include: [Student, StudentResult],
+	const results = await StudentResult.findAll({
+		where: { eventId, schoolId },
+		include: [Student, School],
 	});
 
-	if (!school) throw new AppError("School not found", resCode.NOT_FOUND);
-
-	const students = school.students;
-
-	if (students.length < 1)
-		throw new AppError("School has no student", resCode.NOT_FOUND, students);
-
-	return res.status(resCode.ACCEPTED).send(students);
+	if (!results || results.length < 1)
+		throw new AppError("No results", resCode.NOT_FOUND);
 
 	const schoolName = "MOUNTAIN CREST INTERNATIONAL SECONDARY SCHOOL";
+
+	const arrTitle = [
+		`${results[0].school.name.toLocaleUpperCase()} SAT TEST RESULT`,
+	];
+
+	const arrHeader = [
+		"S/N",
+		"NAME",
+		"REG NUMBER",
+		"READING",
+		"WRITING",
+		"MATH",
+		"TOTAL",
+		"POSITION",
+	];
+
+	const rows = results.map((item, i) => [
+		i + 1,
+		item.student.firstName.toLocaleUpperCase() +
+			" " +
+			item.student.lastName.toLocaleUpperCase(),
+		item.studentRegNo,
+		item.reading,
+		item.writing,
+		item.mathematics,
+		item.total,
+		item.position,
+	]);
+
 	const resultArrData = [
-		[`${schoolName} SAT TEST RESULT`],
-		[
-			"S/N",
-			"NAME",
-			"REG NUMBER",
-			"READING",
-			"WRITING",
-			"MATH",
-			"TOTAL",
-			"POSITION",
-		],
-		[5, "AHAM-NWOGU CHUKWUANUGO", `regNo`, null, null, null, null, ""],
-		[14, "EMEH KOSISOCHUKWU", `regNo`, null, null, null, null, ""],
-		[3, "AHAM-NWOGU KANYITOCHUKWU", `regNo`, null, null, null, null, ""],
-		[8, "CHIGBO CHIDOZIE ANADEBE", `regNo`, null, null, null, null, ""],
-		[15, "EBUBE CHIJIOKE OKERE", `regNo`, null, null, null, null, ""],
-		[18, "NWUGO STEPHANIE", `regNo`, null, null, null, null, ""],
-		[6, "CHUKWUEMEKA JOHN-OKAFOR", `regNo`, null, null, null, null, ""],
-		[10, "CHIEKEZI FAVOUR IHEOUA", `regNo`, null, null, null, null, ""],
-		[1, "AZIKE CLINTON", `regNo`, null, null, null, null, ""],
-		[13, "DON-DANIEL UCHENNA", `regNo`, null, null, null, null, ""],
-		[4, "AGWASIEM-OBASI CHIDUBEM", `regNo`, null, null, null, null, ""],
-		[22, "OTUSOROCHUKWU EMMANUEL", `regNo`, null, null, null, null, ""],
-		[17, "NNABUE CHIMAOBI", `regNo`, null, null, null, null, ""],
-		[24, "UCHENNA PRECIOUS", `regNo`, null, null, null, null, ""],
-		[9, "CHUKWUKA DIVINE-FAVOUR", `regNo`, null, null, null, null, ""],
-		[21, "OKPO KAMSI DERRICK ", `regNo`, null, null, null, null, ""],
-		[23, "THEODORE DIVINE-PROSPER", `regNo`, null, null, null, null, ""],
-		[19, "NWOKORO GABRIEL PRIASE", `regNo`, null, null, null, null, ""],
-		[7, "CHIDI IKECHUKWU", `regNo`, null, null, null, null, ""],
-		[12, "KINGCHI DEVOP", `regNo`, null, null, null, null, ""],
-		[11, "CHRISTABEL ANYIAM", `regNo`, null, null, null, null, ""],
-		[2, "AZIKE FAVOUR", `regNo`, null, null, null, null, ""],
-		[16, "IWUANYANWU JESSICA", `regNo`, null, null, null, null, ""],
-		[20, "ONYEAMA SOMTOCHUKWU", `regNo`, null, null, null, null, ""],
+		arrTitle,
+		arrHeader,
+		...rows,
 		[null, "MARKS OBTAINABLE", , null, null, null, null],
 	];
 
 	const sheetName: string = "sheet1";
-	const fileName = "schoolName_result_template";
+	const fileName = results[0].school.name.replace(" ", "_") + "_results";
 	const workbook = xlsx.utils.book_new();
 	const worksheet = xlsx.utils.aoa_to_sheet(resultArrData);
 
@@ -192,7 +183,10 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 	});
 
 	// Send the Excel file
-	res.setHeader("Content-Disposition", `attachment; filename=${fileName}.xlsx`);
+	res.setHeader(
+		"Content-Disposition",
+		`attachment; filename=${fileName.toLocaleUpperCase()}.xlsx`
+	);
 	res.setHeader(
 		"Content-Type",
 		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
