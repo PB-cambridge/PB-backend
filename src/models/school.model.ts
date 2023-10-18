@@ -66,4 +66,4 @@ class School extends Model<SchoolAttributes, SchoolCreationAttributes> {
 	declare readonly updatedAt: Date;
 }
 
-export default School;
+// export default School;

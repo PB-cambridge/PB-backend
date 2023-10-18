@@ -9,6 +9,7 @@
 		"moduleResolution": "node",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
+		"declaration": false,
 		"allowJs": true,
 		"resolveJsonModule": true
 	},

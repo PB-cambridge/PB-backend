@@ -40,4 +40,4 @@ class Admin extends Model<AdminAttributes, AdminCreationAttributes> {
 	declare readonly updatedAt: Date;
 }
 
-export default Admin;
+// export default Admin;

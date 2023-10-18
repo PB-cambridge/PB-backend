@@ -95,4 +95,4 @@ class Event extends Model<EventAttributes, EventCreationAttributes> {
 	declare readonly updatedAt: Date;
 }
 
-export default Event;
+// export default Event;

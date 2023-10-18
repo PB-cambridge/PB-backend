@@ -27,4 +27,4 @@ class Announcement extends Model<
 	declare date: typeof announcement.date;
 }
 
-export default Announcement;
+// export default Announcement;

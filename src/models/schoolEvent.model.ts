@@ -31,4 +31,4 @@ class SchoolEvent extends Model {
 	declare eventId: string;
 }
 
-export default SchoolEvent;
+// export default SchoolEvent;

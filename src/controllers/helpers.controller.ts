@@ -9,3 +9,14 @@ export const regNo = (username: string) => {
 		.slice(0, 3)
 		.toLocaleUpperCase()}${randomCode}${month}${year}`;
 };
+
+export function findIndexContainingString(arr: any[], searchString: string) {
+	return arr.findIndex(function (item) {
+		return item.includes(searchString);
+	});
+}
+
+export function isValidBase64(str: string) {
+	const base64Regex = /^[A-Za-z0-9+/=]+$/;
+	return base64Regex.test(str);
+}

@@ -8,7 +8,7 @@ import AppError from "./AppError";
 import Student from "../models/student.model";
 import { loginReqSchema } from "../validation/reqSchemas";
 import env from "../../env";
-import Admin from "../models/admin.model";
+import prisma from "../../prisma";
 
 export const adminLogin = async (req: Request, res: Response) => {
 	const safe = loginReqSchema.safeParse(req.body);
@@ -22,7 +22,7 @@ export const adminLogin = async (req: Request, res: Response) => {
 	const { email, password } = safe.data;
 
 	// authenticate here
-	const admin = await Admin.findOne({ where: { email } });
+	const admin = await prisma.admin.findFirst({ where: { email } });
 
 	if (!admin) throw new AppError("Incorrect email", resCode.UNAUTHORIZED);
 
@@ -36,7 +36,7 @@ export const adminLogin = async (req: Request, res: Response) => {
 		env.HASH_SECRET + ""
 	);
 
-	const { password: pass, ...adminData } = admin.dataValues;
+	const { password: pass, ...adminData } = admin;
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,

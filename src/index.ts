@@ -1,9 +1,6 @@
-import bcrypt from "bcrypt";
 import express, { Application } from "express";
 import cors from "cors";
 import env from "../env";
-import fs from "fs";
-import xlsx from "xlsx";
 
 // swagger api doc
 import swaggerUI from "swagger-ui-express";
@@ -12,13 +9,7 @@ import errorController, {
 	tryCatchWapper,
 } from "./controllers/error.controller";
 import swaggerConfig from "./api-doc/swagger-config";
-import "./models/sequelize.config";
-import seedDB from "../prisma/seed";
 import { getSchools } from "./controllers/school.controller";
-import { resultFile } from "./routes/user.route";
-import { findIndexContainingString } from "./controllers/admin.controller";
-import Admin from "./models/admin.model";
-// import timeout from "connect-timeout"
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 

@@ -110,4 +110,4 @@ class StudentResult extends Model<
 	// declare year: typeof userResult.year;
 }
 
-export default StudentResult;
+// export default StudentResult;

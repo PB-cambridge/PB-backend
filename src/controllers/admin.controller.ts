@@ -6,20 +6,8 @@ import { getStringValidation } from "../validation/reqSchemas";
 import AppError from "./AppError";
 import fs from "fs";
 import xlsx from "xlsx";
-import StudentResult from "../models/result.model";
-import School from "../models/school.model";
-import Student from "../models/student.model";
-
-export function findIndexContainingString(arr: any[], searchString: string) {
-	return arr.findIndex(function (item) {
-		return item.includes(searchString);
-	});
-}
-
-export function isValidBase64(str: string) {
-	const base64Regex = /^[A-Za-z0-9+/=]+$/;
-	return base64Regex.test(str);
-}
+import { findIndexContainingString, isValidBase64 } from "./helpers.controller";
+import prisma from "./../../prisma/index";
 
 // Example usage
 export const uploadResultFile = async (req: Request, res: Response) => {
@@ -46,7 +34,7 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 
 	// check if schoool exists
 
-	const school = await School.findOne({ where: { id } });
+	const school = await prisma.school.findFirst({ where: { id } });
 
 	if (!school) throw new AppError("School not found", resCode.NOT_FOUND);
 
@@ -92,7 +80,11 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 			});
 		}
 
-		result = await StudentResult.bulkCreate(resultData);
+		// result = await prisma.school.update({where:{id},data:{results:{createMany}}})
+
+		// prisma.studentResult.updateMany({where})
+
+		// .bulkCreate(resultData);
 	} catch (error) {
 		throw new AppError(
 			"Something wnet wrong with resullt upload",
@@ -125,9 +117,9 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 
 	const { schoolId, eventId } = safe.data;
 
-	const results = await StudentResult.findAll({
-		where: { eventId, schoolId },
-		include: [Student, School],
+	const results = await prisma.studentResult.findMany({
+		where: { schoolId },
+		include: { school: true, student: true },
 	});
 
 	if (!results || results.length < 1)
