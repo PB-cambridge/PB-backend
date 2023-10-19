@@ -10,13 +10,35 @@ const NUM_OF = {
 	USER: 5,
 	USER_RESULT: 2,
 	EVENTS: 2,
+	COMPETITION: 2,
 } as const;
 
 export default async function seedDb() {
-	const events = await seedEvent();
+	const competitions = await seedCompetition();
+	// const events = await seedEvent();
 	const schools = await seedSchool();
 	const students = await seedStudent();
+
 	// await seedResult();
+
+	async function seedCompetition() {
+		const competitions = [];
+		for (let i = 0; i < NUM_OF.EVENTS; i++) {
+			const competition = await prisma.competition.create({
+				data: {
+					name: faker.internet.displayName(),
+					date: faker.date.future(),
+					registrationFee: +faker.commerce.price(),
+					// bannerImage: faker.internet.avatar(),
+					// description: faker.lorem.sentence(),
+					// location: faker.location.secondaryAddress(),
+					// registrationFee: +faker.commerce.price({ dec: 2 }),
+				},
+			});
+			competitions.push(competition);
+		}
+		return competitions;
+	}
 
 	async function seedEvent() {
 		const events = [];
@@ -25,7 +47,8 @@ export default async function seedDb() {
 				data: {
 					title: faker.internet.displayName(),
 					bannerImage: faker.internet.avatar(),
-					dateTime: faker.date.future(),
+					startTime: faker.date.future(),
+					endTime: faker.date.future(),
 					description: faker.lorem.sentence(),
 					location: faker.location.secondaryAddress(),
 					// registrationFee: +faker.commerce.price({ dec: 2 }),
@@ -59,6 +82,7 @@ export default async function seedDb() {
 					school: { connect: { id: schools[0].id } },
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
+					registeredCompetition: { connect: { id: competitions[0].id } },
 					result: {
 						create: {
 							school: { connect: { id: schools[0].id } },
