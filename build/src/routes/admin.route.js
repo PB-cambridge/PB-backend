@@ -11,6 +11,7 @@ adminRoute.get("/", (req, res) => {
         data: {},
     });
 });
+adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/upload-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
 adminRoute.get("/results-template/:schoolId/:eventId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;

@@ -36,5 +36,5 @@ __decorate([
 Admin = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "Admin" })
 ], Admin);
-exports.default = Admin;
+// export default Admin;
 //# sourceMappingURL=admin.model.js.map

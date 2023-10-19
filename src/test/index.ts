@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import Student from "../models/student.model";
 // test1();
 // test2();
 

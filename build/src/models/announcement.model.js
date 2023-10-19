@@ -28,5 +28,5 @@ __decorate([
 Announcement = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "Announcement" })
 ], Announcement);
-exports.default = Announcement;
+// export default Announcement;
 //# sourceMappingURL=announcement.model.js.map

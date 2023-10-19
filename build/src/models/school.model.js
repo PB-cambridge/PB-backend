@@ -47,5 +47,5 @@ __decorate([
 School = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "School" })
 ], School);
-exports.default = School;
+// export default School;
 //# sourceMappingURL=school.model.js.map

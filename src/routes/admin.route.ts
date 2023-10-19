@@ -3,6 +3,7 @@ import { Router, Request, Response } from "express";
 import { resCode, tryCatchWapper } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
 import {
+	createCompetion,
 	downloadResultTemp,
 	uploadResultFile,
 } from "../controllers/admin.controller";
@@ -16,6 +17,7 @@ adminRoute.get("/", (req: Request, res: Response) => {
 		data: {},
 	});
 });
+adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 
 adminRoute.post("/upload-results", tryCatchWapper(uploadResultFile));
 

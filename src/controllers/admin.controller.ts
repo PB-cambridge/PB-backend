@@ -10,6 +10,13 @@ import { findIndexContainingString, isValidBase64 } from "./helpers.controller";
 import prisma from "./../../prisma/index";
 
 // Example usage
+export const createCompetion = async (req: Request, res: Response) => {
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Create competition here",
+	});
+};
+
 export const uploadResultFile = async (req: Request, res: Response) => {
 	const safe = z
 		.object({

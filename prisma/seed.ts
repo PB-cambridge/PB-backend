@@ -1,11 +1,7 @@
-import School from "../src/models/school.model";
 import { Request, Response } from "express";
 import { faker } from "@faker-js/faker";
-import Student from "../src/models/student.model";
-import StudentResult from "../src/models/result.model";
 import { resCode } from "../src/controllers/error.controller";
 import { SuccessResponse } from "../src/types";
-import Event from "../src/models/event.model";
 import prisma from "./index";
 import { regNo } from "../src/controllers/helpers.controller";
 

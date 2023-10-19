@@ -12,34 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downloadResultTemp = exports.uploadResultFile = exports.isValidBase64 = exports.findIndexContainingString = void 0;
+exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
 const AppError_1 = __importDefault(require("./AppError"));
 const fs_1 = __importDefault(require("fs"));
 const xlsx_1 = __importDefault(require("xlsx"));
-const result_model_1 = __importDefault(require("../models/result.model"));
-const school_model_1 = __importDefault(require("../models/school.model"));
-const student_model_1 = __importDefault(require("../models/student.model"));
-function findIndexContainingString(arr, searchString) {
-    return arr.findIndex(function (item) {
-        return item.includes(searchString);
-    });
-}
-exports.findIndexContainingString = findIndexContainingString;
-function isValidBase64(str) {
-    const base64Regex = /^[A-Za-z0-9+/=]+$/;
-    return base64Regex.test(str);
-}
-exports.isValidBase64 = isValidBase64;
+const helpers_controller_1 = require("./helpers.controller");
+const index_1 = __importDefault(require("./../../prisma/index"));
 // Example usage
+const createCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Create competition here",
+    });
+});
+exports.createCompetion = createCompetion;
 const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = zod_1.z
         .object({
         schoolId: (0, reqSchemas_1.getStringValidation)("schoolId"),
         year: (0, reqSchemas_1.getStringValidation)("year"),
-        resultFileString: (0, reqSchemas_1.getStringValidation)("resultFileString").refine((value) => isValidBase64(value), {
+        resultFileString: (0, reqSchemas_1.getStringValidation)("resultFileString").refine((value) => (0, helpers_controller_1.isValidBase64)(value), {
             message: "Invalid Base64 string",
         }),
     })
@@ -48,7 +43,7 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const { schoolId: id, year, resultFileString } = safe.data;
     // check if schoool exists
-    const school = yield school_model_1.default.findOne({ where: { id } });
+    const school = yield index_1.default.school.findFirst({ where: { id } });
     if (!school)
         throw new AppError_1.default("School not found", error_controller_1.resCode.NOT_FOUND);
     // result upload logic here
@@ -69,7 +64,7 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
         fs_1.default.unlinkSync(tempFilePath);
         jsonData[1] = jsonData[1].map((d) => d.replace(/[^a-zA-Z]/g, ""));
         const resultData = [];
-        const indexTotal = findIndexContainingString(jsonData, "MARKS OBTAINABLE") || 0;
+        const indexTotal = (0, helpers_controller_1.findIndexContainingString)(jsonData, "MARKS OBTAINABLE") || 0;
         for (let i = 2; i < indexTotal; i++) {
             resultData.push({
                 studentName: jsonData[i][1],
@@ -83,7 +78,9 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 year,
             });
         }
-        result = yield result_model_1.default.bulkCreate(resultData);
+        // result = await prisma.school.update({where:{id},data:{results:{createMany}}})
+        // prisma.studentResult.updateMany({where})
+        // .bulkCreate(resultData);
     }
     catch (error) {
         throw new AppError_1.default("Something wnet wrong with resullt upload", error_controller_1.resCode.INTERNAL_SERVER_ERROR, error);
@@ -105,9 +102,9 @@ const downloadResultTemp = (req, res) => __awaiter(void 0, void 0, void 0, funct
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const { schoolId, eventId } = safe.data;
-    const results = yield result_model_1.default.findAll({
-        where: { eventId, schoolId },
-        include: [student_model_1.default, school_model_1.default],
+    const results = yield index_1.default.studentResult.findMany({
+        where: { schoolId },
+        include: { school: true, student: true },
     });
     if (!results || results.length < 1)
         throw new AppError_1.default("No results", error_controller_1.resCode.NOT_FOUND);

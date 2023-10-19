@@ -30,21 +30,22 @@ const error_controller_1 = require("./error.controller");
 const AppError_1 = __importDefault(require("./AppError"));
 const reqSchemas_1 = require("../validation/reqSchemas");
 const env_1 = __importDefault(require("../../env"));
-const admin_model_1 = __importDefault(require("../models/admin.model"));
+const prisma_1 = __importDefault(require("../../prisma"));
+const zod_1 = require("zod");
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = reqSchemas_1.loginReqSchema.safeParse(req.body);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const { email, password } = safe.data;
     // authenticate here
-    const admin = yield admin_model_1.default.findOne({ where: { email } });
+    const admin = yield prisma_1.default.admin.findFirst({ where: { email } });
     if (!admin)
         throw new AppError_1.default("Incorrect email", error_controller_1.resCode.UNAUTHORIZED);
     const authorised = bcrypt_1.default.compareSync(password, admin.password);
     if (!authorised)
         throw new AppError_1.default("Incorrect password", error_controller_1.resCode.UNAUTHORIZED);
     const token = jsonwebtoken_1.default.sign({ id: admin.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 }, env_1.default.HASH_SECRET + "");
-    const _a = admin.dataValues, { password: pass } = _a, adminData = __rest(_a, ["password"]);
+    const { password: pass } = admin, adminData = __rest(admin, ["password"]);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Login successfull",
@@ -54,6 +55,22 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.adminLogin = adminLogin;
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // move this to be handled by a middleware
+    const safeQuery = zod_1.z
+        .object({ reference: (0, reqSchemas_1.getStringValidation)("reference") })
+        .safeParse(req.query);
+    if (!safeQuery.success)
+        throw new AppError_1.default(safeQuery.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeQuery.error);
+    const { reference } = safeQuery.data;
+    // verify payment for the competition using paystack
+    const safe = reqSchemas_1.registerStudentReqSchema.safeParse(req.body);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const _a = safe.data, { passport, schoolId } = _a, others = __rest(_a, ["passport", "schoolId"]);
+    const selectedSchool = prisma_1.default.school.findFirst({ where: { id: schoolId } });
+    if (!selectedSchool)
+        throw new AppError_1.default("Selected school does not exist", error_controller_1.resCode.NOT_FOUND);
+    // create the student here
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "ready to register users",

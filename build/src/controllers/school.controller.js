@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSchools = void 0;
-const school_model_1 = __importDefault(require("../models/school.model"));
 const error_controller_1 = require("./error.controller");
+const prisma_1 = __importDefault(require("../../prisma"));
 const getSchools = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const schools = yield school_model_1.default.findAll();
+    const schools = yield prisma_1.default.school.findMany();
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "schools ",

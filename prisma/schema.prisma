@@ -50,7 +50,7 @@ model School {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model StudentResult {
   id           String   @unique @default(cuid())
-  studentRegNo String
+  studentRegNo String   @unique
   schoolId     String
   reading      Int?     @default(0)
   writing      Int?     @default(0)
@@ -64,21 +64,33 @@ model StudentResult {
 }
 
 model Student {
-  id                  String          @unique @default(cuid())
-  firstName           String
-  lastName            String
-  email               String?
-  address             String
-  phoneNumber         String?
-  schoolId            String
-  level               String
-  scienceOrArt        String
-  passport            String
-  whatsappNumber      String?
-  regNo               String          @unique
-  acknowledgementSent Boolean         @default(false)
-  result              StudentResult[]
-  school              School          @relation(fields: [schoolId], references: [id])
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  id                      String         @unique @default(cuid())
+  firstName               String
+  lastName                String
+  email                   String?
+  address                 String
+  phoneNumber             String?
+  schoolId                String
+  level                   String
+  scienceOrArt            String
+  passport                String
+  whatsappNumber          String?
+  regNo                   String         @unique
+  acknowledgementSent     Boolean        @default(false)
+  registeredCompetition   Competition    @relation(fields: [registeredCompetitionId], references: [id])
+  registeredCompetitionId String
+  result                  StudentResult?
+  school                  School         @relation(fields: [schoolId], references: [id])
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+}
+
+model Competition {
+  id                 String    @unique @default(cuid())
+  name               String    @unique
+  registeredStudents Student[]
+  registrationFee    Int
+  date               DateTime
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }

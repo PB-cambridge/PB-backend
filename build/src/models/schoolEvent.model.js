@@ -40,5 +40,5 @@ __decorate([
 SchoolEvent = __decorate([
     sequelize_typescript_1.Table
 ], SchoolEvent);
-exports.default = SchoolEvent;
+// export default SchoolEvent;
 //# sourceMappingURL=schoolEvent.model.js.map

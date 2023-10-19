@@ -67,5 +67,5 @@ __decorate([
 Event = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "Event" })
 ], Event);
-exports.default = Event;
+// export default Event;
 //# sourceMappingURL=event.model.js.map

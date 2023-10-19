@@ -43,10 +43,7 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const routes_1 = require("./routes");
 const error_controller_1 = __importStar(require("./controllers/error.controller"));
 const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
-require("./models/sequelize.config");
-const seed_1 = __importDefault(require("./models/seed"));
 const school_controller_1 = require("./controllers/school.controller");
-// import timeout from "connect-timeout"
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 const app = (0, express_1.default)();
@@ -72,7 +69,7 @@ app.use("/api/user", routes_1.userRoute);
 app.use("/api/admin", routes_1.adminRoute);
 // authenticate secured routes
 // app.use(authenticate);
-app.get("/api/seed", (0, error_controller_1.tryCatchWapper)(seed_1.default));
+// app.get("/api/seed", tryCatchWapper());
 app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getSchools));
 // error handler
 app.use(error_controller_1.default);

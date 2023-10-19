@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
 const student_model_1 = __importDefault(require("./student.model"));
@@ -38,7 +39,7 @@ __decorate([
 ], StudentResult.prototype, "studentRegNo", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => school_model_1.default),
-    __metadata("design:type", school_model_1.default)
+    __metadata("design:type", typeof (_a = typeof school_model_1.default !== "undefined" && school_model_1.default) === "function" ? _a : Object)
 ], StudentResult.prototype, "school", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => school_model_1.default),
@@ -47,7 +48,7 @@ __decorate([
 ], StudentResult.prototype, "schoolId", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => event_model_1.default),
-    __metadata("design:type", event_model_1.default)
+    __metadata("design:type", typeof (_b = typeof event_model_1.default !== "undefined" && event_model_1.default) === "function" ? _b : Object)
 ], StudentResult.prototype, "event", void 0);
 __decorate([
     (0, sequelize_typescript_1.ForeignKey)(() => event_model_1.default),
@@ -77,5 +78,5 @@ __decorate([
 StudentResult = __decorate([
     (0, sequelize_typescript_1.Table)({ modelName: "StudentResult" })
 ], StudentResult);
-exports.default = StudentResult;
+// export default StudentResult;
 //# sourceMappingURL=result.model.js.map

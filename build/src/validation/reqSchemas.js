@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getStringValidation = void 0;
+exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = void 0;
 const zod_1 = require("zod");
 // custome validation function
 const getStringValidation = (key) => zod_1.z
@@ -10,6 +10,12 @@ const getStringValidation = (key) => zod_1.z
 })
     .min(3, { message: `'${key}' must be 3 or more characters` });
 exports.getStringValidation = getStringValidation;
+const getOptionalStringValidation = (key) => zod_1.z
+    .string({
+    invalid_type_error: `'${key}' must be a string`,
+})
+    .optional();
+exports.getOptionalStringValidation = getOptionalStringValidation;
 const getNumberValidation = (key) => zod_1.z.number({
     required_error: `'${key}' is required`,
     invalid_type_error: `'${key}' must be a number`,
@@ -28,5 +34,38 @@ exports.emailSchema = zod_1.z
 exports.loginReqSchema = zod_1.z.object({
     email: exports.emailSchema,
     password: (0, exports.getStringValidation)("password"),
+});
+/*
+  firstName           String
+  lastName            String
+  email               String?
+  address             String
+  phoneNumber         String?
+  schoolId            String
+  level               String
+  scienceOrArt        String
+
+  passport            String
+  whatsappNumber      String?
+  regNo               String          @unique
+  acknowledgementSent Boolean         @default(false)
+  result              StudentResult[]
+  school              School          @relation(fields: [schoolId], references: [id])
+*/
+exports.registerStudentReqSchema = zod_1.z.object({
+    firstName: (0, exports.getStringValidation)("firstName"),
+    lastName: (0, exports.getStringValidation)("lastName"),
+    email: exports.emailSchema,
+    address: (0, exports.getStringValidation)("address"),
+    phoneNumber: (0, exports.getStringValidation)("phoneNumber"),
+    schoolId: (0, exports.getStringValidation)("schoolId"),
+    level: zod_1.z.enum(["Junior", "Senior", "Graduated"], {
+        invalid_type_error: "Please enter etiher 'Junior', 'Senior' or 'Graduated'",
+    }),
+    scienceOrArt: zod_1.z.enum(["Science", "Art"], {
+        invalid_type_error: "Science or Art expected",
+    }),
+    passport: (0, exports.getStringValidation)("passport"),
+    whatsappNumber: (0, exports.getOptionalStringValidation)("whatsappNumber"),
 });
 //# sourceMappingURL=reqSchemas.js.map
