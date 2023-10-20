@@ -21,7 +21,7 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 	const safe = z
 		.object({
 			schoolId: getStringValidation("schoolId"),
-			year: getStringValidation("year"),
+			competitionId: getStringValidation("competitionId"),
 			resultFileString: getStringValidation("resultFileString").refine(
 				(value) => isValidBase64(value),
 				{
@@ -30,6 +30,7 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 			),
 		})
 		.safeParse(req.body);
+
 	if (!safe.success)
 		throw new AppError(
 			safe.error.issues.map((d) => d.message).join(", "),
@@ -37,16 +38,19 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 			safe.error
 		);
 
-	const { schoolId: id, year, resultFileString } = safe.data;
+	const { schoolId, competitionId, resultFileString } = safe.data;
 
-	// check if schoool exists
+	const results = await prisma.studentResult.findMany({
+		where: {
+			schoolId,
+			competitionId,
+		},
+	});
 
-	const school = await prisma.school.findFirst({ where: { id } });
-
-	if (!school) throw new AppError("School not found", resCode.NOT_FOUND);
-
+	if (!results || (await results).length < 1)
+		throw new AppError("No results", resCode.NOT_FOUND);
 	// result upload logic here
-	let result;
+	let updatedItems;
 	try {
 		const excelData = Buffer.from(resultFileString, "base64");
 
@@ -70,27 +74,34 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 
 		const resultData: any[] = [];
 
-		const indexTotal =
-			findIndexContainingString(jsonData, "MARKS OBTAINABLE") || 0;
-
-		for (let i = 2; i < indexTotal; i++) {
+		for (let i = 2; i < jsonData.length - 1; i++) {
 			resultData.push({
-				studentName: jsonData[i][1],
-				reading: jsonData[i][2],
-				writing: jsonData[i][3],
-				mathematics: jsonData[i][4],
-				total: jsonData[i][5],
-				position: jsonData[i][6],
-				schoolName: jsonData[0][0],
-				schoolId: school.id,
-				year,
+				studentRegNo: jsonData[i][2],
+				reading: jsonData[i][3],
+				writing: jsonData[i][4],
+				mathematics: jsonData[i][5],
+				total: jsonData[i][6],
+				position: jsonData[i][7],
+				// schoolName: jsonData[0][0],
+				// schoolId: school.id,
 			});
 		}
 
-		// result = await prisma.school.update({where:{id},data:{results:{createMany}}})
+		// const updates = await prisma.studentResult.updateMany({
+		// 	where: { studentRegNo: { in: results.map((item) => item.studentRegNo) } },
+		// 	data: {},
+		// });
 
-		// prisma.studentResult.updateMany({where})
+		updatedItems = await prisma.$transaction(async (prisma) => {
+			const updatePromises = resultData.map((item) => {
+				return prisma.studentResult.update({
+					where: { studentRegNo: item.studentRegNo },
+					data: item,
+				});
+			});
 
+			return Promise.all(updatePromises);
+		});
 		// .bulkCreate(resultData);
 	} catch (error) {
 		throw new AppError(
@@ -103,7 +114,7 @@ export const uploadResultFile = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Result uploaded successful",
-		data: result,
+		data: updatedItems,
 	});
 };
 
@@ -111,7 +122,7 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 	const safe = z
 		.object({
 			schoolId: getStringValidation("schoolId"),
-			eventId: getStringValidation("eventId"),
+			competitionId: getStringValidation("competitionId"),
 		})
 		.safeParse(req.params);
 
@@ -122,11 +133,14 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 			safe.error
 		);
 
-	const { schoolId, eventId } = safe.data;
+	const { schoolId, competitionId } = safe.data;
 
 	const results = await prisma.studentResult.findMany({
-		where: { schoolId },
-		include: { school: true, student: true },
+		where: { schoolId, student: { competitionId: competitionId } },
+		include: {
+			school: true,
+			student: { select: { firstName: true, lastName: true } },
+		},
 	});
 
 	if (!results || results.length < 1)

@@ -21,13 +21,31 @@ const NUM_OF = {
     USER: 5,
     USER_RESULT: 2,
     EVENTS: 2,
+    COMPETITION: 2,
 };
 function seedDb() {
     return __awaiter(this, void 0, void 0, function* () {
-        const events = yield seedEvent();
+        const competitions = yield seedCompetition();
+        // const events = await seedEvent();
         const schools = yield seedSchool();
         const students = yield seedStudent();
         // await seedResult();
+        function seedCompetition() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const competitions = [];
+                for (let i = 0; i < NUM_OF.COMPETITION; i++) {
+                    const competition = yield index_1.default.competition.create({
+                        data: {
+                            name: faker_1.faker.internet.displayName(),
+                            date: faker_1.faker.date.future(),
+                            registrationFee: +faker_1.faker.commerce.price(),
+                        },
+                    });
+                    competitions.push(competition);
+                }
+                return competitions;
+            });
+        }
         function seedEvent() {
             return __awaiter(this, void 0, void 0, function* () {
                 const events = [];
@@ -36,7 +54,8 @@ function seedDb() {
                         data: {
                             title: faker_1.faker.internet.displayName(),
                             bannerImage: faker_1.faker.internet.avatar(),
-                            dateTime: faker_1.faker.date.future(),
+                            startTime: faker_1.faker.date.future(),
+                            endTime: faker_1.faker.date.future(),
                             description: faker_1.faker.lorem.sentence(),
                             location: faker_1.faker.location.secondaryAddress(),
                             // registrationFee: +faker.commerce.price({ dec: 2 }),
@@ -74,9 +93,11 @@ function seedDb() {
                             school: { connect: { id: schools[0].id } },
                             regNo: (0, helpers_controller_1.regNo)(faker_1.faker.person.firstName()),
                             phoneNumber: faker_1.faker.phone.number(),
+                            competition: { connect: { id: competitions[1].id } },
                             result: {
                                 create: {
                                     school: { connect: { id: schools[0].id } },
+                                    competition: { connect: { id: competitions[1].id } },
                                 },
                             },
                             level: "Junior",
@@ -95,12 +116,13 @@ function seedDb() {
                     const results = yield index_1.default.studentResult.create({
                         data: {
                             mathematics: faker_1.faker.number.int({ max: 100 }),
-                            position: faker_1.faker.number.int({ max: 100 }),
+                            position: faker_1.faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
                             writing: faker_1.faker.number.int({ max: 100 }),
                             reading: faker_1.faker.number.int({ max: 100 }),
                             student: { connect: { regNo: students[i].regNo } },
                             school: { connect: { id: schools[0].id } },
                             total: faker_1.faker.number.int({ max: 100 }),
+                            competition: { connect: { id: competitions[1].id } },
                         },
                     });
                 }

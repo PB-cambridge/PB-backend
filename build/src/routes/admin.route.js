@@ -12,7 +12,7 @@ adminRoute.get("/", (req, res) => {
     });
 });
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
-adminRoute.post("/upload-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
-adminRoute.get("/results-template/:schoolId/:eventId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
+adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
+adminRoute.get("/results-template/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;
 //# sourceMappingURL=admin.route.js.map

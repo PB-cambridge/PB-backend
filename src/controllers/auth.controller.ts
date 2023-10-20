@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 
 import { SuccessResponse } from "../types";
@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { resCode } from "./error.controller";
 import AppError from "./AppError";
 import {
+	getNumberValidation,
 	getStringValidation,
 	loginReqSchema,
 	registerStudentReqSchema,
@@ -13,6 +14,7 @@ import {
 import env from "../../env";
 import prisma from "../../prisma";
 import { z } from "zod";
+import { regNo } from "./helpers.controller";
 
 export const adminLogin = async (req: Request, res: Response) => {
 	const safe = loginReqSchema.safeParse(req.body);
@@ -50,19 +52,46 @@ export const adminLogin = async (req: Request, res: Response) => {
 	});
 };
 
+export const verifyPaystackPayment = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const safeQuery = z
+			.object({ reference: getStringValidation("reference") })
+			.safeParse(req.query);
+		if (!safeQuery.success)
+			throw new AppError(
+				safeQuery.error.issues.map((d) => d.message).join(", "),
+				resCode.BAD_REQUEST,
+				safeQuery.error
+			);
+		const { reference } = safeQuery.data;
+
+		if (isNaN(+reference))
+			throw new AppError("'reference' must be a number", resCode.NOT_ACCEPTED);
+
+		// verify payment for the competition using paystack
+
+		next();
+	} catch (error) {
+		next(error);
+	}
+};
+
 export const registerUser = async (req: Request, res: Response) => {
-	// move this to be handled by a middleware
-	const safeQuery = z
-		.object({ reference: getStringValidation("reference") })
-		.safeParse(req.query);
-	if (!safeQuery.success)
+	const safeParam = z
+		.object({ competitionId: getStringValidation("competitionId") })
+		.safeParse(req.params);
+
+	if (!safeParam.success)
 		throw new AppError(
-			safeQuery.error.issues.map((d) => d.message).join(", "),
+			safeParam.error.issues.map((d) => d.message).join(", "),
 			resCode.BAD_REQUEST,
-			safeQuery.error
+			safeParam.error
 		);
-	const { reference } = safeQuery.data;
-	// verify payment for the competition using paystack
+	const { competitionId } = safeParam.data;
 
 	const safe = registerStudentReqSchema.safeParse(req.body);
 	if (!safe.success)
@@ -71,20 +100,43 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.BAD_REQUEST,
 			safe.error
 		);
+	const { passport, schoolId, firstName, ...others } = safe.data;
 
-	const { passport, schoolId, ...others } = safe.data;
+	const competion = await prisma.competition.findFirst({
+		where: { id: competitionId },
+	});
 
-	const selectedSchool = prisma.school.findFirst({ where: { id: schoolId } });
+	if (!competion)
+		throw new AppError(
+			"Competition with the provided id does not exist",
+			resCode.NOT_FOUND
+		);
+
+	const selectedSchool = await prisma.school.findFirst({
+		where: { id: schoolId },
+	});
 
 	if (!selectedSchool)
 		throw new AppError("Selected school does not exist", resCode.NOT_FOUND);
 
-	// create the student here
+	//  passport to file
+
+	const registeredStudent = await prisma.student.create({
+		data: {
+			firstName,
+			passport,
+			competitionId: competitionId,
+			schoolId,
+			regNo: regNo(firstName),
+			...others,
+			result: { create: { schoolId, competitionId } },
+		},
+	});
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
-		message: "ready to register users",
-		data: {},
+		message: "Registration Successful",
+		data: { registeredStudent },
 	});
 };
 

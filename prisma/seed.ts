@@ -23,16 +23,12 @@ export default async function seedDb() {
 
 	async function seedCompetition() {
 		const competitions = [];
-		for (let i = 0; i < NUM_OF.EVENTS; i++) {
+		for (let i = 0; i < NUM_OF.COMPETITION; i++) {
 			const competition = await prisma.competition.create({
 				data: {
 					name: faker.internet.displayName(),
 					date: faker.date.future(),
 					registrationFee: +faker.commerce.price(),
-					// bannerImage: faker.internet.avatar(),
-					// description: faker.lorem.sentence(),
-					// location: faker.location.secondaryAddress(),
-					// registrationFee: +faker.commerce.price({ dec: 2 }),
 				},
 			});
 			competitions.push(competition);
@@ -82,10 +78,11 @@ export default async function seedDb() {
 					school: { connect: { id: schools[0].id } },
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
-					registeredCompetition: { connect: { id: competitions[0].id } },
+					competition: { connect: { id: competitions[1].id } },
 					result: {
 						create: {
 							school: { connect: { id: schools[0].id } },
+							competition: { connect: { id: competitions[1].id } },
 						},
 					},
 					level: "Junior",
@@ -103,12 +100,13 @@ export default async function seedDb() {
 			const results = await prisma.studentResult.create({
 				data: {
 					mathematics: faker.number.int({ max: 100 }),
-					position: faker.number.int({ max: 100 }),
+					position: faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
 					writing: faker.number.int({ max: 100 }),
 					reading: faker.number.int({ max: 100 }),
 					student: { connect: { regNo: students[i].regNo } },
 					school: { connect: { id: schools[0].id } },
 					total: faker.number.int({ max: 100 }),
+					competition: { connect: { id: competitions[1].id } },
 				},
 			});
 		}

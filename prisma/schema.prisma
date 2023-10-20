@@ -42,7 +42,7 @@ model Event {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model School {
-  id       String          @id @default(uuid())
+  id       String          @id @default(cuid())
   name     String
   results  StudentResult[]
   students Student[]
@@ -50,48 +50,51 @@ model School {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model StudentResult {
-  id           String   @unique @default(cuid())
-  reading      Int?     @default(0)
-  writing      Int?     @default(0)
-  mathematics  Int?     @default(0)
-  total        Int?     @default(0)
-  position     Int?     @default(0)
-  school       School   @relation(fields: [schoolId], references: [id])
-  schoolId     String
-  student      Student  @relation(fields: [studentRegNo], references: [regNo])
-  studentRegNo String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String      @unique @default(cuid())
+  reading       Int?        @default(0)
+  writing       Int?        @default(0)
+  mathematics   Int?        @default(0)
+  total         Int?        @default(0)
+  position      String?
+  school        School      @relation(fields: [schoolId], references: [id])
+  schoolId      String
+  student       Student     @relation(fields: [studentRegNo], references: [regNo])
+  studentRegNo  String      @unique
+  competition   Competition @relation(fields: [competitionId], references: [id])
+  competitionId String      
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model Student {
-  id                      String         @unique @default(cuid())
-  firstName               String
-  lastName                String
-  email                   String?
-  address                 String
-  phoneNumber             String?
-  schoolId                String
-  level                   String
-  scienceOrArt            String
-  passport                String
-  whatsappNumber          String?
-  regNo                   String         @unique
-  acknowledgementSent     Boolean        @default(false)
-  registeredCompetition   Competition    @relation(fields: [registeredCompetitionId], references: [id])
-  registeredCompetitionId String
-  result                  StudentResult?
-  school                  School         @relation(fields: [schoolId], references: [id])
-  createdAt               DateTime       @default(now())
-  updatedAt               DateTime       @updatedAt
+  id                  String         @unique @default(cuid())
+  firstName           String
+  lastName            String
+  email               String?
+  address             String
+  phoneNumber         String?
+  schoolId            String
+  level               String
+  scienceOrArt        String
+  passport            String
+  whatsappNumber      String?
+  regNo               String         @unique
+  acknowledgementSent Boolean        @default(false)
+  competition         Competition    @relation(fields: [competitionId], references: [id])
+  competitionId       String
+  result              StudentResult?
+  school              School         @relation(fields: [schoolId], references: [id])
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
 }
 
 model Competition {
-  id                 String    @unique @default(cuid())
-  name               String    @unique
-  registeredStudents Student[]
-  registrationFee    Int
-  date               DateTime
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id              String          @unique @default(cuid())
+  name            String          @unique
+  students        Student[]
+  results         StudentResult[]
+  registrationFee Int
+  date            DateTime
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }

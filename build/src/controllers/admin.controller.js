@@ -33,7 +33,7 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const safe = zod_1.z
         .object({
         schoolId: (0, reqSchemas_1.getStringValidation)("schoolId"),
-        year: (0, reqSchemas_1.getStringValidation)("year"),
+        competitionId: (0, reqSchemas_1.getStringValidation)("competitionId"),
         resultFileString: (0, reqSchemas_1.getStringValidation)("resultFileString").refine((value) => (0, helpers_controller_1.isValidBase64)(value), {
             message: "Invalid Base64 string",
         }),
@@ -41,13 +41,17 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
         .safeParse(req.body);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
-    const { schoolId: id, year, resultFileString } = safe.data;
-    // check if schoool exists
-    const school = yield index_1.default.school.findFirst({ where: { id } });
-    if (!school)
-        throw new AppError_1.default("School not found", error_controller_1.resCode.NOT_FOUND);
+    const { schoolId, competitionId, resultFileString } = safe.data;
+    const results = yield index_1.default.studentResult.findMany({
+        where: {
+            schoolId,
+            competitionId,
+        },
+    });
+    if (!results || (yield results).length < 1)
+        throw new AppError_1.default("No results", error_controller_1.resCode.NOT_FOUND);
     // result upload logic here
-    let result;
+    let updatedItems;
     try {
         const excelData = Buffer.from(resultFileString, "base64");
         // Write the Excel data to a temporary file
@@ -64,22 +68,31 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
         fs_1.default.unlinkSync(tempFilePath);
         jsonData[1] = jsonData[1].map((d) => d.replace(/[^a-zA-Z]/g, ""));
         const resultData = [];
-        const indexTotal = (0, helpers_controller_1.findIndexContainingString)(jsonData, "MARKS OBTAINABLE") || 0;
-        for (let i = 2; i < indexTotal; i++) {
+        for (let i = 2; i < jsonData.length - 1; i++) {
             resultData.push({
-                studentName: jsonData[i][1],
-                reading: jsonData[i][2],
-                writing: jsonData[i][3],
-                mathematics: jsonData[i][4],
-                total: jsonData[i][5],
-                position: jsonData[i][6],
-                schoolName: jsonData[0][0],
-                schoolId: school.id,
-                year,
+                studentRegNo: jsonData[i][2],
+                reading: jsonData[i][3],
+                writing: jsonData[i][4],
+                mathematics: jsonData[i][5],
+                total: jsonData[i][6],
+                position: jsonData[i][7],
+                // schoolName: jsonData[0][0],
+                // schoolId: school.id,
             });
         }
-        // result = await prisma.school.update({where:{id},data:{results:{createMany}}})
-        // prisma.studentResult.updateMany({where})
+        // const updates = await prisma.studentResult.updateMany({
+        // 	where: { studentRegNo: { in: results.map((item) => item.studentRegNo) } },
+        // 	data: {},
+        // });
+        updatedItems = yield index_1.default.$transaction((prisma) => __awaiter(void 0, void 0, void 0, function* () {
+            const updatePromises = resultData.map((item) => {
+                return prisma.studentResult.update({
+                    where: { studentRegNo: item.studentRegNo },
+                    data: item,
+                });
+            });
+            return Promise.all(updatePromises);
+        }));
         // .bulkCreate(resultData);
     }
     catch (error) {
@@ -88,7 +101,7 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Result uploaded successful",
-        data: result,
+        data: updatedItems,
     });
 });
 exports.uploadResultFile = uploadResultFile;
@@ -96,15 +109,18 @@ const downloadResultTemp = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const safe = zod_1.z
         .object({
         schoolId: (0, reqSchemas_1.getStringValidation)("schoolId"),
-        eventId: (0, reqSchemas_1.getStringValidation)("eventId"),
+        competitionId: (0, reqSchemas_1.getStringValidation)("competitionId"),
     })
         .safeParse(req.params);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
-    const { schoolId, eventId } = safe.data;
+    const { schoolId, competitionId } = safe.data;
     const results = yield index_1.default.studentResult.findMany({
-        where: { schoolId },
-        include: { school: true, student: true },
+        where: { schoolId, student: { competitionId: competitionId } },
+        include: {
+            school: true,
+            student: { select: { firstName: true, lastName: true } },
+        },
     });
     if (!results || results.length < 1)
         throw new AppError_1.default("No results", error_controller_1.resCode.NOT_FOUND);

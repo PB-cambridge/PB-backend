@@ -67,7 +67,7 @@ function errorController(error, req, res, next) {
     return res.status(exports.resCode.INTERNAL_SERVER_ERROR).json({
         ok: false,
         error: {
-            message: "Something went wrong",
+            message: "Something went wrong. Error: " + (error === null || error === void 0 ? void 0 : error.message),
             details: error,
         },
     });

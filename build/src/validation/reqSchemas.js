@@ -59,7 +59,7 @@ exports.registerStudentReqSchema = zod_1.z.object({
     address: (0, exports.getStringValidation)("address"),
     phoneNumber: (0, exports.getStringValidation)("phoneNumber"),
     schoolId: (0, exports.getStringValidation)("schoolId"),
-    registeredCompetitionId: (0, exports.getStringValidation)("registeredCompetitionId"),
+    // registeredCompetitionId: getStringValidation("registeredCompetitionId"),
     level: zod_1.z.enum(["Junior", "Senior", "Graduated"], {
         invalid_type_error: "Please enter etiher 'Junior', 'Senior' or 'Graduated'",
     }),

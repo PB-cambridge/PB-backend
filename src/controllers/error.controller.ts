@@ -64,7 +64,7 @@ export default function errorController(
 	return res.status(resCode.INTERNAL_SERVER_ERROR).json(<ErrorResponse<any>>{
 		ok: false,
 		error: {
-			message: "Something went wrong",
+			message: "Something went wrong. Error: " + error?.message,
 			details: error,
 		},
 	});

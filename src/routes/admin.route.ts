@@ -19,10 +19,10 @@ adminRoute.get("/", (req: Request, res: Response) => {
 });
 adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 
-adminRoute.post("/upload-results", tryCatchWapper(uploadResultFile));
+adminRoute.post("/update-results", tryCatchWapper(uploadResultFile));
 
 adminRoute.get(
-	"/results-template/:schoolId/:eventId",
+	"/results-template/:schoolId/:competitionId",
 	tryCatchWapper(downloadResultTemp)
 );
 

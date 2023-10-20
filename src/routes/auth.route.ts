@@ -6,13 +6,18 @@ import {
 	registerUser,
 	sendOTP,
 	adminLogin,
+	verifyPaystackPayment,
 } from "../controllers/auth.controller";
 
 const authRoute = Router();
 
 authRoute.post("/admin-login", tryCatchWapper(adminLogin));
 
-authRoute.post("/signup", tryCatchWapper(registerUser));
+authRoute.post(
+	"/register/:competitionId",
+	verifyPaystackPayment,
+	tryCatchWapper(registerUser)
+);
 
 authRoute.post("/send-opt", tryCatchWapper(sendOTP));
 
