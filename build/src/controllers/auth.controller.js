@@ -84,16 +84,20 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const _a = safe.data, { passport, schoolId, firstName } = _a, others = __rest(_a, ["passport", "schoolId", "firstName"]);
+    // Add to payment
+    // prisma.payments.create({data:{competitionId,studentRegNo:}})
     const competion = yield prisma_1.default.competition.findFirst({
         where: { id: competitionId },
+        include: { schools: true },
     });
     if (!competion)
         throw new AppError_1.default("Competition with the provided id does not exist", error_controller_1.resCode.NOT_FOUND);
-    const selectedSchool = yield prisma_1.default.school.findFirst({
+    /* 	const selectedSchool = await prisma.school.findFirst({
         where: { id: schoolId },
-    });
+    }); */
+    const selectedSchool = competion.schools.find((item, i) => item.id == schoolId);
     if (!selectedSchool)
-        throw new AppError_1.default("Selected school does not exist", error_controller_1.resCode.NOT_FOUND);
+        throw new AppError_1.default("This competion is not hosted for your school", error_controller_1.resCode.NOT_FOUND);
     //  passport to file
     const registeredStudent = yield prisma_1.default.student.create({
         data: Object.assign(Object.assign({ firstName,

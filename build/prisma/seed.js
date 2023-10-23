@@ -25,9 +25,9 @@ const NUM_OF = {
 };
 function seedDb() {
     return __awaiter(this, void 0, void 0, function* () {
+        const schools = yield seedSchool();
         const competitions = yield seedCompetition();
         // const events = await seedEvent();
-        const schools = yield seedSchool();
         const students = yield seedStudent();
         // await seedResult();
         function seedCompetition() {
@@ -38,7 +38,16 @@ function seedDb() {
                         data: {
                             name: faker_1.faker.internet.displayName(),
                             date: faker_1.faker.date.future(),
-                            registrationFee: +faker_1.faker.commerce.price(),
+                            juniorRegFee: +faker_1.faker.commerce.price(),
+                            seniorRegFee: +faker_1.faker.commerce.price(),
+                            graduateRegFee: +faker_1.faker.commerce.price(),
+                            schools: {
+                                connect: [
+                                    { id: schools[0].id },
+                                    { id: schools[1].id },
+                                    { id: schools[3].id },
+                                ],
+                            },
                         },
                     });
                     competitions.push(competition);
@@ -58,7 +67,6 @@ function seedDb() {
                             endTime: faker_1.faker.date.future(),
                             description: faker_1.faker.lorem.sentence(),
                             location: faker_1.faker.location.secondaryAddress(),
-                            // registrationFee: +faker.commerce.price({ dec: 2 }),
                         },
                     });
                     events.push(event);

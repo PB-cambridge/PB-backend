@@ -206,3 +206,15 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 	);
 	return res.status(resCode.ACCEPTED).send(excelBuffer);
 };
+
+export const getActiveCompetion = async (req: Request, res: Response) => {
+	const ongoingCompetitions = await prisma.competition.findMany({
+		where: { active: true },
+		include: { schools: true },
+	});
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { ongoingCompetitions },
+	});
+};

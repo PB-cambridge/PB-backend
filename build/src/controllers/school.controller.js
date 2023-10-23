@@ -12,16 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSchools = void 0;
+exports.getAllSchools = void 0;
 const error_controller_1 = require("./error.controller");
 const prisma_1 = __importDefault(require("../../prisma"));
-const getSchools = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllSchools = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const schools = yield prisma_1.default.school.findMany();
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "schools ",
-        data: schools,
+        data: { schools },
     });
 });
-exports.getSchools = getSchools;
+exports.getAllSchools = getAllSchools;
 //# sourceMappingURL=school.controller.js.map

@@ -102,8 +102,13 @@ export const registerUser = async (req: Request, res: Response) => {
 		);
 	const { passport, schoolId, firstName, ...others } = safe.data;
 
+	// Add to payment
+
+	// prisma.payments.create({data:{competitionId,studentRegNo:}})
+
 	const competion = await prisma.competition.findFirst({
 		where: { id: competitionId },
+		include: { schools: true },
 	});
 
 	if (!competion)
@@ -112,12 +117,19 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.NOT_FOUND
 		);
 
-	const selectedSchool = await prisma.school.findFirst({
+	/* 	const selectedSchool = await prisma.school.findFirst({
 		where: { id: schoolId },
-	});
+	}); */
+
+	const selectedSchool = competion.schools.find(
+		(item, i) => item.id == schoolId
+	);
 
 	if (!selectedSchool)
-		throw new AppError("Selected school does not exist", resCode.NOT_FOUND);
+		throw new AppError(
+			"This competion is not hosted for your school",
+			resCode.NOT_FOUND
+		);
 
 	//  passport to file
 

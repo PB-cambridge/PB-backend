@@ -70,7 +70,7 @@ app.use("/api/admin", routes_1.adminRoute);
 // authenticate secured routes
 // app.use(authenticate);
 // app.get("/api/seed", tryCatchWapper());
-app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getSchools));
+app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
 // error handler
 app.use(error_controller_1.default);
 // Read the Base64 encoded file from the backend

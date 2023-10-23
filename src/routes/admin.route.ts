@@ -5,6 +5,7 @@ import { SuccessResponse } from "../types";
 import {
 	createCompetion,
 	downloadResultTemp,
+	getActiveCompetion,
 	uploadResultFile,
 } from "../controllers/admin.controller";
 
@@ -20,6 +21,8 @@ adminRoute.get("/", (req: Request, res: Response) => {
 adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 
 adminRoute.post("/update-results", tryCatchWapper(uploadResultFile));
+
+adminRoute.get("/ongoing-competitions", tryCatchWapper(getActiveCompetion));
 
 adminRoute.get(
 	"/results-template/:schoolId/:competitionId",

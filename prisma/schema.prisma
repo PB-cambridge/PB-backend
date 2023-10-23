@@ -30,7 +30,6 @@ model Announcements {
 model Event {
   id          String   @unique @default(cuid())
   title       String
-  // registrationFee Int
   description String
   bannerImage String
   location    String
@@ -42,10 +41,11 @@ model Event {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model School {
-  id       String          @id @default(cuid())
-  name     String
-  results  StudentResult[]
-  students Student[]
+  id          String          @id @default(cuid())
+  name        String
+  competition Competition[]
+  results     StudentResult[]
+  students    Student[]
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -61,7 +61,7 @@ model StudentResult {
   student       Student     @relation(fields: [studentRegNo], references: [regNo])
   studentRegNo  String      @unique
   competition   Competition @relation(fields: [competitionId], references: [id])
-  competitionId String      
+  competitionId String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -89,12 +89,24 @@ model Student {
 }
 
 model Competition {
-  id              String          @unique @default(cuid())
-  name            String          @unique
-  students        Student[]
-  results         StudentResult[]
-  registrationFee Int
-  date            DateTime
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String          @id @default(cuid())
+  name           String          @unique
+  students       Student[]
+  results        StudentResult[]
+  schools        School[]
+  seniorRegFee   Int
+  juniorRegFee   Int
+  graduateRegFee Int
+  active         Boolean         @default(true)
+  date           DateTime
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Payments {
+  id            String @id @default(cuid())
+  amount        Int
+  paystackRef   String
+  studentRegNo  String
+  competitionId String
 }

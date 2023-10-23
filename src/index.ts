@@ -9,7 +9,7 @@ import errorController, {
 	tryCatchWapper,
 } from "./controllers/error.controller";
 import swaggerConfig from "./api-doc/swagger-config";
-import { getSchools } from "./controllers/school.controller";
+import { getAllSchools } from "./controllers/school.controller";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
@@ -48,7 +48,7 @@ app.use("/api/admin", adminRoute);
 // app.use(authenticate);
 
 // app.get("/api/seed", tryCatchWapper());
-app.get("/api/schools", tryCatchWapper(getSchools));
+app.get("/api/schools", tryCatchWapper(getAllSchools));
 
 // error handler
 app.use(errorController);

@@ -14,9 +14,9 @@ const NUM_OF = {
 } as const;
 
 export default async function seedDb() {
+	const schools = await seedSchool();
 	const competitions = await seedCompetition();
 	// const events = await seedEvent();
-	const schools = await seedSchool();
 	const students = await seedStudent();
 
 	// await seedResult();
@@ -28,7 +28,16 @@ export default async function seedDb() {
 				data: {
 					name: faker.internet.displayName(),
 					date: faker.date.future(),
-					registrationFee: +faker.commerce.price(),
+					juniorRegFee: +faker.commerce.price(),
+					seniorRegFee: +faker.commerce.price(),
+					graduateRegFee: +faker.commerce.price(),
+					schools: {
+						connect: [
+							{ id: schools[0].id },
+							{ id: schools[1].id },
+							{ id: schools[3].id },
+						],
+					},
 				},
 			});
 			competitions.push(competition);
@@ -47,7 +56,6 @@ export default async function seedDb() {
 					endTime: faker.date.future(),
 					description: faker.lorem.sentence(),
 					location: faker.location.secondaryAddress(),
-					// registrationFee: +faker.commerce.price({ dec: 2 }),
 				},
 			});
 			events.push(event);

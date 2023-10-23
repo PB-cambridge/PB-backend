@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
+exports.getActiveCompetion = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -171,4 +171,16 @@ const downloadResultTemp = (req, res) => __awaiter(void 0, void 0, void 0, funct
     return res.status(error_controller_1.resCode.ACCEPTED).send(excelBuffer);
 });
 exports.downloadResultTemp = downloadResultTemp;
+const getActiveCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const ongoingCompetitions = yield index_1.default.competition.findMany({
+        where: { active: true },
+        include: { schools: true },
+    });
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { ongoingCompetitions },
+    });
+});
+exports.getActiveCompetion = getActiveCompetion;
 //# sourceMappingURL=admin.controller.js.map
