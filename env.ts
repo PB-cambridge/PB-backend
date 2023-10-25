@@ -9,6 +9,7 @@ const envSchema = z.object({
 	DATABASE_URL: z.string(),
 	DEV_ENV: z.string(),
 	HASH_SECRET: z.string(),
+	PAYSTACK_SECRET_KEY: z.string(),
 	// MAIL_USER: z.string(),
 	// MAIL_PASSWORD: z.string(),
 	// MAIL_HOST: z.string(),
