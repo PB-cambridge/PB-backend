@@ -97,18 +97,10 @@ export const verifyPaystackPayment = async (
 			);
 		const { passport, schoolId, firstName, ...others } = safe.data;
 
-		/* 
-	  verifyPaystackPayment: publicProcedure
-    .input(z.object({ reference: z.number() })).output(z.custom<Paystack.Response>())
-    .mutation(async ({ input, ctx }) => {
-    const response = await paystack.transaction.verify(""+input.reference)
-      return response
-    }),
-	*/
-
 		// verify payment for the competition using paystack
 		const response = await paystack.transaction.verify("" + reference);
-		console.log(response);
+		if (!response.status)
+			throw new AppError(response.message, resCode.NOT_ACCEPTED);
 
 		// Add to payment
 		prisma.payments.create({

@@ -40,7 +40,7 @@ const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
 	// const schoolResults = compet.map((item) => item)
 	// console.log(results);
-	const reference = "";
+	const reference = "098765434567";
 
 	const response = await paystack.transaction.verify(reference);
 	console.log(response);
