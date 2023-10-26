@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
 import prisma from "../../prisma";
+import Paystack from "paystack";
+import env from "../../env";
+const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 // test1();
 // test2();
 
@@ -20,12 +23,12 @@ import prisma from "../../prisma";
 	// 	include: { results: true },
 	// });
 
-	const results = await prisma.studentResult.findMany({
-		where: {
-			schoolId,
-			competitionId,
-		},
-	});
+	// const results = await prisma.studentResult.findMany({
+	// 	where: {
+	// 		schoolId,
+	// 		competitionId,
+	// 	},
+	// });
 
 	// const compet = await prisma.competition.findFirst({
 	// 	where: { AND: [{ id: competitionId }, {}] },
@@ -36,5 +39,9 @@ import prisma from "../../prisma";
 	// });
 
 	// const schoolResults = compet.map((item) => item)
-	console.log(results);
+	// console.log(results);
+	const reference = "";
+
+	const response = await paystack.transaction.verify(reference);
+	console.log(response);
 })();

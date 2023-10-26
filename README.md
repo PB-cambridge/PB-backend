@@ -16,7 +16,7 @@ mkdir .env
 ```env
 PORT="50"
 BASE_URL="127.0.0.1:50"
-DATABASE_URL="./db.sqlite"
+DATABASE_URL="file:./db.sqlite"
 DEV_ENV="development"
 CORS_ORIGIN="*"
 ```
@@ -24,5 +24,7 @@ CORS_ORIGIN="*"
 ### Then run
 
 ```bash
+npm run db:sync
+npm run db:seed
 npm start
 ```

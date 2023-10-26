@@ -15,6 +15,9 @@ import env from "../../env";
 import prisma from "../../prisma";
 import { z } from "zod";
 import { regNo } from "./helpers.controller";
+import Paystack from "paystack";
+
+const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
 export const adminLogin = async (req: Request, res: Response) => {
 	const safe = loginReqSchema.safeParse(req.body);
@@ -67,12 +70,55 @@ export const verifyPaystackPayment = async (
 				resCode.BAD_REQUEST,
 				safeQuery.error
 			);
+
 		const { reference } = safeQuery.data;
 
 		if (isNaN(+reference))
 			throw new AppError("'reference' must be a number", resCode.NOT_ACCEPTED);
 
+		const safeParam = z
+			.object({ competitionId: getStringValidation("competitionId") })
+			.safeParse(req.params);
+
+		if (!safeParam.success)
+			throw new AppError(
+				safeParam.error.issues.map((d) => d.message).join(", "),
+				resCode.BAD_REQUEST,
+				safeParam.error
+			);
+		const { competitionId } = safeParam.data;
+
+		const safe = registerStudentReqSchema.safeParse(req.body);
+		if (!safe.success)
+			throw new AppError(
+				safe.error.issues.map((d) => d.message).join(", "),
+				resCode.BAD_REQUEST,
+				safe.error
+			);
+		const { passport, schoolId, firstName, ...others } = safe.data;
+
+		/* 
+	  verifyPaystackPayment: publicProcedure
+    .input(z.object({ reference: z.number() })).output(z.custom<Paystack.Response>())
+    .mutation(async ({ input, ctx }) => {
+    const response = await paystack.transaction.verify(""+input.reference)
+      return response
+    }),
+	*/
+
 		// verify payment for the competition using paystack
+		const response = await paystack.transaction.verify("" + reference);
+		console.log(response);
+
+		// Add to payment
+		prisma.payments.create({
+			data: {
+				amount: 123,
+				competitionId,
+				paystackRef: reference,
+				studentData: JSON.stringify({ competitionId, ...safe.data }),
+			},
+		});
 
 		next();
 	} catch (error) {
@@ -97,12 +143,22 @@ export const registerUser = async (req: Request, res: Response) => {
 	if (!safe.success)
 		throw new AppError(
 			safe.error.issues.map((d) => d.message).join(", "),
+
 			resCode.BAD_REQUEST,
 			safe.error
 		);
 	const { passport, schoolId, firstName, ...others } = safe.data;
 
 	// Add to payment
+
+	/* 
+	  verifyPaystackPayment: publicProcedure
+    .input(z.object({ reference: z.number() })).output(z.custom<Paystack.Response>())
+    .mutation(async ({ input, ctx }) => {
+    const response = await paystack.transaction.verify(""+input.reference)
+      return response
+    }),
+	*/
 
 	// prisma.payments.create({data:{competitionId,studentRegNo:}})
 

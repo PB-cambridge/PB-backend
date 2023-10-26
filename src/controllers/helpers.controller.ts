@@ -20,3 +20,6 @@ export function isValidBase64(str: string) {
 	const base64Regex = /^[A-Za-z0-9+/=]+$/;
 	return base64Regex.test(str);
 }
+
+export const generateAcknowledgementSlip = () => `
+`;
