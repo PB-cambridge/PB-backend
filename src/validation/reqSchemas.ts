@@ -62,6 +62,10 @@ export const registerStudentReqSchema = z.object({
 	lastName: getStringValidation("lastName"),
 	email: emailSchema,
 	address: getStringValidation("address"),
+	hasInternationalPassport: z.boolean({
+		required_error: `'hasInternationalPassport' is required`,
+		invalid_type_error: `'hasInternationalPassport' must be a boolen`,
+	}),
 	phoneNumber: getStringValidation("phoneNumber"),
 	schoolId: getStringValidation("schoolId"),
 	// registeredCompetitionId: getStringValidation("registeredCompetitionId"),

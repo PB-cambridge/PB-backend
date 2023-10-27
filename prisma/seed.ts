@@ -27,7 +27,8 @@ export default async function seedDb() {
 			const competition = await prisma.competition.create({
 				data: {
 					name: faker.internet.displayName(),
-					date: faker.date.future(),
+					startDate: faker.date.future(),
+					endDate: faker.date.future(),
 					juniorRegFee: +faker.commerce.price(),
 					seniorRegFee: +faker.commerce.price(),
 					graduateRegFee: +faker.commerce.price(),
@@ -86,6 +87,7 @@ export default async function seedDb() {
 					school: { connect: { id: schools[0].id } },
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
+					hasInternationalPassport: false,
 					competition: { connect: { id: competitions[1].id } },
 					result: {
 						create: {

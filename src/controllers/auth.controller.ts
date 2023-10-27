@@ -73,9 +73,6 @@ export const verifyPaystackPayment = async (
 
 		const { reference } = safeQuery.data;
 
-		if (isNaN(+reference))
-			throw new AppError("'reference' must be a number", resCode.NOT_ACCEPTED);
-
 		const safeParam = z
 			.object({ competitionId: getStringValidation("competitionId") })
 			.safeParse(req.params);
@@ -101,6 +98,8 @@ export const verifyPaystackPayment = async (
 		const response = await paystack.transaction.verify("" + reference);
 		if (!response.status)
 			throw new AppError(response.message, resCode.NOT_ACCEPTED);
+
+		res.locals.paymentDetails = response.data;
 
 		// Add to payment
 		prisma.payments.create({
@@ -154,6 +153,10 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	// prisma.payments.create({data:{competitionId,studentRegNo:}})
 
+	const paymentDetails = res.locals.paymentDetails;
+
+	const paidAmt = (paymentDetails.amount / 100) as number;
+
 	const competion = await prisma.competition.findFirst({
 		where: { id: competitionId },
 		include: { schools: true },
@@ -163,6 +166,19 @@ export const registerUser = async (req: Request, res: Response) => {
 		throw new AppError(
 			"Competition with the provided id does not exist",
 			resCode.NOT_FOUND
+		);
+
+	const requiredFee =
+		others.level == "Senior"
+			? competion.seniorRegFee
+			: others.level == "Junior"
+			? competion.juniorRegFee
+			: competion.graduateRegFee;
+
+	if (paidAmt < requiredFee)
+		throw new AppError(
+			`The required amount for ${others.level} is #${requiredFee}`,
+			resCode.NOT_ACCEPTED
 		);
 
 	/* 	const selectedSchool = await prisma.school.findFirst({
