@@ -75,6 +75,7 @@ export default async function seedDb() {
 		}
 		return schools;
 	}
+
 	async function seedStudent() {
 		const users = [];
 		for (let i = 0; i < NUM_OF.USER; i++) {
