@@ -6,6 +6,7 @@ import {
 	createCompetion,
 	downloadResultTemp,
 	getActiveCompetion,
+	getStudents,
 	uploadResultFile,
 } from "../controllers/admin.controller";
 
@@ -23,6 +24,8 @@ adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 adminRoute.post("/update-results", tryCatchWapper(uploadResultFile));
 
 adminRoute.get("/ongoing-competitions", tryCatchWapper(getActiveCompetion));
+
+adminRoute.get("/students", tryCatchWapper(getStudents));
 
 adminRoute.get(
 	"/results-template/:schoolId/:competitionId",

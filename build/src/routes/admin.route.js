@@ -14,6 +14,7 @@ adminRoute.get("/", (req, res) => {
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
 adminRoute.get("/ongoing-competitions", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getActiveCompetion));
+adminRoute.get("/students", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudents));
 adminRoute.get("/results-template/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;
 //# sourceMappingURL=admin.route.js.map

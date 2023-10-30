@@ -6,15 +6,15 @@ const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 // test1();
 // test2();
 
-// (async () => {
-// 	const salt = bcrypt.genSaltSync(10);
-// 	const hashedPassword = await bcrypt.hashSync("password", salt);
-// 	console.log(hashedPassword);
-// })();
+(async () => {
+	const salt = bcrypt.genSaltSync(10);
+	const hashedPassword = await bcrypt.hashSync("password", salt);
+	console.log(hashedPassword);
+})();
 /*
  */
 
-(async () => {
+async () => {
 	const sampleRes = {
 		status: true,
 		message: "Verification successful",
@@ -93,4 +93,4 @@ const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
 	const response = await paystack.transaction.verify(reference);
 	console.log(response);
-})();
+};

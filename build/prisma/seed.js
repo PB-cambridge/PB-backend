@@ -18,7 +18,7 @@ const index_1 = __importDefault(require("./index"));
 const helpers_controller_1 = require("../src/controllers/helpers.controller");
 const NUM_OF = {
     SCHOOL: 5,
-    USER: 5,
+    USER: 100,
     USER_RESULT: 2,
     EVENTS: 2,
     COMPETITION: 2,

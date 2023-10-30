@@ -7,7 +7,7 @@ import { regNo } from "../src/controllers/helpers.controller";
 
 const NUM_OF = {
 	SCHOOL: 5,
-	USER: 5,
+	USER: 100,
 	USER_RESULT: 2,
 	EVENTS: 2,
 	COMPETITION: 2,

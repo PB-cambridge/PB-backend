@@ -12,19 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const paystack_1 = __importDefault(require("paystack"));
 const env_1 = __importDefault(require("../../env"));
 const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
 // test1();
 // test2();
-// (async () => {
-// 	const salt = bcrypt.genSaltSync(10);
-// 	const hashedPassword = await bcrypt.hashSync("password", salt);
-// 	console.log(hashedPassword);
-// })();
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    const salt = bcrypt_1.default.genSaltSync(10);
+    const hashedPassword = yield bcrypt_1.default.hashSync("password", salt);
+    console.log(hashedPassword);
+}))();
 /*
  */
-(() => __awaiter(void 0, void 0, void 0, function* () {
+() => __awaiter(void 0, void 0, void 0, function* () {
     const sampleRes = {
         status: true,
         message: "Verification successful",
@@ -101,5 +102,5 @@ const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
     const reference = "T795526163218997";
     const response = yield paystack.transaction.verify(reference);
     console.log(response);
-}))();
+});
 //# sourceMappingURL=index.js.map

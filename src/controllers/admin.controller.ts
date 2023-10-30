@@ -212,9 +212,28 @@ export const getActiveCompetion = async (req: Request, res: Response) => {
 		where: { active: true },
 		include: { schools: true },
 	});
+
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Fetch successful",
 		data: { ongoingCompetitions },
 	});
 };
+
+export const getStudents = async (req: Request, res: Response) => {
+	const page = +(req.query.page || 1);
+	const skip = (page - 1) * 20;
+
+	const students = await prisma.student.findMany({
+		take: 20,
+		skip,
+	});
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { students },
+	});
+};
+
+export const getStudentsWithFilter = async (req: Request, res: Response) => {};
