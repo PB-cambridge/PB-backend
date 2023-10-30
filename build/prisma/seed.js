@@ -37,7 +37,8 @@ function seedDb() {
                     const competition = yield index_1.default.competition.create({
                         data: {
                             name: faker_1.faker.internet.displayName(),
-                            date: faker_1.faker.date.future(),
+                            startDate: faker_1.faker.date.future(),
+                            endDate: faker_1.faker.date.future(),
                             juniorRegFee: +faker_1.faker.commerce.price(),
                             seniorRegFee: +faker_1.faker.commerce.price(),
                             graduateRegFee: +faker_1.faker.commerce.price(),
@@ -101,6 +102,7 @@ function seedDb() {
                             school: { connect: { id: schools[0].id } },
                             regNo: (0, helpers_controller_1.regNo)(faker_1.faker.person.firstName()),
                             phoneNumber: faker_1.faker.phone.number(),
+                            hasInternationalPassport: false,
                             competition: { connect: { id: competitions[1].id } },
                             result: {
                                 create: {

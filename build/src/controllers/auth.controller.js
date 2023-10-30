@@ -33,6 +33,8 @@ const env_1 = __importDefault(require("../../env"));
 const prisma_1 = __importDefault(require("../../prisma"));
 const zod_1 = require("zod");
 const helpers_controller_1 = require("./helpers.controller");
+const paystack_1 = __importDefault(require("paystack"));
+const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = reqSchemas_1.loginReqSchema.safeParse(req.body);
     if (!safe.success)
@@ -63,9 +65,21 @@ const verifyPaystackPayment = (req, res, next) => __awaiter(void 0, void 0, void
         if (!safeQuery.success)
             throw new AppError_1.default(safeQuery.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeQuery.error);
         const { reference } = safeQuery.data;
-        if (isNaN(+reference))
-            throw new AppError_1.default("'reference' must be a number", error_controller_1.resCode.NOT_ACCEPTED);
+        const safeParam = zod_1.z
+            .object({ competitionId: (0, reqSchemas_1.getStringValidation)("competitionId") })
+            .safeParse(req.params);
+        if (!safeParam.success)
+            throw new AppError_1.default(safeParam.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeParam.error);
+        const { competitionId } = safeParam.data;
+        const safe = reqSchemas_1.registerStudentReqSchema.safeParse(req.body);
+        if (!safe.success)
+            throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+        const _a = safe.data, { passport, schoolId, firstName } = _a, others = __rest(_a, ["passport", "schoolId", "firstName"]);
         // verify payment for the competition using paystack
+        const response = yield paystack.transaction.verify("" + reference);
+        if (!response.status)
+            throw new AppError_1.default(response.message, error_controller_1.resCode.NOT_ACCEPTED, response);
+        res.locals.paymentDetails = response.data;
         next();
     }
     catch (error) {
@@ -83,18 +97,22 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const safe = reqSchemas_1.registerStudentReqSchema.safeParse(req.body);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
-    const _a = safe.data, { passport, schoolId, firstName } = _a, others = __rest(_a, ["passport", "schoolId", "firstName"]);
-    // Add to payment
-    // prisma.payments.create({data:{competitionId,studentRegNo:}})
+    const _b = safe.data, { passport, schoolId, firstName } = _b, others = __rest(_b, ["passport", "schoolId", "firstName"]);
+    const paymentDetails = res.locals.paymentDetails;
+    const paidAmt = (paymentDetails.amount / 100);
     const competion = yield prisma_1.default.competition.findFirst({
         where: { id: competitionId },
         include: { schools: true },
     });
     if (!competion)
         throw new AppError_1.default("Competition with the provided id does not exist", error_controller_1.resCode.NOT_FOUND);
-    /* 	const selectedSchool = await prisma.school.findFirst({
-        where: { id: schoolId },
-    }); */
+    const requiredFee = others.level == "Senior"
+        ? competion.seniorRegFee
+        : others.level == "Junior"
+            ? competion.juniorRegFee
+            : competion.graduateRegFee;
+    if (paidAmt < requiredFee)
+        throw new AppError_1.default(`The required amount for ${others.level} is #${requiredFee}`, error_controller_1.resCode.NOT_ACCEPTED);
     const selectedSchool = competion.schools.find((item, i) => item.id == schoolId);
     if (!selectedSchool)
         throw new AppError_1.default("This competion is not hosted for your school", error_controller_1.resCode.NOT_FOUND);
@@ -102,11 +120,26 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const registeredStudent = yield prisma_1.default.student.create({
         data: Object.assign(Object.assign({ firstName,
             passport, competitionId: competitionId, schoolId, regNo: (0, helpers_controller_1.regNo)(firstName) }, others), { result: { create: { schoolId, competitionId } } }),
+        include: {
+            school: true,
+            competition: {
+                select: { id: true, endDate: true, startDate: true, name: true },
+            },
+        },
+    });
+    // Add to payment
+    const addedPay = yield prisma_1.default.payments.create({
+        data: {
+            amount: paidAmt,
+            competitionId,
+            paystackRef: paymentDetails.reference,
+            studentData: JSON.stringify(registeredStudent),
+        },
     });
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Registration Successful",
-        data: { registeredStudent },
+        data: Object.assign(Object.assign({}, registeredStudent), { competionFee: requiredFee, paidAmount: paidAmt, reference: paymentDetails.reference }),
     });
 });
 exports.registerUser = registerUser;

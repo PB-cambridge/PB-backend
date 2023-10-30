@@ -97,19 +97,9 @@ export const verifyPaystackPayment = async (
 		// verify payment for the competition using paystack
 		const response = await paystack.transaction.verify("" + reference);
 		if (!response.status)
-			throw new AppError(response.message, resCode.NOT_ACCEPTED);
+			throw new AppError(response.message, resCode.NOT_ACCEPTED, response);
 
 		res.locals.paymentDetails = response.data;
-
-		// Add to payment
-		prisma.payments.create({
-			data: {
-				amount: 123,
-				competitionId,
-				paystackRef: reference,
-				studentData: JSON.stringify({ competitionId, ...safe.data }),
-			},
-		});
 
 		next();
 	} catch (error) {
@@ -140,19 +130,6 @@ export const registerUser = async (req: Request, res: Response) => {
 		);
 	const { passport, schoolId, firstName, ...others } = safe.data;
 
-	// Add to payment
-
-	/* 
-	  verifyPaystackPayment: publicProcedure
-    .input(z.object({ reference: z.number() })).output(z.custom<Paystack.Response>())
-    .mutation(async ({ input, ctx }) => {
-    const response = await paystack.transaction.verify(""+input.reference)
-      return response
-    }),
-	*/
-
-	// prisma.payments.create({data:{competitionId,studentRegNo:}})
-
 	const paymentDetails = res.locals.paymentDetails;
 
 	const paidAmt = (paymentDetails.amount / 100) as number;
@@ -181,10 +158,6 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.NOT_ACCEPTED
 		);
 
-	/* 	const selectedSchool = await prisma.school.findFirst({
-		where: { id: schoolId },
-	}); */
-
 	const selectedSchool = competion.schools.find(
 		(item, i) => item.id == schoolId
 	);
@@ -207,12 +180,33 @@ export const registerUser = async (req: Request, res: Response) => {
 			...others,
 			result: { create: { schoolId, competitionId } },
 		},
+		include: {
+			school: true,
+			competition: {
+				select: { id: true, endDate: true, startDate: true, name: true },
+			},
+		},
+	});
+
+	// Add to payment
+	const addedPay = await prisma.payments.create({
+		data: {
+			amount: paidAmt,
+			competitionId,
+			paystackRef: paymentDetails.reference,
+			studentData: JSON.stringify(registeredStudent),
+		},
 	});
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Registration Successful",
-		data: { registeredStudent },
+		data: {
+			...registeredStudent,
+			competionFee: requiredFee,
+			paidAmount: paidAmt,
+			reference: paymentDetails.reference,
+		},
 	});
 };
 

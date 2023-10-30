@@ -2,16 +2,30 @@ import { Router, Request, Response } from "express";
 
 import { resCode, tryCatchWapper } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
+import {
+	reprintAcknowledgementSlip,
+	viewResult,
+} from "../controllers/student.controller";
 
 const userRoute = Router();
 
-userRoute.get("/", (req: Request, res: Response) => {
-	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
-		ok: true,
-		message: "this is the users route",
-		data: {},
-	});
-});
+userRoute.get(
+	"/",
+	tryCatchWapper(async (req: Request, res: Response) => {
+		return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+			ok: true,
+			message: "this is the users route",
+			data: {},
+		});
+	})
+);
+
+userRoute.get("/view-result/:regNo", tryCatchWapper(viewResult));
+
+userRoute.get(
+	"/reprint-slip/:reference",
+	tryCatchWapper(reprintAcknowledgementSlip)
+);
 
 export default userRoute;
 

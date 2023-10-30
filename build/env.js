@@ -12,6 +12,7 @@ const envSchema = zod_1.z.object({
     DATABASE_URL: zod_1.z.string(),
     DEV_ENV: zod_1.z.string(),
     HASH_SECRET: zod_1.z.string(),
+    PAYSTACK_SECRET_KEY: zod_1.z.string(),
     // MAIL_USER: z.string(),
     // MAIL_PASSWORD: z.string(),
     // MAIL_HOST: z.string(),

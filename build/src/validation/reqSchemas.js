@@ -57,6 +57,10 @@ exports.registerStudentReqSchema = zod_1.z.object({
     lastName: (0, exports.getStringValidation)("lastName"),
     email: exports.emailSchema,
     address: (0, exports.getStringValidation)("address"),
+    hasInternationalPassport: zod_1.z.boolean({
+        required_error: `'hasInternationalPassport' is required`,
+        invalid_type_error: `'hasInternationalPassport' must be a boolen`,
+    }),
     phoneNumber: (0, exports.getStringValidation)("phoneNumber"),
     schoolId: (0, exports.getStringValidation)("schoolId"),
     // registeredCompetitionId: getStringValidation("registeredCompetitionId"),
