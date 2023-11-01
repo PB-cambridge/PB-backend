@@ -8,11 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
+exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -23,9 +34,47 @@ const helpers_controller_1 = require("./helpers.controller");
 const index_1 = __importDefault(require("./../../prisma/index"));
 // Example usage
 const createCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    /*
+      name           String          @unique
+  students       Student[]
+  results        StudentResult[]
+  schools        School[]
+  seniorRegFee   Int
+  juniorRegFee   Int
+  graduateRegFee Int
+  active         Boolean         @default(true)
+  startDate      DateTime
+  endDate
+    */
+    const safeInput = zod_1.z
+        .object({
+        name: (0, reqSchemas_1.getStringValidation)("name"),
+        schoolsId: zod_1.z.array((0, reqSchemas_1.getStringValidation)("schoolId")),
+        seniorRegFee: (0, reqSchemas_1.getNumberValidation)("seniorRegFee"),
+        juniorRegFee: (0, reqSchemas_1.getNumberValidation)("juniorRegFee"),
+        graduateRegFee: (0, reqSchemas_1.getNumberValidation)("graduateRegFee"),
+        active: zod_1.z
+            .boolean({
+            invalid_type_error: "'active' must be true / false",
+        })
+            .optional(),
+        startDate: reqSchemas_1.dateSchema,
+        endDate: reqSchemas_1.dateSchema,
+    })
+        .safeParse(req.body);
+    if (!safeInput.success)
+        throw new AppError_1.default(safeInput.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeInput.error);
+    const _a = safeInput.data, { schoolsId } = _a, others = __rest(_a, ["schoolsId"]);
+    console.log(others);
+    const createdCompetition = yield index_1.default.competition.create({
+        data: Object.assign(Object.assign({}, others), { schools: { connect: schoolsId.map((id, i) => ({ id })) } }),
+    });
+    if (!createdCompetition)
+        throw new AppError_1.default("AN error occourd and competition could not create", error_controller_1.resCode.BAD_REQUEST);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Create competition here",
+        data: { createdCompetition },
     });
 });
 exports.createCompetion = createCompetion;
@@ -171,6 +220,39 @@ const downloadResultTemp = (req, res) => __awaiter(void 0, void 0, void 0, funct
     return res.status(error_controller_1.resCode.ACCEPTED).send(excelBuffer);
 });
 exports.downloadResultTemp = downloadResultTemp;
+const getAllCompetions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const competitions = yield index_1.default.competition.findMany({
+        include: { schools: true },
+    });
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { competitions },
+    });
+});
+exports.getAllCompetions = getAllCompetions;
+const getCompetionsDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        id: (0, reqSchemas_1.getStringValidation)("id"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { id } = safe.data;
+    const competitionDetails = yield index_1.default.competition.findUnique({
+        where: { id },
+        include: { schools: true, students: { include: { result: true } } },
+    });
+    if (!competitionDetails)
+        throw new AppError_1.default("Not found", error_controller_1.resCode.NOT_FOUND);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { competitionDetails },
+    });
+});
+exports.getCompetionsDetails = getCompetionsDetails;
 const getActiveCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ongoingCompetitions = yield index_1.default.competition.findMany({
         where: { active: true },
@@ -193,10 +275,32 @@ const getStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Fetch successful",
-        data: { students },
+        data: { students, no_of_currenct_students: students.length },
     });
 });
 exports.getStudents = getStudents;
 const getStudentsWithFilter = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
 exports.getStudentsWithFilter = getStudentsWithFilter;
+const getStudentDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        regNo: (0, reqSchemas_1.getStringValidation)("regNo"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { regNo } = safe.data;
+    const studentDetails = yield index_1.default.student.findUnique({
+        where: { regNo },
+        include: { result: true, school: true, competition: true },
+    });
+    if (!studentDetails)
+        throw new AppError_1.default("Not found", error_controller_1.resCode.NOT_FOUND);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { studentDetails },
+    });
+});
+exports.getStudentDetails = getStudentDetails;
 //# sourceMappingURL=admin.controller.js.map

@@ -13,8 +13,11 @@ adminRoute.get("/", (req, res) => {
 });
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
+adminRoute.get("/competitions", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAllCompetions));
 adminRoute.get("/ongoing-competitions", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getActiveCompetion));
+adminRoute.get("/competition/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getCompetionsDetails));
 adminRoute.get("/students", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudents));
+adminRoute.get("/student/:regNo", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudentDetails));
 adminRoute.get("/results-template/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;
 //# sourceMappingURL=admin.route.js.map

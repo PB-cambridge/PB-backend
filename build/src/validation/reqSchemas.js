@@ -1,8 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = void 0;
+exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = exports.dateSchema = void 0;
 const zod_1 = require("zod");
 // custome validation function
+exports.dateSchema = zod_1.z
+    .string()
+    .refine((value) => !isNaN(Date.parse(value)), {
+    message: "Invalid date format",
+})
+    .refine((value) => {
+    const date = new Date(value);
+    const currentDate = new Date();
+    return date > currentDate;
+}, {
+    message: "Date must be in the future",
+})
+    .transform((v) => new Date(v));
 const getStringValidation = (key) => zod_1.z
     .string({
     required_error: `'${key}' is required`,

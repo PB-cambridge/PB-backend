@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { SuccessResponse } from "../types";
 import { resCode } from "./error.controller";
 import { z } from "zod";
-import { getStringValidation } from "../validation/reqSchemas";
+import {
+	dateSchema,
+	getNumberValidation,
+	getStringValidation,
+} from "../validation/reqSchemas";
 import AppError from "./AppError";
 import fs from "fs";
 import xlsx from "xlsx";
@@ -11,9 +15,63 @@ import prisma from "./../../prisma/index";
 
 // Example usage
 export const createCompetion = async (req: Request, res: Response) => {
+	/* 
+	  name           String          @unique
+  students       Student[]
+  results        StudentResult[]
+  schools        School[]
+  seniorRegFee   Int
+  juniorRegFee   Int
+  graduateRegFee Int
+  active         Boolean         @default(true)
+  startDate      DateTime
+  endDate  
+	*/
+	const safeInput = z
+		.object({
+			name: getStringValidation("name"),
+			schoolsId: z.array(getStringValidation("schoolId")),
+			seniorRegFee: getNumberValidation("seniorRegFee"),
+			juniorRegFee: getNumberValidation("juniorRegFee"),
+			graduateRegFee: getNumberValidation("graduateRegFee"),
+			active: z
+				.boolean({
+					invalid_type_error: "'active' must be true / false",
+				})
+				.optional(),
+			startDate: dateSchema,
+			endDate: dateSchema,
+		})
+		.safeParse(req.body);
+
+	if (!safeInput.success)
+		throw new AppError(
+			safeInput.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safeInput.error
+		);
+
+	const { schoolsId, ...others } = safeInput.data;
+
+	console.log(others);
+
+	const createdCompetition = await prisma.competition.create({
+		data: {
+			...others,
+			schools: { connect: schoolsId.map((id, i) => ({ id })) },
+		},
+	});
+
+	if (!createdCompetition)
+		throw new AppError(
+			"AN error occourd and competition could not create",
+			resCode.BAD_REQUEST
+		);
+
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Create competition here",
+		data: { createdCompetition },
 	});
 };
 
@@ -207,6 +265,47 @@ export const downloadResultTemp = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).send(excelBuffer);
 };
 
+export const getAllCompetions = async (req: Request, res: Response) => {
+	const competitions = await prisma.competition.findMany({
+		include: { schools: true },
+	});
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { competitions },
+	});
+};
+
+export const getCompetionsDetails = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			id: getStringValidation("id"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+	const { id } = safe.data;
+
+	const competitionDetails = await prisma.competition.findUnique({
+		where: { id },
+		include: { schools: true, students: { include: { result: true } } },
+	});
+
+	if (!competitionDetails) throw new AppError("Not found", resCode.NOT_FOUND);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { competitionDetails },
+	});
+};
+
 export const getActiveCompetion = async (req: Request, res: Response) => {
 	const ongoingCompetitions = await prisma.competition.findMany({
 		where: { active: true },
@@ -232,8 +331,38 @@ export const getStudents = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Fetch successful",
-		data: { students },
+		data: { students, no_of_currenct_students: students.length },
 	});
 };
 
 export const getStudentsWithFilter = async (req: Request, res: Response) => {};
+
+export const getStudentDetails = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			regNo: getStringValidation("regNo"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+
+	const { regNo } = safe.data;
+
+	const studentDetails = await prisma.student.findUnique({
+		where: { regNo },
+		include: { result: true, school: true, competition: true },
+	});
+
+	if (!studentDetails) throw new AppError("Not found", resCode.NOT_FOUND);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { studentDetails },
+	});
+};

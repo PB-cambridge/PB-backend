@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tryCatchWapper = exports.errMsgEnum = exports.resCode = void 0;
 const AppError_1 = __importDefault(require("./AppError"));
 const jsonwebtoken_1 = require("jsonwebtoken");
+const library_1 = require("@prisma/client/runtime/library");
 exports.resCode = {
     OK: 200,
     CREATED: 201,
@@ -50,6 +51,7 @@ exports.errMsgEnum = {
     GATEWAY_TIMEOUT: "Gateway Timeout",
 };
 function errorController(error, req, res, next) {
+    var _a, _b;
     console.log(error);
     if (error instanceof AppError_1.default)
         return res.status(error.statusCode).json({
@@ -61,6 +63,14 @@ function errorController(error, req, res, next) {
             ok: false,
             error: {
                 message: "Invalid API key",
+                details: error,
+            },
+        });
+    if (error instanceof library_1.PrismaClientKnownRequestError && error.code == "P2002")
+        return res.status(exports.resCode.CONFLICT).json({
+            ok: false,
+            error: {
+                message: `${(_b = (_a = error.meta) === null || _a === void 0 ? void 0 : _a.target) === null || _b === void 0 ? void 0 : _b[0]} already exists`,
                 details: error,
             },
         });

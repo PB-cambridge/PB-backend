@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "PB-Cambridge-api-docs",
-    "dateExported": "2023-10-30T17:27:33.765Z",
+    "dateExported": "2023-11-01T10:41:58.372Z",
     "version": "1.1",
     "folders": [
         {
@@ -200,6 +200,87 @@
             "modified": "2023-10-30T17:07:47.310Z",
             "headers": [],
             "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e44bf747-2435-4c83-aa0c-19896c118567",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Get Students",
+            "url": "/api/admin/students/?page=6",
+            "method": "GET",
+            "sortNum": 110000,
+            "created": "2023-10-30T18:12:17.211Z",
+            "modified": "2023-10-31T14:08:10.240Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "page",
+                    "value": "6",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "dd14ec11-8d29-4c89-939f-ea49f256c253",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Get Student Details",
+            "url": "/api/admin/student/KAI092490102023",
+            "method": "GET",
+            "sortNum": 120000,
+            "created": "2023-11-01T09:11:44.013Z",
+            "modified": "2023-11-01T09:15:19.179Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "d02a1af7-146d-491e-b69d-b452b9e79b7f",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Get All Competitions",
+            "url": "/api/admin/competitions",
+            "method": "GET",
+            "sortNum": 130000,
+            "created": "2023-11-01T09:20:47.524Z",
+            "modified": "2023-11-01T09:21:33.309Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "1abf5fc6-a4b2-4c3a-a093-b1753e216de4",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Get Competition Dteails",
+            "url": "/api/admin/competition/clocu34uy0005o0k82nqqlkkf",
+            "method": "GET",
+            "sortNum": 140000,
+            "created": "2023-11-01T09:27:48.943Z",
+            "modified": "2023-11-01T09:42:13.766Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "13107814-3bde-4c7e-88fa-d9c6521faa95",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Create Competition",
+            "url": "/api/admin/create-competition",
+            "method": "POST",
+            "sortNum": 150000,
+            "created": "2023-11-01T10:10:35.703Z",
+            "modified": "2023-11-01T10:40:05.588Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n\"name\": \"another two\",\n\"schoolsId\": [\"clocu34h50002o0k8eimndkh7\",\"clocu34ck0001o0k8e2g8iw8t\"],\n\"seniorRegFee\": 123,\n\"juniorRegFee\": 654,\n\"graduateRegFee\": 423,\n\"active\":false,\n\"startDate\":\"11/2/2023\",\n\"endDate\":\"11/4/2023\"\n}\n\n// P2025\n// P2002",
+                "form": []
+            },
             "tests": []
         }
     ],

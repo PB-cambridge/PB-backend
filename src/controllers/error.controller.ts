@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorResponse } from "../types";
 import AppError from "./AppError";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const resCode = {
 	OK: 200,
@@ -57,6 +58,15 @@ export default function errorController(
 			ok: false,
 			error: {
 				message: "Invalid API key",
+				details: error,
+			},
+		});
+
+	if (error instanceof PrismaClientKnownRequestError && error.code == "P2002")
+		return res.status(resCode.CONFLICT).json(<ErrorResponse<typeof error>>{
+			ok: false,
+			error: {
+				message: `${(error.meta?.target as string[])?.[0]} already exists`,
 				details: error,
 			},
 		});

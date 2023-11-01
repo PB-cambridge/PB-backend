@@ -1,6 +1,23 @@
 import { z } from "zod";
 
 // custome validation function
+export const dateSchema = z
+	.string()
+	.refine((value) => !isNaN(Date.parse(value)), {
+		message: "Invalid date format",
+	})
+	.refine(
+		(value) => {
+			const date = new Date(value);
+			const currentDate = new Date();
+			return date > currentDate;
+		},
+		{
+			message: "Date must be in the future",
+		}
+	)
+	.transform((v) => new Date(v));
+
 export const getStringValidation = (key: string) =>
 	z
 		.string({
