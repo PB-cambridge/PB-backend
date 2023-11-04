@@ -27,7 +27,7 @@ const viewResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { regNo } = safeParam.data;
     const student = yield prisma_1.default.student.findUnique({
         where: { regNo },
-        include: { result: true },
+        include: { result: true, school: true, competition: true },
     });
     // console.log(student);
     if (!student)
@@ -35,7 +35,7 @@ const viewResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: `Check your result here with this your reg no ${req.params.regNo}`,
-        data: { result: student.result },
+        data: { student },
     });
 });
 exports.viewResult = viewResult;

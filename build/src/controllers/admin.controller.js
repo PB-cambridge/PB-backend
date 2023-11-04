@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
+exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -303,4 +303,30 @@ const getStudentDetails = (req, res) => __awaiter(void 0, void 0, void 0, functi
     });
 });
 exports.getStudentDetails = getStudentDetails;
+const getResultsByCompetitionSchool = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        schoolId: (0, reqSchemas_1.getStringValidation)("schoolId"),
+        competitionId: (0, reqSchemas_1.getStringValidation)("competitionId"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { schoolId, competitionId } = safe.data;
+    const results = yield index_1.default.studentResult.findMany({
+        where: { schoolId, student: { competitionId: competitionId } },
+        include: {
+            school: true,
+            student: { select: { firstName: true, lastName: true, regNo: true } },
+        },
+    });
+    if (!results)
+        throw new AppError_1.default("Not found", error_controller_1.resCode.NOT_FOUND);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { results },
+    });
+});
+exports.getResultsByCompetitionSchool = getResultsByCompetitionSchool;
 //# sourceMappingURL=admin.controller.js.map

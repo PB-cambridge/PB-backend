@@ -1,3 +1,30 @@
+import { v2 as cloudinary } from "cloudinary";
+import env from "../../env";
+
+cloudinary.config({
+	cloud_name: env.CLOUDINARY_CLOUD_NAME,
+	api_key: env.CLOUDINARY_API_KEY,
+	api_secret: env.CLOUDINARY_API_SECRET,
+});
+
+export const uploadImage = async (image: string) => {
+	try {
+		// Upload the image
+		const result = await cloudinary.uploader.upload(image, {
+			use_filename: true,
+			unique_filename: true,
+			overwrite: true,
+			resource_type: "auto",
+			invalidate: true,
+		});
+		// console.log(result);
+		return result;
+	} catch (error) {
+		// console.log(error)
+		return { error };
+	}
+};
+
 export const regNo = (username: string) => {
 	const year = new Date().getFullYear();
 	const month = new Date().getMonth() + 1;

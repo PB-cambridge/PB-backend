@@ -97,7 +97,11 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const safe = reqSchemas_1.registerStudentReqSchema.safeParse(req.body);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
-    const _b = safe.data, { passport, schoolId, firstName } = _b, others = __rest(_b, ["passport", "schoolId", "firstName"]);
+    const _b = safe.data, { passport: _passport, schoolId, firstName } = _b, others = __rest(_b, ["passport", "schoolId", "firstName"]);
+    const uploadImageRes = yield (0, helpers_controller_1.uploadImage)(_passport);
+    if (uploadImageRes.error)
+        throw new AppError_1.default("An error Occoured", error_controller_1.resCode.BAD_GATEWAY, uploadImageRes.error);
+    const passport = uploadImageRes.url;
     const paymentDetails = res.locals.paymentDetails;
     const paidAmt = (paymentDetails.amount / 100);
     const competion = yield prisma_1.default.competition.findFirst({

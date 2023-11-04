@@ -366,3 +366,40 @@ export const getStudentDetails = async (req: Request, res: Response) => {
 		data: { studentDetails },
 	});
 };
+
+export const getResultsByCompetitionSchool = async (
+	req: Request,
+	res: Response
+) => {
+	const safe = z
+		.object({
+			schoolId: getStringValidation("schoolId"),
+			competitionId: getStringValidation("competitionId"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+
+	const { schoolId, competitionId } = safe.data;
+
+	const results = await prisma.studentResult.findMany({
+		where: { schoolId, student: { competitionId: competitionId } },
+		include: {
+			school: true,
+			student: { select: { firstName: true, lastName: true, regNo: true } },
+		},
+	});
+
+	if (!results) throw new AppError("Not found", resCode.NOT_FOUND);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { results },
+	});
+};

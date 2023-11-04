@@ -14,8 +14,9 @@ import {
 import env from "../../env";
 import prisma from "../../prisma";
 import { z } from "zod";
-import { regNo } from "./helpers.controller";
+import { regNo, uploadImage } from "./helpers.controller";
 import Paystack from "paystack";
+import { UploadApiResponse } from "cloudinary";
 
 const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
@@ -128,7 +129,17 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.BAD_REQUEST,
 			safe.error
 		);
-	const { passport, schoolId, firstName, ...others } = safe.data;
+	const { passport: _passport, schoolId, firstName, ...others } = safe.data;
+
+	const uploadImageRes = await uploadImage(_passport);
+	if (uploadImageRes.error)
+		throw new AppError(
+			"An error Occoured",
+			resCode.BAD_GATEWAY,
+			uploadImageRes.error
+		);
+
+	const passport = (uploadImageRes as UploadApiResponse).url;
 
 	const paymentDetails = res.locals.paymentDetails;
 

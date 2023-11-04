@@ -22,7 +22,7 @@ export const viewResult = async (req: Request, res: Response) => {
 
 	const student = await prisma.student.findUnique({
 		where: { regNo },
-		include: { result: true },
+		include: { result: true, school: true, competition: true },
 	});
 	// console.log(student);
 
@@ -31,7 +31,7 @@ export const viewResult = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: `Check your result here with this your reg no ${req.params.regNo}`,
-		data: { result: student.result },
+		data: { student },
 	});
 };
 

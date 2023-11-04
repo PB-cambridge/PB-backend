@@ -8,6 +8,7 @@ import {
 	getActiveCompetion,
 	getAllCompetions,
 	getCompetionsDetails,
+	getResultsByCompetitionSchool,
 	getStudentDetails,
 	getStudents,
 	uploadResultFile,
@@ -36,6 +37,11 @@ adminRoute.get("/competition/:id", tryCatchWapper(getCompetionsDetails));
 adminRoute.get("/students", tryCatchWapper(getStudents));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
+
+adminRoute.get(
+	"/results/:schoolId/:competitionId",
+	tryCatchWapper(getResultsByCompetitionSchool)
+);
 
 adminRoute.get(
 	"/results-template/:schoolId/:competitionId",
