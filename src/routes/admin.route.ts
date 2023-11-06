@@ -40,7 +40,7 @@ adminRoute.get("/ongoing-competitions", tryCatchWapper(getActiveCompetion));
 
 adminRoute.get("/competition/:id", tryCatchWapper(getCompetionsDetails));
 
-adminRoute.get("/students", tryCatchWapper(getStudents));
+adminRoute.get("/students/:competitionId", tryCatchWapper(getStudents));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
 

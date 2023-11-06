@@ -327,16 +327,39 @@ const getActiveCompetion = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getActiveCompetion = getActiveCompetion;
 const getStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        competitionId: (0, reqSchemas_1.getStringValidation)("competitionId"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { competitionId: id } = safe.data;
     const page = +(req.query.page || 1);
     const skip = (page - 1) * 20;
-    const students = yield index_1.default.student.findMany({
-        take: 20,
-        skip,
+    const competition = yield index_1.default.competition.findFirst({
+        where: { id },
+        select: {
+            students: { take: 20, skip },
+            _count: { select: { students: true } },
+        },
     });
+    const students = competition === null || competition === void 0 ? void 0 : competition.students;
+    const current_students_count = (students === null || students === void 0 ? void 0 : students.length) || 0;
+    const total_students_count = (competition === null || competition === void 0 ? void 0 : competition._count.students) || 0;
+    const remainning_schools_count = current_students_count < 20 ? 0 : total_students_count - page * 20;
+    const nextPage = !!remainning_schools_count;
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Fetch successful",
-        data: { students, no_of_currenct_students: students.length },
+        data: {
+            students,
+            current_students_count,
+            total_students_count,
+            remainning_schools_count,
+            current_page_count: page,
+            nextPage,
+        },
     });
 });
 exports.getStudents = getStudents;

@@ -418,18 +418,50 @@ export const getActiveCompetion = async (req: Request, res: Response) => {
 };
 
 export const getStudents = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			competitionId: getStringValidation("competitionId"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+
+	const { competitionId: id } = safe.data;
+
 	const page = +(req.query.page || 1);
 	const skip = (page - 1) * 20;
 
-	const students = await prisma.student.findMany({
-		take: 20,
-		skip,
+	const competition = await prisma.competition.findFirst({
+		where: { id },
+		select: {
+			students: { take: 20, skip },
+			_count: { select: { students: true } },
+		},
 	});
+
+	const students = competition?.students;
+	const current_students_count = students?.length || 0;
+	const total_students_count = competition?._count.students || 0;
+	const remainning_schools_count =
+		current_students_count < 20 ? 0 : total_students_count - page * 20;
+	const nextPage = !!remainning_schools_count;
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Fetch successful",
-		data: { students, no_of_currenct_students: students.length },
+		data: {
+			students,
+			current_students_count,
+			total_students_count,
+			remainning_schools_count,
+			current_page_count: page,
+			nextPage,
+		},
 	});
 };
 
