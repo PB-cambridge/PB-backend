@@ -35,7 +35,7 @@ async function dropAllTable() {
 }
 
 export default async function seedDb() {
-	const schools = await seedSchool();
+	// const schools = await seedSchool();
 	const competitions = await seedCompetition();
 	await seedEvent();
 	await seedAnnouncements();
@@ -71,13 +71,10 @@ export default async function seedDb() {
 					seniorRegFee: +faker.commerce.price(),
 					graduateRegFee: +faker.commerce.price(),
 					schools: {
-						connect: [
-							{ id: schools[0].id },
-							{ id: schools[1].id },
-							{ id: schools[3].id },
-						],
+						create: [1, 2].map(() => ({ name: faker.internet.displayName() })),
 					},
 				},
+				include: { schools: true },
 			});
 			competitions.push(competition);
 		}
@@ -121,7 +118,9 @@ export default async function seedDb() {
 		for (let i = 0; i < NUM_OF.USER; i++) {
 			const randomComp =
 				competitions[Math.floor(Math.random() * competitions.length)];
-			const randomSchoool = schools[Math.floor(Math.random() * schools.length)];
+
+			const randomSchoool = randomComp.schools[Math.random() < 0.5 ? 0 : 1];
+
 			const user = await prisma.student.create({
 				data: {
 					firstName: faker.person.firstName(),
@@ -132,15 +131,15 @@ export default async function seedDb() {
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
 					hasInternationalPassport: Math.random() < 0.5,
-					competition: { connect: { id: randomSchoool.competition[0].id } },
+					competition: { connect: { id: randomComp.id } },
 					result: {
 						create: {
 							school: { connect: { id: randomSchoool.id } },
-							competition: { connect: { id: randomSchoool.competition[0].id } },
+							competition: { connect: { id: randomComp.id } },
 						},
 					},
 					level: ["Junior", "Senior", "Graduated"][
-						Math.floor(Math.random() * ["Junior", "Senior", "Graduated"].length)
+						Math.floor(Math.random() * 3)
 					],
 					scienceOrArt: Math.random() > 0.5 ? "Science" : "Art",
 					passport: faker.image.avatar(),
@@ -151,27 +150,29 @@ export default async function seedDb() {
 		return users;
 	}
 
-	async function seedResult() {
-		for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
-			const results = await prisma.studentResult.create({
-				data: {
-					mathematics: faker.number.int({ max: 100 }),
-					position: faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
-					writing: faker.number.int({ max: 100 }),
-					reading: faker.number.int({ max: 100 }),
-					student: { connect: { regNo: students[i].regNo } },
-					school: { connect: { id: schools[0].id } },
-					total: faker.number.int({ max: 100 }),
-					competition: { connect: { id: competitions[1].id } },
-				},
-			});
-		}
-	}
+	// async function seedResult() {
+	// 	for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
+	// 		const results = await prisma.studentResult.create({
+	// 			data: {
+	// 				mathematics: faker.number.int({ max: 100 }),
+	// 				position: faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
+	// 				writing: faker.number.int({ max: 100 }),
+	// 				reading: faker.number.int({ max: 100 }),
+	// 				student: { connect: { regNo: students[i].regNo } },
+	// 				school: { connect: { id: schools[0].id } },
+	// 				total: faker.number.int({ max: 100 }),
+	// 				competition: { connect: { id: competitions[1].id } },
+	// 			},
+	// 		});
+	// 	}
+	// }
 
 	console.log("Database has been seeded successfully");
 }
 
 export const handleSeedDB = async (req: Request, res: Response) => {
+	console.log("seeding");
+
 	await seedDb();
 	return res.status(resCode.OK).json(<SuccessResponse<any>>{
 		ok: true,
@@ -180,6 +181,7 @@ export const handleSeedDB = async (req: Request, res: Response) => {
 };
 
 export const handleDropTable = async (req: Request, res: Response) => {
+	console.log("dropping");
 	await dropAllTable();
 	return res.status(resCode.OK).json(<SuccessResponse<any>>{
 		ok: true,
@@ -187,5 +189,5 @@ export const handleDropTable = async (req: Request, res: Response) => {
 	});
 };
 
-seedDb();
+// seedDb();
 // dropAllTable();

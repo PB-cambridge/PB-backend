@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleDropTable = exports.handleSeedDB = void 0;
 const faker_1 = require("@faker-js/faker");
 const error_controller_1 = require("../src/controllers/error.controller");
 const index_1 = __importDefault(require("./index"));
@@ -24,7 +25,7 @@ const NUM_OF = {
     ANNOUNCEMENT: 5,
     COMPETITION: 2,
 };
-function seedDb() {
+function dropAllTable() {
     return __awaiter(this, void 0, void 0, function* () {
         const tableNames = [
             "Admin",
@@ -36,19 +37,19 @@ function seedDb() {
             "Competition",
             "Payments",
         ];
-        // await dropAllTable();
-        const schools = yield seedSchool();
+        for (const tableName of tableNames)
+            yield index_1.default.$queryRawUnsafe(`Truncate "${tableName}" restart identity cascade;`);
+        console.log("Tables dropped");
+    });
+}
+function seedDb() {
+    return __awaiter(this, void 0, void 0, function* () {
+        // const schools = await seedSchool();
         const competitions = yield seedCompetition();
         yield seedEvent();
         yield seedAnnouncements();
         const students = yield seedStudent();
         // await seedResult();
-        function dropAllTable() {
-            return __awaiter(this, void 0, void 0, function* () {
-                for (const tableName of tableNames)
-                    yield index_1.default.$queryRawUnsafe(`Truncate "${tableName}" restart identity cascade;`);
-            });
-        }
         // async function seedEvent() {}
         function seedAnnouncements() {
             return __awaiter(this, void 0, void 0, function* () {
@@ -78,13 +79,10 @@ function seedDb() {
                             seniorRegFee: +faker_1.faker.commerce.price(),
                             graduateRegFee: +faker_1.faker.commerce.price(),
                             schools: {
-                                connect: [
-                                    { id: schools[0].id },
-                                    { id: schools[1].id },
-                                    { id: schools[3].id },
-                                ],
+                                create: [1, 2].map(() => ({ name: faker_1.faker.internet.displayName() })),
                             },
                         },
+                        include: { schools: true },
                     });
                     competitions.push(competition);
                 }
@@ -118,6 +116,7 @@ function seedDb() {
                         data: {
                             name: faker_1.faker.internet.displayName(),
                         },
+                        include: { competition: true },
                     });
                     schools.push(school);
                 }
@@ -128,25 +127,27 @@ function seedDb() {
             return __awaiter(this, void 0, void 0, function* () {
                 const users = [];
                 for (let i = 0; i < NUM_OF.USER; i++) {
+                    const randomComp = competitions[Math.floor(Math.random() * competitions.length)];
+                    const randomSchoool = randomComp.schools[Math.random() < 0.5 ? 0 : 1];
                     const user = yield index_1.default.student.create({
                         data: {
                             firstName: faker_1.faker.person.firstName(),
                             email: faker_1.faker.internet.email(),
                             lastName: faker_1.faker.person.lastName(),
                             address: faker_1.faker.location.streetAddress(),
-                            school: { connect: { id: schools[0].id } },
+                            school: { connect: { id: randomSchoool.id } },
                             regNo: (0, helpers_controller_1.regNo)(faker_1.faker.person.firstName()),
                             phoneNumber: faker_1.faker.phone.number(),
-                            hasInternationalPassport: false,
-                            competition: { connect: { id: competitions[1].id } },
+                            hasInternationalPassport: Math.random() < 0.5,
+                            competition: { connect: { id: randomComp.id } },
                             result: {
                                 create: {
-                                    school: { connect: { id: schools[0].id } },
-                                    competition: { connect: { id: competitions[1].id } },
+                                    school: { connect: { id: randomSchoool.id } },
+                                    competition: { connect: { id: randomComp.id } },
                                 },
                             },
-                            level: "Junior",
-                            scienceOrArt: "Science",
+                            level: ["Junior", "Senior", "Graduated"][Math.floor(Math.random() * 3)],
+                            scienceOrArt: Math.random() > 0.5 ? "Science" : "Art",
                             passport: faker_1.faker.image.avatar(),
                         },
                     });
@@ -155,34 +156,44 @@ function seedDb() {
                 return users;
             });
         }
-        function seedResult() {
-            return __awaiter(this, void 0, void 0, function* () {
-                for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
-                    const results = yield index_1.default.studentResult.create({
-                        data: {
-                            mathematics: faker_1.faker.number.int({ max: 100 }),
-                            position: faker_1.faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
-                            writing: faker_1.faker.number.int({ max: 100 }),
-                            reading: faker_1.faker.number.int({ max: 100 }),
-                            student: { connect: { regNo: students[i].regNo } },
-                            school: { connect: { id: schools[0].id } },
-                            total: faker_1.faker.number.int({ max: 100 }),
-                            competition: { connect: { id: competitions[1].id } },
-                        },
-                    });
-                }
-            });
-        }
+        // async function seedResult() {
+        // 	for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
+        // 		const results = await prisma.studentResult.create({
+        // 			data: {
+        // 				mathematics: faker.number.int({ max: 100 }),
+        // 				position: faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
+        // 				writing: faker.number.int({ max: 100 }),
+        // 				reading: faker.number.int({ max: 100 }),
+        // 				student: { connect: { regNo: students[i].regNo } },
+        // 				school: { connect: { id: schools[0].id } },
+        // 				total: faker.number.int({ max: 100 }),
+        // 				competition: { connect: { id: competitions[1].id } },
+        // 			},
+        // 		});
+        // 	}
+        // }
         console.log("Database has been seeded successfully");
     });
 }
 exports.default = seedDb;
-const seedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const handleSeedDB = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("seeding");
     yield seedDb();
     return res.status(error_controller_1.resCode.OK).json({
         ok: true,
         message: "Database has been seeded successfully",
     });
 });
-seedDb();
+exports.handleSeedDB = handleSeedDB;
+const handleDropTable = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("dropping");
+    yield dropAllTable();
+    return res.status(error_controller_1.resCode.OK).json({
+        ok: true,
+        message: "Database tables dropped successfully",
+    });
+});
+exports.handleDropTable = handleDropTable;
+// seedDb();
+// dropAllTable();
 //# sourceMappingURL=seed.js.map

@@ -45,6 +45,7 @@ const error_controller_1 = __importStar(require("./controllers/error.controller"
 const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
 const school_controller_1 = require("./controllers/school.controller");
 const admin_controller_1 = require("./controllers/admin.controller");
+const seed_1 = require("../prisma/seed");
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 const app = (0, express_1.default)();
@@ -70,7 +71,8 @@ app.use("/api/user", routes_1.userRoute);
 app.use("/api/admin", routes_1.adminRoute);
 // authenticate secured routes
 // app.use(authenticate);
-// app.get("/api/seed", tryCatchWapper());
+app.get("/api/db/seed", (0, error_controller_1.tryCatchWapper)(seed_1.handleSeedDB));
+app.get("/api/db/drop-table", (0, error_controller_1.tryCatchWapper)(seed_1.handleDropTable));
 app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
 app.get("/api/events", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getEvents));
 app.get("/api/announcements", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAnnouncements));
