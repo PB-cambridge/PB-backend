@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAcknowledgementSlip = exports.isValidBase64 = exports.findIndexContainingString = exports.regNo = exports.uploadImage = void 0;
+exports.generateAcknowledgementSlip = exports.validateDateRange = exports.isValidBase64 = exports.findIndexContainingString = exports.regNo = exports.uploadImage = void 0;
 const cloudinary_1 = require("cloudinary");
 const env_1 = __importDefault(require("../../env"));
 cloudinary_1.v2.config({
@@ -61,6 +61,10 @@ function isValidBase64(str) {
     return base64Regex.test(str);
 }
 exports.isValidBase64 = isValidBase64;
+function validateDateRange(startDate, endDate) {
+    return startDate.getTime() < endDate.getTime();
+}
+exports.validateDateRange = validateDateRange;
 const generateAcknowledgementSlip = (details) => `<!DOCTYPE html>
 	<html lang="en">
 	  <head>

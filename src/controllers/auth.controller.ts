@@ -14,9 +14,14 @@ import {
 import env from "../../env";
 import prisma from "../../prisma";
 import { z } from "zod";
-import { regNo, uploadImage } from "./helpers.controller";
+import {
+	generateAcknowledgementSlip,
+	regNo,
+	uploadImage,
+} from "./helpers.controller";
 import Paystack from "paystack";
 import { UploadApiResponse } from "cloudinary";
+import { sendEmail } from "./mail.controller";
 
 const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
@@ -129,7 +134,13 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.BAD_REQUEST,
 			safe.error
 		);
-	const { passport: _passport, schoolId, firstName, ...others } = safe.data;
+	const {
+		passport: _passport,
+		schoolId,
+		firstName,
+		email,
+		...others
+	} = safe.data;
 
 	const uploadImageRes = await uploadImage(_passport);
 	if (uploadImageRes.error)
@@ -185,6 +196,7 @@ export const registerUser = async (req: Request, res: Response) => {
 		data: {
 			firstName,
 			passport,
+			email,
 			competitionId: competitionId,
 			schoolId,
 			regNo: regNo(firstName),
@@ -208,6 +220,19 @@ export const registerUser = async (req: Request, res: Response) => {
 			studentData: JSON.stringify(registeredStudent),
 		},
 	});
+
+	// send acknowledgement email
+	const acknowledgementMail = generateAcknowledgementSlip({
+		...registeredStudent,
+		competionFee: requiredFee,
+		paidAmount: paidAmt,
+		reference: paymentDetails.reference,
+	});
+	try {
+		sendEmail(email, acknowledgementMail, "PAYMENT ACKNOWLEDGEMENT");
+	} catch (error) {
+		console.log(error);
+	}
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,

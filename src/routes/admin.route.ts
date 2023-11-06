@@ -3,7 +3,9 @@ import { Router, Request, Response } from "express";
 import { resCode, tryCatchWapper } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
 import {
+	createAnnouncement,
 	createCompetion,
+	createEvent,
 	downloadResultTemp,
 	getActiveCompetion,
 	getAllCompetions,
@@ -23,6 +25,10 @@ adminRoute.get("/", (req: Request, res: Response) => {
 		data: {},
 	});
 });
+
+adminRoute.post("/create-event", tryCatchWapper(createEvent));
+
+adminRoute.post("/create-announcement", tryCatchWapper(createAnnouncement));
 
 adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 

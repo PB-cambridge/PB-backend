@@ -9,17 +9,55 @@ const NUM_OF = {
 	SCHOOL: 5,
 	USER: 100,
 	USER_RESULT: 2,
-	EVENTS: 2,
+	EVENTS: 5,
+	ANNOUNCEMENT: 5,
 	COMPETITION: 2,
 } as const;
 
 export default async function seedDb() {
+	const tableNames = [
+		"Admin",
+		"Announcements",
+		"Event",
+		"School",
+		"StudentResult",
+		"Student",
+		"Competition",
+		"Payments",
+	];
+
+	// await dropAllTable();
+
 	const schools = await seedSchool();
 	const competitions = await seedCompetition();
-	// const events = await seedEvent();
+	await seedEvent();
+	await seedAnnouncements();
 	const students = await seedStudent();
 
 	// await seedResult();
+
+	async function dropAllTable() {
+		for (const tableName of tableNames)
+			await prisma.$queryRawUnsafe(
+				`Truncate "${tableName}" restart identity cascade;`
+			);
+	}
+
+	// async function seedEvent() {}
+
+	async function seedAnnouncements() {
+		const events = [];
+		for (let i = 0; i < NUM_OF.ANNOUNCEMENT; i++) {
+			const event = await prisma.announcements.create({
+				data: {
+					content: faker.lorem.sentences(),
+					date: faker.date.recent(),
+				},
+			});
+			events.push(event);
+		}
+		return events;
+	}
 
 	async function seedCompetition() {
 		const competitions = [];
@@ -63,6 +101,7 @@ export default async function seedDb() {
 		}
 		return events;
 	}
+
 	async function seedSchool() {
 		const schools = [];
 		for (let i = 0; i < NUM_OF.SCHOOL; i++) {

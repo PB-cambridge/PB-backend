@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = void 0;
+exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getEvents = exports.getAnnouncements = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = exports.createAnnouncement = exports.createEvent = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -32,20 +32,61 @@ const fs_1 = __importDefault(require("fs"));
 const xlsx_1 = __importDefault(require("xlsx"));
 const helpers_controller_1 = require("./helpers.controller");
 const index_1 = __importDefault(require("./../../prisma/index"));
+const faker_1 = require("@faker-js/faker");
 // Example usage
+const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safeInput = zod_1.z
+        .object({
+        title: (0, reqSchemas_1.getStringValidation)("title"),
+        description: (0, reqSchemas_1.getStringValidation)("description"),
+        location: (0, reqSchemas_1.getStringValidation)("location"),
+        bannerImage: (0, reqSchemas_1.getStringValidation)("bannerImage"),
+        startTime: reqSchemas_1.dateSchema,
+        endTime: reqSchemas_1.dateSchema,
+    })
+        .safeParse(req.body);
+    if (!safeInput.success)
+        throw new AppError_1.default(safeInput.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeInput.error);
+    const _a = safeInput.data, { bannerImage: bi, startTime, endTime } = _a, others = __rest(_a, ["bannerImage", "startTime", "endTime"]);
+    if (!(0, helpers_controller_1.validateDateRange)(startTime, endTime))
+        throw new AppError_1.default("endDate must be later than startDate", error_controller_1.resCode.BAD_REQUEST);
+    const data = Object.assign(Object.assign({}, others), { startTime,
+        endTime, bannerImage: faker_1.faker.image.urlPicsumPhotos() });
+    const event = yield index_1.default.event.create({
+        data,
+    });
+    if (!event)
+        throw new AppError_1.default("Announcement not created", error_controller_1.resCode.BAD_REQUEST);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Event created successfully",
+        data: { event },
+    });
+});
+exports.createEvent = createEvent;
+const createAnnouncement = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safeInput = zod_1.z
+        .object({
+        content: (0, reqSchemas_1.getStringValidation)("content"),
+        date: reqSchemas_1.dateSchema,
+    })
+        .safeParse(req.body);
+    if (!safeInput.success)
+        throw new AppError_1.default(safeInput.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeInput.error);
+    const data = __rest(safeInput.data, []);
+    const announcement = yield index_1.default.announcements.create({
+        data,
+    });
+    if (!announcement)
+        throw new AppError_1.default("Announcement not created", error_controller_1.resCode.BAD_REQUEST);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Created announcement",
+        data: { announcement },
+    });
+});
+exports.createAnnouncement = createAnnouncement;
 const createCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    /*
-      name           String          @unique
-  students       Student[]
-  results        StudentResult[]
-  schools        School[]
-  seniorRegFee   Int
-  juniorRegFee   Int
-  graduateRegFee Int
-  active         Boolean         @default(true)
-  startDate      DateTime
-  endDate
-    */
     const safeInput = zod_1.z
         .object({
         name: (0, reqSchemas_1.getStringValidation)("name"),
@@ -64,17 +105,19 @@ const createCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function
         .safeParse(req.body);
     if (!safeInput.success)
         throw new AppError_1.default(safeInput.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeInput.error);
-    const _a = safeInput.data, { schoolsId } = _a, others = __rest(_a, ["schoolsId"]);
-    console.log(others);
-    const createdCompetition = yield index_1.default.competition.create({
-        data: Object.assign(Object.assign({}, others), { schools: { connect: schoolsId.map((id, i) => ({ id })) } }),
+    const _b = safeInput.data, { schoolsId, startDate, endDate } = _b, others = __rest(_b, ["schoolsId", "startDate", "endDate"]);
+    if (!(0, helpers_controller_1.validateDateRange)(startDate, endDate))
+        throw new AppError_1.default("endDate must be later than startDate", error_controller_1.resCode.BAD_REQUEST);
+    const competition = yield index_1.default.competition.create({
+        data: Object.assign(Object.assign({}, others), { startDate,
+            endDate, schools: { connect: schoolsId.map((id, i) => ({ id })) } }),
     });
-    if (!createdCompetition)
+    if (!competition)
         throw new AppError_1.default("AN error occourd and competition could not create", error_controller_1.resCode.BAD_REQUEST);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Create competition here",
-        data: { createdCompetition },
+        data: { competition },
     });
 });
 exports.createCompetion = createCompetion;
@@ -231,6 +274,24 @@ const getAllCompetions = (req, res) => __awaiter(void 0, void 0, void 0, functio
     });
 });
 exports.getAllCompetions = getAllCompetions;
+const getAnnouncements = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const announcements = yield index_1.default.announcements.findMany({});
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { announcements },
+    });
+});
+exports.getAnnouncements = getAnnouncements;
+const getEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const event = yield index_1.default.event.findMany({});
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: { event },
+    });
+});
+exports.getEvents = getEvents;
 const getCompetionsDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = zod_1.z
         .object({

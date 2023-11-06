@@ -44,6 +44,7 @@ const routes_1 = require("./routes");
 const error_controller_1 = __importStar(require("./controllers/error.controller"));
 const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
 const school_controller_1 = require("./controllers/school.controller");
+const admin_controller_1 = require("./controllers/admin.controller");
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 const app = (0, express_1.default)();
@@ -71,6 +72,8 @@ app.use("/api/admin", routes_1.adminRoute);
 // app.use(authenticate);
 // app.get("/api/seed", tryCatchWapper());
 app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
+app.get("/api/events", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getEvents));
+app.get("/api/announcements", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAnnouncements));
 // error handler
 app.use(error_controller_1.default);
 // Read the Base64 encoded file from the backend

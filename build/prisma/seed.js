@@ -20,16 +20,51 @@ const NUM_OF = {
     SCHOOL: 5,
     USER: 100,
     USER_RESULT: 2,
-    EVENTS: 2,
+    EVENTS: 5,
+    ANNOUNCEMENT: 5,
     COMPETITION: 2,
 };
 function seedDb() {
     return __awaiter(this, void 0, void 0, function* () {
+        const tableNames = [
+            "Admin",
+            "Announcements",
+            "Event",
+            "School",
+            "StudentResult",
+            "Student",
+            "Competition",
+            "Payments",
+        ];
+        // await dropAllTable();
         const schools = yield seedSchool();
         const competitions = yield seedCompetition();
-        // const events = await seedEvent();
+        yield seedEvent();
+        yield seedAnnouncements();
         const students = yield seedStudent();
         // await seedResult();
+        function dropAllTable() {
+            return __awaiter(this, void 0, void 0, function* () {
+                for (const tableName of tableNames)
+                    yield index_1.default.$queryRawUnsafe(`Truncate "${tableName}" restart identity cascade;`);
+            });
+        }
+        // async function seedEvent() {}
+        function seedAnnouncements() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const events = [];
+                for (let i = 0; i < NUM_OF.ANNOUNCEMENT; i++) {
+                    const event = yield index_1.default.announcements.create({
+                        data: {
+                            content: faker_1.faker.lorem.sentences(),
+                            date: faker_1.faker.date.recent(),
+                        },
+                    });
+                    events.push(event);
+                }
+                return events;
+            });
+        }
         function seedCompetition() {
             return __awaiter(this, void 0, void 0, function* () {
                 const competitions = [];

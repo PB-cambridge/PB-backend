@@ -13,10 +13,10 @@ const envSchema = z.object({
 	CLOUDINARY_API_KEY: z.string(),
 	CLOUDINARY_CLOUD_NAME: z.string(),
 	CLOUDINARY_API_SECRET: z.string(),
-	// MAIL_USER: z.string(),
-	// MAIL_PASSWORD: z.string(),
-	// MAIL_HOST: z.string(),
-	// MAIL_PORT: z.string(),
+	MAIL_USER: z.string(),
+	MAIL_PASSWORD: z.string(),
+	MAIL_HOST: z.string(),
+	MAIL_PORT: z.string(),
 	CORS_ORIGIN: z.string(),
 });
 

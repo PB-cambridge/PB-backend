@@ -10,23 +10,95 @@ import {
 import AppError from "./AppError";
 import fs from "fs";
 import xlsx from "xlsx";
-import { findIndexContainingString, isValidBase64 } from "./helpers.controller";
+import {
+	findIndexContainingString,
+	isValidBase64,
+	validateDateRange,
+} from "./helpers.controller";
 import prisma from "./../../prisma/index";
+import { faker } from "@faker-js/faker";
 
 // Example usage
+export const createEvent = async (req: Request, res: Response) => {
+	const safeInput = z
+		.object({
+			title: getStringValidation("title"),
+			description: getStringValidation("description"),
+			location: getStringValidation("location"),
+			bannerImage: getStringValidation("bannerImage"),
+			startTime: dateSchema,
+			endTime: dateSchema,
+		})
+		.safeParse(req.body);
+
+	if (!safeInput.success)
+		throw new AppError(
+			safeInput.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safeInput.error
+		);
+
+	const { bannerImage: bi, startTime, endTime, ...others } = safeInput.data;
+
+	if (!validateDateRange(startTime, endTime))
+		throw new AppError(
+			"endDate must be later than startDate",
+			resCode.BAD_REQUEST
+		);
+
+	const data = {
+		...others,
+		startTime,
+		endTime,
+		bannerImage: faker.image.urlPicsumPhotos(),
+	};
+
+	const event = await prisma.event.create({
+		data,
+	});
+
+	if (!event)
+		throw new AppError("Announcement not created", resCode.BAD_REQUEST);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Event created successfully",
+		data: { event },
+	});
+};
+
+export const createAnnouncement = async (req: Request, res: Response) => {
+	const safeInput = z
+		.object({
+			content: getStringValidation("content"),
+			date: dateSchema,
+		})
+		.safeParse(req.body);
+
+	if (!safeInput.success)
+		throw new AppError(
+			safeInput.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safeInput.error
+		);
+
+	const { ...data } = safeInput.data;
+
+	const announcement = await prisma.announcements.create({
+		data,
+	});
+
+	if (!announcement)
+		throw new AppError("Announcement not created", resCode.BAD_REQUEST);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Created announcement",
+		data: { announcement },
+	});
+};
+
 export const createCompetion = async (req: Request, res: Response) => {
-	/* 
-	  name           String          @unique
-  students       Student[]
-  results        StudentResult[]
-  schools        School[]
-  seniorRegFee   Int
-  juniorRegFee   Int
-  graduateRegFee Int
-  active         Boolean         @default(true)
-  startDate      DateTime
-  endDate  
-	*/
 	const safeInput = z
 		.object({
 			name: getStringValidation("name"),
@@ -51,18 +123,24 @@ export const createCompetion = async (req: Request, res: Response) => {
 			safeInput.error
 		);
 
-	const { schoolsId, ...others } = safeInput.data;
+	const { schoolsId, startDate, endDate, ...others } = safeInput.data;
 
-	console.log(others);
+	if (!validateDateRange(startDate, endDate))
+		throw new AppError(
+			"endDate must be later than startDate",
+			resCode.BAD_REQUEST
+		);
 
-	const createdCompetition = await prisma.competition.create({
+	const competition = await prisma.competition.create({
 		data: {
 			...others,
+			startDate,
+			endDate,
 			schools: { connect: schoolsId.map((id, i) => ({ id })) },
 		},
 	});
 
-	if (!createdCompetition)
+	if (!competition)
 		throw new AppError(
 			"AN error occourd and competition could not create",
 			resCode.BAD_REQUEST
@@ -71,7 +149,7 @@ export const createCompetion = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Create competition here",
-		data: { createdCompetition },
+		data: { competition },
 	});
 };
 
@@ -274,6 +352,26 @@ export const getAllCompetions = async (req: Request, res: Response) => {
 		ok: true,
 		message: "Fetch successful",
 		data: { competitions },
+	});
+};
+
+export const getAnnouncements = async (req: Request, res: Response) => {
+	const announcements = await prisma.announcements.findMany({});
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { announcements },
+	});
+};
+
+export const getEvents = async (req: Request, res: Response) => {
+	const event = await prisma.event.findMany({});
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: { event },
 	});
 };
 

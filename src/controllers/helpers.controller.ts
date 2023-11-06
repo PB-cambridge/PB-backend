@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import env from "../../env";
+import { TAcknowledgementTemp } from "../types";
 
 cloudinary.config({
 	cloud_name: env.CLOUDINARY_CLOUD_NAME,
@@ -48,7 +49,13 @@ export function isValidBase64(str: string) {
 	return base64Regex.test(str);
 }
 
-export const generateAcknowledgementSlip = (details: any) => `<!DOCTYPE html>
+export function validateDateRange(startDate: Date, endDate: Date) {
+	return startDate.getTime() < endDate.getTime();
+}
+
+export const generateAcknowledgementSlip = (
+	details: TAcknowledgementTemp | any
+) => `<!DOCTYPE html>
 	<html lang="en">
 	  <head>
 	    <meta charset="UTF-8" />
