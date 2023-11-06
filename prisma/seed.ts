@@ -26,7 +26,7 @@ export default async function seedDb() {
 		"Payments",
 	];
 
-	// await dropAllTable();
+	await dropAllTable();
 
 	const schools = await seedSchool();
 	const competitions = await seedCompetition();

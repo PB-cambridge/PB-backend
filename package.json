@@ -34,10 +34,10 @@
 		"sqlite3": "^5.1.6",
 		"swagger-ui-express": "^5.0.0",
 		"xlsx": "^0.18.5",
+		"@faker-js/faker": "^8.1.0",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
-		"@faker-js/faker": "^8.1.0",
 		"@types/bcrypt": "^5.0.0",
 		"@types/cors": "^2.8.14",
 		"@types/dotenv": "^8.2.0",

@@ -34,6 +34,7 @@ const prisma_1 = __importDefault(require("../../prisma"));
 const zod_1 = require("zod");
 const helpers_controller_1 = require("./helpers.controller");
 const paystack_1 = __importDefault(require("paystack"));
+const mail_controller_1 = require("./mail.controller");
 const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = reqSchemas_1.loginReqSchema.safeParse(req.body);
@@ -97,7 +98,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const safe = reqSchemas_1.registerStudentReqSchema.safeParse(req.body);
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
-    const _b = safe.data, { passport: _passport, schoolId, firstName } = _b, others = __rest(_b, ["passport", "schoolId", "firstName"]);
+    const _b = safe.data, { passport: _passport, schoolId, firstName, email } = _b, others = __rest(_b, ["passport", "schoolId", "firstName", "email"]);
     const uploadImageRes = yield (0, helpers_controller_1.uploadImage)(_passport);
     if (uploadImageRes.error)
         throw new AppError_1.default("An error Occoured", error_controller_1.resCode.BAD_GATEWAY, uploadImageRes.error);
@@ -123,7 +124,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     //  passport to file
     const registeredStudent = yield prisma_1.default.student.create({
         data: Object.assign(Object.assign({ firstName,
-            passport, competitionId: competitionId, schoolId, regNo: (0, helpers_controller_1.regNo)(firstName) }, others), { result: { create: { schoolId, competitionId } } }),
+            passport,
+            email, competitionId: competitionId, schoolId, regNo: (0, helpers_controller_1.regNo)(firstName) }, others), { result: { create: { schoolId, competitionId } } }),
         include: {
             school: true,
             competition: {
@@ -140,6 +142,14 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             studentData: JSON.stringify(registeredStudent),
         },
     });
+    // send acknowledgement email
+    const acknowledgementMail = (0, helpers_controller_1.generateAcknowledgementSlip)(Object.assign(Object.assign({}, registeredStudent), { competionFee: requiredFee, paidAmount: paidAmt, reference: paymentDetails.reference }));
+    try {
+        (0, mail_controller_1.sendEmail)(email, acknowledgementMail, "PAYMENT ACKNOWLEDGEMENT");
+    }
+    catch (error) {
+        console.log(error);
+    }
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Registration Successful",

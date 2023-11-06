@@ -16,10 +16,10 @@ const envSchema = zod_1.z.object({
     CLOUDINARY_API_KEY: zod_1.z.string(),
     CLOUDINARY_CLOUD_NAME: zod_1.z.string(),
     CLOUDINARY_API_SECRET: zod_1.z.string(),
-    // MAIL_USER: z.string(),
-    // MAIL_PASSWORD: z.string(),
-    // MAIL_HOST: z.string(),
-    // MAIL_PORT: z.string(),
+    MAIL_USER: zod_1.z.string(),
+    MAIL_PASSWORD: zod_1.z.string(),
+    MAIL_HOST: zod_1.z.string(),
+    MAIL_PORT: zod_1.z.string(),
     CORS_ORIGIN: zod_1.z.string(),
 });
 const env = envSchema.parse(process.env);
