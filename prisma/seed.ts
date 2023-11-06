@@ -109,6 +109,7 @@ export default async function seedDb() {
 				data: {
 					name: faker.internet.displayName(),
 				},
+				include: { competition: true },
 			});
 			schools.push(school);
 		}
@@ -130,16 +131,18 @@ export default async function seedDb() {
 					school: { connect: { id: randomSchoool.id } },
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
-					hasInternationalPassport: false,
-					competition: { connect: { id: randomComp.id } },
+					hasInternationalPassport: Math.random() < 0.5,
+					competition: { connect: { id: randomSchoool.competition[0].id } },
 					result: {
 						create: {
 							school: { connect: { id: randomSchoool.id } },
-							competition: { connect: { id: randomComp.id } },
+							competition: { connect: { id: randomSchoool.competition[0].id } },
 						},
 					},
-					level: "Junior",
-					scienceOrArt: "Science",
+					level: ["Junior", "Senior", "Graduated"][
+						Math.floor(Math.random() * ["Junior", "Senior", "Graduated"].length)
+					],
+					scienceOrArt: Math.random() > 0.5 ? "Science" : "Art",
 					passport: faker.image.avatar(),
 				},
 			});
