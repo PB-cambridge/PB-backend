@@ -11,6 +11,7 @@ import errorController, {
 import swaggerConfig from "./api-doc/swagger-config";
 import { getAllSchools } from "./controllers/school.controller";
 import { getAnnouncements, getEvents } from "./controllers/admin.controller";
+import seedDb, { handleDropTable, handleSeedDB } from "../prisma/seed";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
@@ -48,7 +49,8 @@ app.use("/api/admin", adminRoute);
 // authenticate secured routes
 // app.use(authenticate);
 
-// app.get("/api/seed", tryCatchWapper());
+app.get("/api/db/seed", tryCatchWapper(handleSeedDB));
+app.get("/api/db/drop-table", tryCatchWapper(handleDropTable));
 app.get("/api/schools", tryCatchWapper(getAllSchools));
 app.get("/api/events", tryCatchWapper(getEvents));
 app.get("/api/announcements", tryCatchWapper(getAnnouncements));

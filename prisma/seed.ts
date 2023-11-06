@@ -14,7 +14,7 @@ const NUM_OF = {
 	COMPETITION: 2,
 } as const;
 
-export default async function seedDb() {
+async function dropAllTable() {
 	const tableNames = [
 		"Admin",
 		"Announcements",
@@ -26,8 +26,15 @@ export default async function seedDb() {
 		"Payments",
 	];
 
-	// await dropAllTable();
+	for (const tableName of tableNames)
+		await prisma.$queryRawUnsafe(
+			`Truncate "${tableName}" restart identity cascade;`
+		);
 
+	console.log("Tables dropped");
+}
+
+export default async function seedDb() {
 	const schools = await seedSchool();
 	const competitions = await seedCompetition();
 	await seedEvent();
@@ -35,13 +42,6 @@ export default async function seedDb() {
 	const students = await seedStudent();
 
 	// await seedResult();
-
-	async function dropAllTable() {
-		for (const tableName of tableNames)
-			await prisma.$queryRawUnsafe(
-				`Truncate "${tableName}" restart identity cascade;`
-			);
-	}
 
 	// async function seedEvent() {}
 
@@ -118,21 +118,24 @@ export default async function seedDb() {
 	async function seedStudent() {
 		const users = [];
 		for (let i = 0; i < NUM_OF.USER; i++) {
+			const randomComp =
+				competitions[Math.floor(Math.random() * competitions.length)];
+			const randomSchoool = schools[Math.floor(Math.random() * schools.length)];
 			const user = await prisma.student.create({
 				data: {
 					firstName: faker.person.firstName(),
 					email: faker.internet.email(),
 					lastName: faker.person.lastName(),
 					address: faker.location.streetAddress(),
-					school: { connect: { id: schools[0].id } },
+					school: { connect: { id: randomSchoool.id } },
 					regNo: regNo(faker.person.firstName()),
 					phoneNumber: faker.phone.number(),
 					hasInternationalPassport: false,
-					competition: { connect: { id: competitions[1].id } },
+					competition: { connect: { id: randomComp.id } },
 					result: {
 						create: {
-							school: { connect: { id: schools[0].id } },
-							competition: { connect: { id: competitions[1].id } },
+							school: { connect: { id: randomSchoool.id } },
+							competition: { connect: { id: randomComp.id } },
 						},
 					},
 					level: "Junior",
@@ -165,7 +168,7 @@ export default async function seedDb() {
 	console.log("Database has been seeded successfully");
 }
 
-const seedDB = async (req: Request, res: Response) => {
+export const handleSeedDB = async (req: Request, res: Response) => {
 	await seedDb();
 	return res.status(resCode.OK).json(<SuccessResponse<any>>{
 		ok: true,
@@ -173,4 +176,13 @@ const seedDB = async (req: Request, res: Response) => {
 	});
 };
 
+export const handleDropTable = async (req: Request, res: Response) => {
+	await dropAllTable();
+	return res.status(resCode.OK).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Database tables dropped successfully",
+	});
+};
+
 seedDb();
+// dropAllTable();
