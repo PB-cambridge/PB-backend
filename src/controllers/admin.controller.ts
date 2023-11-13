@@ -4,6 +4,7 @@ import { resCode } from "./error.controller";
 import { z } from "zod";
 import {
 	dateSchema,
+	getBooleanValidation,
 	getNumberValidation,
 	getStringValidation,
 } from "../validation/reqSchemas";
@@ -466,6 +467,60 @@ export const getStudents = async (req: Request, res: Response) => {
 };
 
 export const getStudentsWithFilter = async (req: Request, res: Response) => {};
+
+export const toggleCompetitionActive = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			id: getStringValidation("id"),
+			active: getBooleanValidation("active"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+	const { id, active } = safe.data;
+
+	const activated = await prisma.competition.update({
+		where: { id },
+		data: { active },
+	});
+
+	if (!activated) throw new AppError("Not found", resCode.NOT_FOUND);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Done",
+		data: { competition: activated },
+	});
+};
+
+/*
+(async () => {
+	const safe = z
+		.object({
+			id: getStringValidation("id"),
+			active: getBooleanValidation("active"),
+		})
+		.safeParse({ id: "jhgfcvvb", active: "false" });
+
+	if (!safe.success)
+		return console.log(safe.error.issues.map((d) => d.message).join(", "));
+
+	const { id, active } = safe.data;
+
+	const activated = await prisma.competition.update({
+		where: { id },
+		data: { active },
+	});
+
+	console.log(activated);
+})();
+
+*/
 
 export const getStudentDetails = async (req: Request, res: Response) => {
 	const safe = z

@@ -1,3 +1,4 @@
+import isBoolean from "validator/lib/isBoolean";
 import { z } from "zod";
 
 // custome validation function
@@ -17,6 +18,13 @@ export const dateSchema = z
 		}
 	)
 	.transform((v) => new Date(v));
+
+export const getBooleanValidation = (v: string) =>
+	z
+		.enum(["true", "false"], {
+			required_error: `'${v}' is required`,
+		})
+		.transform((v) => v == "true");
 
 export const getStringValidation = (key: string) =>
 	z

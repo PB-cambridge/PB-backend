@@ -20,6 +20,7 @@ adminRoute.get("/ongoing-competitions", (0, error_controller_1.tryCatchWapper)(a
 adminRoute.get("/competition/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getCompetionsDetails));
 adminRoute.get("/students/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudents));
 adminRoute.get("/student/:regNo", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudentDetails));
+adminRoute.lock("/competition/:id/:active", (0, error_controller_1.tryCatchWapper)(admin_controller_1.toggleCompetitionActive));
 adminRoute.get("/results/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getResultsByCompetitionSchool));
 adminRoute.get("/results-template/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 exports.default = adminRoute;

@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getEvents = exports.getAnnouncements = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = exports.createAnnouncement = exports.createEvent = void 0;
+exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.toggleCompetitionActive = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getEvents = exports.getAnnouncements = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = exports.createAnnouncement = exports.createEvent = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -365,6 +365,52 @@ const getStudents = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getStudents = getStudents;
 const getStudentsWithFilter = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
 exports.getStudentsWithFilter = getStudentsWithFilter;
+const toggleCompetitionActive = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        id: (0, reqSchemas_1.getStringValidation)("id"),
+        active: (0, reqSchemas_1.getBooleanValidation)("active"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { id, active } = safe.data;
+    const activated = yield index_1.default.competition.update({
+        where: { id },
+        data: { active },
+    });
+    if (!activated)
+        throw new AppError_1.default("Not found", error_controller_1.resCode.NOT_FOUND);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Done",
+        data: { competition: activated },
+    });
+});
+exports.toggleCompetitionActive = toggleCompetitionActive;
+/*
+(async () => {
+    const safe = z
+        .object({
+            id: getStringValidation("id"),
+            active: getBooleanValidation("active"),
+        })
+        .safeParse({ id: "jhgfcvvb", active: "false" });
+
+    if (!safe.success)
+        return console.log(safe.error.issues.map((d) => d.message).join(", "));
+
+    const { id, active } = safe.data;
+
+    const activated = await prisma.competition.update({
+        where: { id },
+        data: { active },
+    });
+
+    console.log(activated);
+})();
+
+*/
 const getStudentDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = zod_1.z
         .object({

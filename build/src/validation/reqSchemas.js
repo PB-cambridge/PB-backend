@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = exports.dateSchema = void 0;
+exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = exports.getBooleanValidation = exports.dateSchema = void 0;
 const zod_1 = require("zod");
 // custome validation function
 exports.dateSchema = zod_1.z
@@ -16,6 +16,12 @@ exports.dateSchema = zod_1.z
     message: "Date must be in the future",
 })
     .transform((v) => new Date(v));
+const getBooleanValidation = (v) => zod_1.z
+    .enum(["true", "false"], {
+    required_error: `'${v}' is required`,
+})
+    .transform((v) => v == "true");
+exports.getBooleanValidation = getBooleanValidation;
 const getStringValidation = (key) => zod_1.z
     .string({
     required_error: `'${key}' is required`,

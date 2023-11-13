@@ -13,6 +13,7 @@ import {
 	getResultsByCompetitionSchool,
 	getStudentDetails,
 	getStudents,
+	toggleCompetitionActive,
 	uploadResultFile,
 } from "../controllers/admin.controller";
 
@@ -43,6 +44,8 @@ adminRoute.get("/competition/:id", tryCatchWapper(getCompetionsDetails));
 adminRoute.get("/students/:competitionId", tryCatchWapper(getStudents));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
+
+adminRoute.lock("/competition/:id/:active", tryCatchWapper(toggleCompetitionActive));
 
 adminRoute.get(
 	"/results/:schoolId/:competitionId",
