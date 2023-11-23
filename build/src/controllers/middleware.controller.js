@@ -41,7 +41,8 @@ const protectedRoute = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         const admin = yield prisma_1.default.admin.findFirst({ where: { id } });
         if (!admin)
             throw new AppError_1.default("Invalid auth cookie", error_controller_1.resCode.UNAUTHORIZED);
-        console.log(admin.email);
+        res.locals.user = admin;
+        // console.log(admin.email);
         next();
     }
     catch (err) {

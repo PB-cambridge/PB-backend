@@ -16,6 +16,7 @@ import {
 	toggleCompetitionActive,
 	uploadResultFile,
 } from "../controllers/admin.controller";
+import { changePassword } from "../controllers/auth.controller";
 
 const adminRoute = Router();
 
@@ -45,7 +46,10 @@ adminRoute.get("/students/:competitionId", tryCatchWapper(getStudents));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
 
-adminRoute.lock("/competition/:id/:active", tryCatchWapper(toggleCompetitionActive));
+adminRoute.lock(
+	"/competition/:id/:active",
+	tryCatchWapper(toggleCompetitionActive)
+);
 
 adminRoute.get(
 	"/results/:schoolId/:competitionId",
@@ -56,5 +60,7 @@ adminRoute.get(
 	"/results-template/:schoolId/:competitionId",
 	tryCatchWapper(downloadResultTemp)
 );
+
+adminRoute.put("/password", tryCatchWapper(changePassword));
 
 export default adminRoute;

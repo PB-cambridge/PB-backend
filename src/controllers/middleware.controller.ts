@@ -44,7 +44,8 @@ export const protectedRoute = async (
 
 		if (!admin) throw new AppError("Invalid auth cookie", resCode.UNAUTHORIZED);
 
-		console.log(admin.email);
+		res.locals.user = admin;
+		// console.log(admin.email);
 
 		next();
 	} catch (err) {

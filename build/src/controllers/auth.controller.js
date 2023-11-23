@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOTP = exports.registerUser = exports.verifyPaystackPayment = exports.adminLogin = void 0;
+exports.sendOTP = exports.changePassword = exports.registerUser = exports.verifyPaystackPayment = exports.adminLogin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const error_controller_1 = require("./error.controller");
@@ -161,6 +161,41 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     });
 });
 exports.registerUser = registerUser;
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c, _d, _e, _f;
+    const safe = zod_1.z
+        .object({
+        oldpassword: (0, reqSchemas_1.getStringValidation)("oldpassword"),
+        password: (0, reqSchemas_1.getStringValidation)("password"),
+    })
+        .safeParse(req.body);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { password: rawPassword, oldpassword } = safe.data;
+    // return console.log(res.locals);
+    const email = (_d = (_c = res.locals) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.email;
+    const oldpasswordHash = (_f = (_e = res.locals) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.password;
+    if (!email || !oldpasswordHash)
+        throw new AppError_1.default("Not logged in", error_controller_1.resCode.UNAUTHORIZED);
+    // verify old password
+    const verified = bcrypt_1.default.compareSync(oldpassword, oldpasswordHash);
+    if (!verified)
+        throw new AppError_1.default("Incorrect old password", error_controller_1.resCode.NOT_ACCEPTED);
+    const salt = bcrypt_1.default.genSaltSync(10);
+    const password = yield bcrypt_1.default.hashSync(rawPassword, salt);
+    const updatedPassword = yield prisma_1.default.admin.update({
+        where: { email },
+        data: { password },
+    });
+    if (!updatedPassword)
+        throw new AppError_1.default("Password changed failed", error_controller_1.resCode.INTERNAL_SERVER_ERROR);
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Password changed.",
+        data: {},
+    });
+});
+exports.changePassword = changePassword;
 const sendOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,

@@ -251,6 +251,56 @@ export const registerUser = async (req: Request, res: Response) => {
 	});
 };
 
+export const changePassword = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			oldpassword: getStringValidation("oldpassword"),
+			password: getStringValidation("password"),
+		})
+		.safeParse(req.body);
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+
+	const { password: rawPassword, oldpassword } = safe.data;
+
+	// return console.log(res.locals);
+
+	const email = res.locals?.user?.email as string;
+	const oldpasswordHash = res.locals?.user?.password as string;
+	if (!email || !oldpasswordHash)
+		throw new AppError("Not logged in", resCode.UNAUTHORIZED);
+
+	// verify old password
+	const verified = bcrypt.compareSync(oldpassword, oldpasswordHash);
+
+	if (!verified)
+		throw new AppError("Incorrect old password", resCode.NOT_ACCEPTED);
+
+	// now change password
+	const salt = bcrypt.genSaltSync(10);
+	const password = await bcrypt.hashSync(rawPassword, salt);
+
+	const updatedPassword = await prisma.admin.update({
+		where: { email },
+		data: { password },
+	});
+
+	if (!updatedPassword)
+		throw new AppError(
+			"Password changed failed",
+			resCode.INTERNAL_SERVER_ERROR
+		);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Password changed",
+	});
+};
+
 export const sendOTP = async (req: Request, res: Response) => {
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
