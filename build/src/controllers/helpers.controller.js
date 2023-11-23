@@ -22,7 +22,6 @@ cloudinary_1.v2.config({
 });
 const uploadImage = (image) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Upload the image
         const result = yield cloudinary_1.v2.uploader.upload(image, {
             use_filename: true,
             unique_filename: true,
@@ -30,11 +29,9 @@ const uploadImage = (image) => __awaiter(void 0, void 0, void 0, function* () {
             resource_type: "auto",
             invalidate: true,
         });
-        // console.log(result);
         return result;
     }
     catch (error) {
-        // console.log(error)
         return { error };
     }
 });

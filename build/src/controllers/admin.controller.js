@@ -33,7 +33,6 @@ const xlsx_1 = __importDefault(require("xlsx"));
 const helpers_controller_1 = require("./helpers.controller");
 const index_1 = __importDefault(require("./../../prisma/index"));
 const faker_1 = require("@faker-js/faker");
-// Example usage
 const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safeInput = zod_1.z
         .object({
@@ -142,21 +141,16 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
     });
     if (!results || (yield results).length < 1)
         throw new AppError_1.default("No results", error_controller_1.resCode.NOT_FOUND);
-    // result upload logic here
     let updatedItems;
     try {
         const excelData = Buffer.from(resultFileString, "base64");
-        // Write the Excel data to a temporary file
         const tempFilePath = "temp.xlsx";
         fs_1.default.writeFileSync(tempFilePath, excelData);
-        // Parse the Excel file
         const workbook = xlsx_1.default.readFile(tempFilePath);
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        // Convert the worksheet to JSON
         const jsonData = xlsx_1.default.utils.sheet_to_json(worksheet, {
             header: 1,
         });
-        // Delete the temporary file
         fs_1.default.unlinkSync(tempFilePath);
         jsonData[1] = jsonData[1].map((d) => d.replace(/[^a-zA-Z]/g, ""));
         const resultData = [];
@@ -168,14 +162,8 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 mathematics: jsonData[i][5],
                 total: jsonData[i][6],
                 position: jsonData[i][7],
-                // schoolName: jsonData[0][0],
-                // schoolId: school.id,
             });
         }
-        // const updates = await prisma.studentResult.updateMany({
-        // 	where: { studentRegNo: { in: results.map((item) => item.studentRegNo) } },
-        // 	data: {},
-        // });
         updatedItems = yield index_1.default.$transaction((prisma) => __awaiter(void 0, void 0, void 0, function* () {
             const updatePromises = resultData.map((item) => {
                 return prisma.studentResult.update({
@@ -185,7 +173,6 @@ const uploadResultFile = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
             return Promise.all(updatePromises);
         }));
-        // .bulkCreate(resultData);
     }
     catch (error) {
         throw new AppError_1.default("Something wnet wrong with resullt upload", error_controller_1.resCode.INTERNAL_SERVER_ERROR, error);
@@ -257,7 +244,6 @@ const downloadResultTemp = (req, res) => __awaiter(void 0, void 0, void 0, funct
         type: "buffer",
         bookType: "xlsx",
     });
-    // Send the Excel file
     res.setHeader("Content-Disposition", `attachment; filename=${fileName.toLocaleUpperCase()}.xlsx`);
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     return res.status(error_controller_1.resCode.ACCEPTED).send(excelBuffer);
@@ -388,29 +374,6 @@ const toggleCompetitionActive = (req, res) => __awaiter(void 0, void 0, void 0, 
     });
 });
 exports.toggleCompetitionActive = toggleCompetitionActive;
-/*
-(async () => {
-    const safe = z
-        .object({
-            id: getStringValidation("id"),
-            active: getBooleanValidation("active"),
-        })
-        .safeParse({ id: "jhgfcvvb", active: "false" });
-
-    if (!safe.success)
-        return console.log(safe.error.issues.map((d) => d.message).join(", "));
-
-    const { id, active } = safe.data;
-
-    const activated = await prisma.competition.update({
-        where: { id },
-        data: { active },
-    });
-
-    console.log(activated);
-})();
-
-*/
 const getStudentDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = zod_1.z
         .object({

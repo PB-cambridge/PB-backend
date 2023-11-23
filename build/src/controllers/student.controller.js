@@ -29,7 +29,6 @@ const viewResult = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         where: { regNo },
         include: { result: true, school: true, competition: true },
     });
-    // console.log(student);
     if (!student)
         throw new AppError_1.default("Incorrect regNo", error_controller_1.resCode.NOT_FOUND);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
@@ -53,7 +52,6 @@ const reprintAcknowledgementSlip = (req, res) => __awaiter(void 0, void 0, void 
         throw new AppError_1.default("Invalid reference", error_controller_1.resCode.NOT_FOUND);
     const paymentDetails_studentData = JSON.parse(paymentDetails.studentData);
     const acknowledgementDetails = Object.assign(Object.assign({}, paymentDetails_studentData), { paidAmount: paymentDetails.amount, reference: paymentDetails.paystackRef });
-    // return res.send(generateAcknowledgementSlip(acknowledgementDetails));
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: `Reprint your Ack SLip here`,

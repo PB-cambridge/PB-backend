@@ -44,13 +44,10 @@ function dropAllTable() {
 }
 function seedDb() {
     return __awaiter(this, void 0, void 0, function* () {
-        // const schools = await seedSchool();
         const competitions = yield seedCompetition();
         yield seedEvent();
         yield seedAnnouncements();
         const students = yield seedStudent();
-        // await seedResult();
-        // async function seedEvent() {}
         function seedAnnouncements() {
             return __awaiter(this, void 0, void 0, function* () {
                 const events = [];
@@ -156,22 +153,6 @@ function seedDb() {
                 return users;
             });
         }
-        // async function seedResult() {
-        // 	for (let i = 0; i < NUM_OF.USER_RESULT; i++) {
-        // 		const results = await prisma.studentResult.create({
-        // 			data: {
-        // 				mathematics: faker.number.int({ max: 100 }),
-        // 				position: faker.string.fromCharacters(["1st", "2nd", "3rd", "4th"]),
-        // 				writing: faker.number.int({ max: 100 }),
-        // 				reading: faker.number.int({ max: 100 }),
-        // 				student: { connect: { regNo: students[i].regNo } },
-        // 				school: { connect: { id: schools[0].id } },
-        // 				total: faker.number.int({ max: 100 }),
-        // 				competition: { connect: { id: competitions[1].id } },
-        // 			},
-        // 		});
-        // 	}
-        // }
         console.log("Database has been seeded successfully");
     });
 }
@@ -194,6 +175,4 @@ const handleDropTable = (req, res) => __awaiter(void 0, void 0, void 0, function
     });
 });
 exports.handleDropTable = handleDropTable;
-// seedDb();
-// dropAllTable();
 //# sourceMappingURL=seed.js.map

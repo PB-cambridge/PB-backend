@@ -16,17 +16,11 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const paystack_1 = __importDefault(require("paystack"));
 const env_1 = __importDefault(require("../../env"));
 const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
-// test1();
-// test2();
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const salt = bcrypt_1.default.genSaltSync(10);
     const hashedPassword = yield bcrypt_1.default.hashSync("", salt);
-    // $2b$10$l3oznciq4HwbPHtHuXrbNuR5gNgz01If.nJJxzmomNw1zYZ.xsytC;
     console.log(hashedPassword);
-    // prisma.$queryRawUnsafe("");
 }))();
-/*
- */
 () => __awaiter(void 0, void 0, void 0, function* () {
     const sampleRes = {
         status: true,
@@ -100,7 +94,6 @@ const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
             subaccount: {},
         },
     };
-    // console.log(results);
     const reference = "T795526163218997";
     const response = yield paystack.transaction.verify(reference);
     console.log(response);

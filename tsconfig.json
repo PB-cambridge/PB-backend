@@ -10,6 +10,7 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"declaration": false,
+		"removeComments": true,
 		"allowJs": true,
 		"resolveJsonModule": true
 	},

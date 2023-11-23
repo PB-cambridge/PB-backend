@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerStudentReqSchema = exports.loginReqSchema = exports.emailSchema = exports.phoneNumberSchema = exports.getNumberValidation = exports.getOptionalStringValidation = exports.getStringValidation = exports.getBooleanValidation = exports.dateSchema = void 0;
 const zod_1 = require("zod");
-// custome validation function
 exports.dateSchema = zod_1.z
     .string()
     .refine((value) => !isNaN(Date.parse(value)), {
@@ -49,28 +48,10 @@ exports.phoneNumberSchema = zod_1.z
 exports.emailSchema = zod_1.z
     .string({ required_error: "Email is required" })
     .email({ message: "Provide a valid email" });
-// route Request validators
 exports.loginReqSchema = zod_1.z.object({
     email: exports.emailSchema,
     password: (0, exports.getStringValidation)("password"),
 });
-/*
-  firstName           String
-  lastName            String
-  email               String?
-  address             String
-  phoneNumber         String?
-  schoolId            String
-  level               String
-  scienceOrArt        String
-
-  passport            String
-  whatsappNumber      String?
-  regNo               String          @unique
-  acknowledgementSent Boolean         @default(false)
-  result              StudentResult[]
-  school              School          @relation(fields: [schoolId], references: [id])
-*/
 exports.registerStudentReqSchema = zod_1.z.object({
     firstName: (0, exports.getStringValidation)("firstName"),
     lastName: (0, exports.getStringValidation)("lastName"),
@@ -82,7 +63,6 @@ exports.registerStudentReqSchema = zod_1.z.object({
     }),
     phoneNumber: (0, exports.getStringValidation)("phoneNumber"),
     schoolId: (0, exports.getStringValidation)("schoolId"),
-    // registeredCompetitionId: getStringValidation("registeredCompetitionId"),
     level: zod_1.z.enum(["Junior", "Senior", "Graduated"], {
         invalid_type_error: "Please enter etiher 'Junior', 'Senior' or 'Graduated'",
     }),

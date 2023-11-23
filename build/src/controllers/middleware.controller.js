@@ -28,7 +28,6 @@ const protectedRoute = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         const isValid = zod_1.z.object({ authed: zod_1.z.string() }).safeParse(req.cookies);
         if (!isValid.success)
             throw new AppError_1.default("Not logged in", error_controller_1.resCode.UNAUTHORIZED);
-        // const providedToken = isValid.data.authed.split(" ")?.[1]?.trim();
         const providedToken = isValid.data.authed;
         if (!providedToken)
             throw new AppError_1.default("Invalid API key", error_controller_1.resCode.UNAUTHORIZED);
@@ -42,7 +41,6 @@ const protectedRoute = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         if (!admin)
             throw new AppError_1.default("Invalid auth cookie", error_controller_1.resCode.UNAUTHORIZED);
         res.locals.user = admin;
-        // console.log(admin.email);
         next();
     }
     catch (err) {

@@ -41,7 +41,6 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const { email, password } = safe.data;
-    // authenticate here
     const admin = yield prisma_1.default.admin.findFirst({ where: { email } });
     if (!admin)
         throw new AppError_1.default("Incorrect email", error_controller_1.resCode.UNAUTHORIZED);
@@ -58,7 +57,6 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         ok: true,
         message: "Login successfull",
         data: adminData,
-        // token,
     });
 });
 exports.adminLogin = adminLogin;
@@ -80,7 +78,6 @@ const verifyPaystackPayment = (req, res, next) => __awaiter(void 0, void 0, void
         if (!safe.success)
             throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
         const _a = safe.data, { passport, schoolId, firstName } = _a, others = __rest(_a, ["passport", "schoolId", "firstName"]);
-        // verify payment for the competition using paystack
         const response = yield paystack.transaction.verify("" + reference);
         if (!response.status)
             throw new AppError_1.default(response.message, error_controller_1.resCode.NOT_ACCEPTED, response);
@@ -125,7 +122,6 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const selectedSchool = competion.schools.find((item, i) => item.id == schoolId);
     if (!selectedSchool)
         throw new AppError_1.default("This competion is not hosted for your school", error_controller_1.resCode.NOT_FOUND);
-    //  passport to file
     const registeredStudent = yield prisma_1.default.student.create({
         data: Object.assign(Object.assign({ firstName,
             passport,
@@ -137,7 +133,6 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             },
         },
     });
-    // Add to payment
     const addedPay = yield prisma_1.default.payments.create({
         data: {
             amount: paidAmt,
@@ -146,7 +141,6 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             studentData: JSON.stringify(registeredStudent),
         },
     });
-    // send acknowledgement email
     const acknowledgementMail = (0, helpers_controller_1.generateAcknowledgementSlip)(Object.assign(Object.assign({}, registeredStudent), { competionFee: requiredFee, paidAmount: paidAmt, reference: paymentDetails.reference }));
     try {
         (0, mail_controller_1.sendEmail)(email, acknowledgementMail, "PAYMENT ACKNOWLEDGEMENT");
@@ -172,16 +166,13 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (!safe.success)
         throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
     const { password: rawPassword, oldpassword } = safe.data;
-    // return console.log(res.locals);
     const email = (_d = (_c = res.locals) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.email;
     const oldpasswordHash = (_f = (_e = res.locals) === null || _e === void 0 ? void 0 : _e.user) === null || _f === void 0 ? void 0 : _f.password;
     if (!email || !oldpasswordHash)
         throw new AppError_1.default("Not logged in", error_controller_1.resCode.UNAUTHORIZED);
-    // verify old password
     const verified = bcrypt_1.default.compareSync(oldpassword, oldpasswordHash);
     if (!verified)
         throw new AppError_1.default("Incorrect old password", error_controller_1.resCode.NOT_ACCEPTED);
-    // now change password
     const salt = bcrypt_1.default.genSaltSync(10);
     const password = yield bcrypt_1.default.hashSync(rawPassword, salt);
     const updatedPassword = yield prisma_1.default.admin.update({
