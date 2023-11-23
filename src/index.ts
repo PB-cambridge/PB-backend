@@ -4,15 +4,13 @@ import cookieParser from "cookie-parser";
 import env from "../env";
 
 // swagger api doc
-import swaggerUI from "swagger-ui-express";
 import { adminRoute, authRoute, userRoute } from "./routes";
 import errorController, {
 	tryCatchWapper,
 } from "./controllers/error.controller";
-import swaggerConfig from "./api-doc/swagger-config";
 import { getAllSchools } from "./controllers/school.controller";
 import { getAnnouncements, getEvents } from "./controllers/admin.controller";
-import seedDb, { handleDropTable, handleSeedDB } from "../prisma/seed";
+import { handleDropTable, handleSeedDB } from "../prisma/seed";
 import { protectedRoute } from "./controllers/middleware.controller";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
@@ -37,8 +35,8 @@ app.get("/", (req, res) => {
 });
 
 // API Doc endpoint
-app.use("/api/docs", swaggerUI.serve);
-app.get("/api/docs", swaggerUI.setup(swaggerConfig));
+// app.use("/api/docs", swaggerUI.serve);
+// app.get("/api/docs", swaggerUI.setup(swaggerConfig));
 
 // auth route
 app.use("/api/auth", authRoute);
