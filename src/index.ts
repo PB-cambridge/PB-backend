@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import env from "../env";
 
 // swagger api doc
@@ -12,6 +13,7 @@ import swaggerConfig from "./api-doc/swagger-config";
 import { getAllSchools } from "./controllers/school.controller";
 import { getAnnouncements, getEvents } from "./controllers/admin.controller";
 import seedDb, { handleDropTable, handleSeedDB } from "../prisma/seed";
+import { protectedRoute } from "./controllers/middleware.controller";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
@@ -28,6 +30,7 @@ app.use(
 	})
 );
 app.use(express.json({ limit: "2mb" }));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
 	res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
@@ -44,13 +47,12 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 
 // admin route
-app.use("/api/admin", adminRoute);
+app.use("/api/admin", protectedRoute, adminRoute);
 
 // authenticate secured routes
-// app.use(authenticate);
 
-app.get("/api/db/seed", tryCatchWapper(handleSeedDB));
-app.get("/api/db/drop-table", tryCatchWapper(handleDropTable));
+app.get("/api/db/seed", protectedRoute, tryCatchWapper(handleSeedDB));
+app.get("/api/db/drop-table", protectedRoute, tryCatchWapper(handleDropTable));
 app.get("/api/schools", tryCatchWapper(getAllSchools));
 app.get("/api/events", tryCatchWapper(getEvents));
 app.get("/api/announcements", tryCatchWapper(getAnnouncements));

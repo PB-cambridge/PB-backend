@@ -7,10 +7,11 @@ const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 // test2();
 
 (async () => {
-	// const salt = bcrypt.genSaltSync(10);
-	// const hashedPassword = await bcrypt.hashSync("password", salt);
-	// console.log(hashedPassword);
-	prisma.$queryRawUnsafe("");
+	const salt = bcrypt.genSaltSync(10);
+	const hashedPassword = await bcrypt.hashSync("", salt);
+	// $2b$10$l3oznciq4HwbPHtHuXrbNuR5gNgz01If.nJJxzmomNw1zYZ.xsytC;
+	console.log(hashedPassword);
+	// prisma.$queryRawUnsafe("");
 })();
 /*
  */

@@ -12,17 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const prisma_1 = __importDefault(require("../../prisma"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const paystack_1 = __importDefault(require("paystack"));
 const env_1 = __importDefault(require("../../env"));
 const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
 // test1();
 // test2();
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    // const salt = bcrypt.genSaltSync(10);
-    // const hashedPassword = await bcrypt.hashSync("password", salt);
-    // console.log(hashedPassword);
-    prisma_1.default.$queryRawUnsafe("");
+    const salt = bcrypt_1.default.genSaltSync(10);
+    const hashedPassword = yield bcrypt_1.default.hashSync("", salt);
+    // $2b$10$l3oznciq4HwbPHtHuXrbNuR5gNgz01If.nJJxzmomNw1zYZ.xsytC;
+    console.log(hashedPassword);
+    // prisma.$queryRawUnsafe("");
 }))();
 /*
  */

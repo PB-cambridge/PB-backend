@@ -50,11 +50,15 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         throw new AppError_1.default("Incorrect password", error_controller_1.resCode.UNAUTHORIZED);
     const token = jsonwebtoken_1.default.sign({ id: admin.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 }, env_1.default.HASH_SECRET + "");
     const { password: pass } = admin, adminData = __rest(admin, ["password"]);
+    res.cookie("authed", token, {
+        httpOnly: true,
+        maxAge: 5 * 24 * 60 * 60 * 1000,
+    });
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
         message: "Login successfull",
         data: adminData,
-        token,
+        // token,
     });
 });
 exports.adminLogin = adminLogin;

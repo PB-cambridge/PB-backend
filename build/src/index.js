@@ -37,6 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const env_1 = __importDefault(require("../env"));
 // swagger api doc
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
@@ -46,6 +47,7 @@ const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
 const school_controller_1 = require("./controllers/school.controller");
 const admin_controller_1 = require("./controllers/admin.controller");
 const seed_1 = require("../prisma/seed");
+const middleware_controller_1 = require("./controllers/middleware.controller");
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 const app = (0, express_1.default)();
@@ -57,6 +59,7 @@ app.use((0, cors_1.default)({
     credentials: true,
 }));
 app.use(express_1.default.json({ limit: "2mb" }));
+app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
 });
@@ -68,11 +71,10 @@ app.use("/api/auth", routes_1.authRoute);
 // user route
 app.use("/api/user", routes_1.userRoute);
 // admin route
-app.use("/api/admin", routes_1.adminRoute);
+app.use("/api/admin", middleware_controller_1.protectedRoute, routes_1.adminRoute);
 // authenticate secured routes
-// app.use(authenticate);
-app.get("/api/db/seed", (0, error_controller_1.tryCatchWapper)(seed_1.handleSeedDB));
-app.get("/api/db/drop-table", (0, error_controller_1.tryCatchWapper)(seed_1.handleDropTable));
+app.get("/api/db/seed", middleware_controller_1.protectedRoute, (0, error_controller_1.tryCatchWapper)(seed_1.handleSeedDB));
+app.get("/api/db/drop-table", middleware_controller_1.protectedRoute, (0, error_controller_1.tryCatchWapper)(seed_1.handleDropTable));
 app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
 app.get("/api/events", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getEvents));
 app.get("/api/announcements", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAnnouncements));

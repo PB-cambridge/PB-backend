@@ -53,11 +53,16 @@ export const adminLogin = async (req: Request, res: Response) => {
 
 	const { password: pass, ...adminData } = admin;
 
+	res.cookie("authed", token, {
+		httpOnly: true,
+		maxAge: 5 * 24 * 60 * 60 * 1000,
+	});
+
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Login successfull",
 		data: adminData,
-		token,
+		// token,
 	});
 };
 
