@@ -181,6 +181,7 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const verified = bcrypt_1.default.compareSync(oldpassword, oldpasswordHash);
     if (!verified)
         throw new AppError_1.default("Incorrect old password", error_controller_1.resCode.NOT_ACCEPTED);
+    // now change password
     const salt = bcrypt_1.default.genSaltSync(10);
     const password = yield bcrypt_1.default.hashSync(rawPassword, salt);
     const updatedPassword = yield prisma_1.default.admin.update({
@@ -191,8 +192,7 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         throw new AppError_1.default("Password changed failed", error_controller_1.resCode.INTERNAL_SERVER_ERROR);
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
-        message: "Password changed.",
-        data: {},
+        message: "Password changed",
     });
 });
 exports.changePassword = changePassword;
