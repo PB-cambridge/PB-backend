@@ -1,7 +1,7 @@
 {
     "client": "Thunder Client",
     "collectionName": "PB-Cambridge-api-docs",
-    "dateExported": "2023-11-06T13:11:16.345Z",
+    "dateExported": "2023-12-05T14:46:16.502Z",
     "version": "1.1",
     "folders": [
         {
@@ -90,12 +90,12 @@
             "method": "POST",
             "sortNum": 20000,
             "created": "2023-10-11T14:20:36.431Z",
-            "modified": "2023-10-16T19:56:09.983Z",
+            "modified": "2023-12-05T13:44:31.069Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"email\":\"teatadmin@gmail.com\",\n  \"password\":\"Admin@presh\"\n}",
+                "raw": "{\n  \"email\":\"ceo@admail.com\",\n  \"password\":\"pass@Presh423\"\n  // \"password\":\"pass@Presh423\"\n}",
                 "form": []
             },
             "tests": []
@@ -214,16 +214,16 @@
             "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
             "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
             "name": "Get Students",
-            "url": "/api/admin/students/?page=6",
+            "url": "/api/admin/students/clp3y04gk0003o0b4ydl4w5mr?page=2",
             "method": "GET",
             "sortNum": 110000,
             "created": "2023-10-30T18:12:17.211Z",
-            "modified": "2023-10-31T14:08:10.240Z",
+            "modified": "2023-11-18T11:23:47.063Z",
             "headers": [],
             "params": [
                 {
                     "name": "page",
-                    "value": "6",
+                    "value": "2",
                     "isPath": false
                 }
             ],
@@ -252,7 +252,7 @@
             "method": "GET",
             "sortNum": 130000,
             "created": "2023-11-01T09:20:47.524Z",
-            "modified": "2023-11-01T09:21:33.309Z",
+            "modified": "2023-11-23T13:38:42.033Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -262,11 +262,11 @@
             "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
             "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
             "name": "Get Competition Dteails",
-            "url": "/api/admin/competition/clocu34uy0005o0k82nqqlkkf",
+            "url": "/api/admin/competition/clongq5dx0000lc0stppyx2ku",
             "method": "GET",
             "sortNum": 140000,
             "created": "2023-11-01T09:27:48.943Z",
-            "modified": "2023-11-01T09:42:13.766Z",
+            "modified": "2023-11-13T12:15:23.737Z",
             "headers": [],
             "params": [],
             "tests": []
@@ -327,13 +327,48 @@
             "method": "POST",
             "sortNum": 170000,
             "created": "2023-11-06T12:43:25.783Z",
-            "modified": "2023-11-06T13:01:22.073Z",
+            "modified": "2023-12-05T14:45:07.572Z",
             "headers": [],
             "params": [],
             "body": {
-                "type": "json",
-                "raw": "{\n  \"title\":\"3 ore more\",\n  \"description\":\"3 ore more\",\n  \"location\":\"Aba\",\n  \"bannerImage\":\"Aba\",\n  \"startTime\":\"12/12/23\",\n  \"endTime\":\"12/13/23\"\n}",
-                "form": []
+                "type": "formdata",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "title",
+                        "value": "testing"
+                    },
+                    {
+                        "name": "description",
+                        "value": "Dive into a global perspective at Unleashing benefits of being an international student. Join us for a unique exploration of world-class education, global career pathways, and the enriching experiences that come with being an international student. Connect with accomplished alumni, gather practical tips, and reshape your academic journey. This event is your passport to unlocking a world of possibilities. Seize the opportunity to redefine your educational experience. Join us for an event that promises inspiration and insights—don't miss out!"
+                    },
+                    {
+                        "name": "location",
+                        "value": "Rockview Hotel, plot CP/2-CP/5 Government Station layout, Owerri, Imo state"
+                    },
+                    {
+                        "name": "organisedBy",
+                        "value": "Pbcambridge Consult"
+                    },
+                    {
+                        "name": "type",
+                        "value": "Seminar"
+                    },
+                    {
+                        "name": "startTime",
+                        "value": "12/10/2023 16:00:00"
+                    },
+                    {
+                        "name": "endTime",
+                        "value": "12/13/23"
+                    }
+                ],
+                "files": [
+                    {
+                        "name": "bannerImage",
+                        "value": "c:\\Users\\Kingchi\\Pictures\\seminar-flyer.webp"
+                    }
+                ]
             },
             "tests": []
         },
@@ -355,11 +390,72 @@
                 "form": []
             },
             "tests": []
+        },
+        {
+            "_id": "e4029194-6a39-4de3-b306-0951bceed41e",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Update competition active",
+            "url": "/api/admin/competition/clp3y04gk0003o0b4ydl4w5mr/true",
+            "method": "LOCK",
+            "sortNum": 190000,
+            "created": "2023-11-13T10:15:40.295Z",
+            "modified": "2023-11-18T11:22:00.948Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "9093688e-14b7-4cfc-a2ba-15371d7b107a",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "803d1728-8a34-4ce4-8639-ced6d125c99f",
+            "name": "Change password",
+            "url": "/api/admin/password",
+            "method": "PUT",
+            "sortNum": 200000,
+            "created": "2023-11-23T14:06:04.569Z",
+            "modified": "2023-11-23T14:32:32.966Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"oldpassword\":\"pass@Presh43\",\n  \"password\":\"pass@Presh423\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "ad360f20-ef4e-40c4-9329-e543ed1ef0fb",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "8f30b18f-a0ca-42a9-b44d-8c7dadef9842",
+            "name": "Check if loggin",
+            "url": "/api/auth/check-auth",
+            "method": "GET",
+            "sortNum": 210000,
+            "created": "2023-12-02T10:26:33.660Z",
+            "modified": "2023-12-02T10:26:49.456Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "cc4d2d50-a041-41c9-b1a4-87557579ec5e",
+            "colId": "3d1ac20c-9759-432e-87ba-fbb93d1856d9",
+            "containerId": "8f30b18f-a0ca-42a9-b44d-8c7dadef9842",
+            "name": "Log out",
+            "url": "/api/auth/logout",
+            "method": "GET",
+            "sortNum": 220000,
+            "created": "2023-12-02T10:30:21.192Z",
+            "modified": "2023-12-02T10:30:33.221Z",
+            "headers": [],
+            "params": [],
+            "tests": []
         }
     ],
     "settings": {
         "options": {
-            "baseUrl": "http://127.0.0.1:50"
+            "baseUrl": "https://pbcapi.cyclic.app"
         }
     }
 }
