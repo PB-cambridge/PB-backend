@@ -16,7 +16,6 @@ adminRoute.get("/", (req, res) => {
         data: {},
     });
 });
-adminRoute.post("/create-event", (0, express_formidable_1.default)(), (0, error_controller_1.tryCatchWapper)(admin_controller_1.createEvent));
 adminRoute.post("/create-announcement", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createAnnouncement));
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
@@ -29,5 +28,6 @@ adminRoute.lock("/competition/:id/:active", (0, error_controller_1.tryCatchWappe
 adminRoute.get("/results/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getResultsByCompetitionSchool));
 adminRoute.get("/results-template/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.downloadResultTemp));
 adminRoute.put("/password", (0, error_controller_1.tryCatchWapper)(auth_controller_1.changePassword));
+adminRoute.use((0, express_formidable_1.default)()).post("/create-event", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createEvent));
 exports.default = adminRoute;
 //# sourceMappingURL=admin.route.js.map
