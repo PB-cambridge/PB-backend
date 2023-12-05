@@ -26,7 +26,7 @@ import { File } from "formidable";
 export const createEvent = async (req: Request, res: Response) => {
 	// console.log(fd.get("title"));
 	// req.body.forEach((v, k) => console.log({k:v}));
-	console.log((req.files?.bannerImage as File)?.filepath);
+	console.log((req.files?.bannerImage as any)?.filepath);
 
 	// return
 
