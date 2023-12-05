@@ -20,14 +20,12 @@ import {
 import prisma from "./../../prisma/index";
 import { faker } from "@faker-js/faker";
 import { UploadApiResponse } from "cloudinary";
-import { File } from "formidable";
 
 // Example usage
 export const createEvent = async (req: Request, res: Response) => {
 	// console.log(fd.get("title"));
 	// req.body.forEach((v, k) => console.log({k:v}));
-	console.log((req.files?.bannerImage as any)?.filepath);
-
+	console.log((req.files?.bannerImage as any)?.path);
 	// return
 
 	const safeInput = z

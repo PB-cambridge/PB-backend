@@ -35,7 +35,7 @@ const index_1 = __importDefault(require("./../../prisma/index"));
 const faker_1 = require("@faker-js/faker");
 const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    console.log((_b = (_a = req.files) === null || _a === void 0 ? void 0 : _a.bannerImage) === null || _b === void 0 ? void 0 : _b.path);
+    console.log((_b = (_a = req.files) === null || _a === void 0 ? void 0 : _a.bannerImage) === null || _b === void 0 ? void 0 : _b.filepath);
     const safeInput = zod_1.z
         .object({
         title: (0, reqSchemas_1.getStringValidation)("title"),
