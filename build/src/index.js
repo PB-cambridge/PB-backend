@@ -39,14 +39,13 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const env_1 = __importDefault(require("../env"));
-const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const routes_1 = require("./routes");
 const error_controller_1 = __importStar(require("./controllers/error.controller"));
-const swagger_config_1 = __importDefault(require("./api-doc/swagger-config"));
 const school_controller_1 = require("./controllers/school.controller");
 const admin_controller_1 = require("./controllers/admin.controller");
 const seed_1 = require("../prisma/seed");
 const middleware_controller_1 = require("./controllers/middleware.controller");
+const express_formidable_1 = __importDefault(require("express-formidable"));
 const app = (0, express_1.default)();
 const PORT = +env_1.default.PORT || 3000;
 app.use((0, cors_1.default)({
@@ -55,11 +54,11 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json({ limit: "2mb" }));
 app.use((0, cookie_parser_1.default)());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, express_formidable_1.default)());
 app.get("/", (req, res) => {
     res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
 });
-app.use("/api/docs", swagger_ui_express_1.default.serve);
-app.get("/api/docs", swagger_ui_express_1.default.setup(swagger_config_1.default));
 app.use("/api/auth", routes_1.authRoute);
 app.use("/api/user", routes_1.userRoute);
 app.use("/api/admin", middleware_controller_1.protectedRoute, routes_1.adminRoute);

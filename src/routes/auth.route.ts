@@ -7,6 +7,8 @@ import {
 	sendOTP,
 	adminLogin,
 	verifyPaystackPayment,
+	checkAuth,
+	AdminLogout,
 } from "../controllers/auth.controller";
 
 const authRoute = Router();
@@ -20,5 +22,9 @@ authRoute.post(
 );
 
 authRoute.post("/send-opt", tryCatchWapper(sendOTP));
+
+authRoute.get("/check-auth", tryCatchWapper(checkAuth));
+
+authRoute.get("/logout", tryCatchWapper(AdminLogout));
 
 export default authRoute;

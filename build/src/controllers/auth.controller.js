@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOTP = exports.changePassword = exports.registerUser = exports.verifyPaystackPayment = exports.adminLogin = void 0;
+exports.checkAuth = exports.AdminLogout = exports.sendOTP = exports.changePassword = exports.registerUser = exports.verifyPaystackPayment = exports.adminLogin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const error_controller_1 = require("./error.controller");
@@ -35,6 +35,7 @@ const zod_1 = require("zod");
 const helpers_controller_1 = require("./helpers.controller");
 const paystack_1 = __importDefault(require("paystack"));
 const mail_controller_1 = require("./mail.controller");
+const middleware_controller_1 = require("./middleware.controller");
 const paystack = (0, paystack_1.default)(env_1.default.PAYSTACK_SECRET_KEY);
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = reqSchemas_1.loginReqSchema.safeParse(req.body);
@@ -195,4 +196,51 @@ const sendOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.sendOTP = sendOTP;
+const AdminLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    return res
+        .cookie("authed", "token", {
+        httpOnly: true,
+        maxAge: 5,
+    })
+        .status(error_controller_1.resCode.ACCEPTED)
+        .json({
+        ok: true,
+        message: "Logged out",
+        data: {},
+    });
+});
+exports.AdminLogout = AdminLogout;
+const checkAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const isValid = zod_1.z.object({ authed: zod_1.z.string() }).safeParse(req.cookies);
+    if (!isValid.success)
+        throw new AppError_1.default("Not authenticated", error_controller_1.resCode.UNAUTHORIZED);
+    const providedToken = isValid.data.authed;
+    if (!providedToken)
+        throw new AppError_1.default("Invalid API key", error_controller_1.resCode.UNAUTHORIZED);
+    const veriedToken = jsonwebtoken_1.default.verify(providedToken, env_1.default.HASH_SECRET);
+    if (!(0, middleware_controller_1.isValidToken)(veriedToken))
+        throw new AppError_1.default("Invalid API key", error_controller_1.resCode.UNAUTHORIZED);
+    const { id, exp } = veriedToken;
+    if (exp && (0, middleware_controller_1.hasExpired)(exp))
+        throw new AppError_1.default("API key has expired", error_controller_1.resCode.UNAUTHORIZED);
+    const admin = yield prisma_1.default.admin.findFirst({ where: { id } });
+    if (!admin)
+        throw new AppError_1.default("Invalid auth cookie", error_controller_1.resCode.UNAUTHORIZED);
+    res.locals.user = admin;
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Authenticated",
+    });
+});
+exports.checkAuth = checkAuth;
+const obj = {
+    "title": "3 ore more",
+    "description": "3 ore more",
+    "location": "Aba",
+    "bannerImage": "Aba",
+    "organisedBy": "Precious",
+    "type": "Seminar",
+    "startTime": "12/12/23",
+    "endTime": "12/13/23",
+};
 //# sourceMappingURL=auth.controller.js.map

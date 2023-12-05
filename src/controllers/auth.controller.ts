@@ -22,6 +22,7 @@ import {
 import Paystack from "paystack";
 import { UploadApiResponse } from "cloudinary";
 import { sendEmail } from "./mail.controller";
+import { hasExpired, isValidToken } from "./middleware.controller";
 
 const paystack = Paystack(env.PAYSTACK_SECRET_KEY);
 
@@ -307,4 +308,64 @@ export const sendOTP = async (req: Request, res: Response) => {
 		message: "Otp send successfully.",
 		data: {},
 	});
+};
+
+export const AdminLogout = async (req: Request, res: Response) => {
+	return res
+		.cookie("authed", "token", {
+			httpOnly: true,
+			maxAge: 5,
+		})
+		.status(resCode.ACCEPTED)
+		.json(<SuccessResponse<any>>{
+			ok: true,
+			message: "Logged out",
+			data: {},
+		});
+};
+
+export const checkAuth = async (req: Request, res: Response) => {
+	const isValid = z.object({ authed: z.string() }).safeParse(req.cookies);
+
+	if (!isValid.success)
+		throw new AppError("Not authenticated", resCode.UNAUTHORIZED);
+
+	// const providedToken = isValid.data.authed.split(" ")?.[1]?.trim();
+	const providedToken = isValid.data.authed;
+
+	if (!providedToken)
+		throw new AppError("Invalid API key", resCode.UNAUTHORIZED);
+
+	const veriedToken: unknown = jwt.verify(providedToken, env.HASH_SECRET);
+
+	if (!isValidToken(veriedToken))
+		throw new AppError("Invalid API key", resCode.UNAUTHORIZED);
+
+	const { id, exp } = veriedToken;
+
+	if (exp && hasExpired(exp))
+		throw new AppError("API key has expired", resCode.UNAUTHORIZED);
+
+	const admin = await prisma.admin.findFirst({ where: { id } });
+
+	if (!admin) throw new AppError("Invalid auth cookie", resCode.UNAUTHORIZED);
+
+	res.locals.user = admin;
+	// console.log(admin.email);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Authenticated",
+	});
+};
+
+const obj = {
+	"title": "3 ore more",
+	"description": "3 ore more",
+	"location": "Aba",
+	"bannerImage": "Aba",
+	"organisedBy": "Precious",
+	"type": "Seminar",
+	"startTime": "12/12/23",
+	"endTime": "12/13/23",
 };

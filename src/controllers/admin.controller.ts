@@ -14,23 +14,40 @@ import xlsx from "xlsx";
 import {
 	findIndexContainingString,
 	isValidBase64,
+	uploadImage,
 	validateDateRange,
 } from "./helpers.controller";
 import prisma from "./../../prisma/index";
 import { faker } from "@faker-js/faker";
+import { UploadApiResponse } from "cloudinary";
+import { File } from "formidable";
 
 // Example usage
 export const createEvent = async (req: Request, res: Response) => {
+	// console.log(fd.get("title"));
+	// req.body.forEach((v, k) => console.log({k:v}));
+	console.log((req.files?.bannerImage as File)?.filepath);
+
+	// return
+
 	const safeInput = z
 		.object({
 			title: getStringValidation("title"),
 			description: getStringValidation("description"),
 			location: getStringValidation("location"),
 			bannerImage: getStringValidation("bannerImage"),
+			type: getStringValidation("type"),
+			organisedBy: getStringValidation("organisedBy"),
 			startTime: dateSchema,
 			endTime: dateSchema,
 		})
 		.safeParse(req.body);
+
+	const safeImg = z
+		.object({
+			bannerImage: z.custom<File>(),
+		})
+		.safeParse(req.files);
 
 	if (!safeInput.success)
 		throw new AppError(
@@ -39,7 +56,29 @@ export const createEvent = async (req: Request, res: Response) => {
 			safeInput.error
 		);
 
-	const { bannerImage: bi, startTime, endTime, ...others } = safeInput.data;
+	if (!safeImg.success)
+		throw new AppError(
+			safeImg.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safeImg.error
+		);
+
+	const { bannerImage: imgFile } = safeImg.data;
+
+	// console.log();
+
+	const { startTime, endTime, bannerImage: bi, ...others } = safeInput.data;
+	const uploadImageRes = await uploadImage(imgFile.toString());
+	if (uploadImageRes.error)
+		throw new AppError(
+			"An error Occoured",
+			resCode.BAD_GATEWAY,
+			uploadImageRes.error
+		);
+
+	const bannerImage = (uploadImageRes as UploadApiResponse).url;
+
+	console.log(bannerImage);
 
 	if (!validateDateRange(startTime, endTime))
 		throw new AppError(

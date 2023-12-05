@@ -36,6 +36,7 @@ async function dropAllTable() {
 
 export default async function seedDb() {
 	// const schools = await seedSchool();
+	await seedAdmin();
 	const competitions = await seedCompetition();
 	await seedEvent();
 	await seedAnnouncements();
@@ -43,7 +44,16 @@ export default async function seedDb() {
 
 	// await seedResult();
 
-	// async function seedEvent() {}
+	async function seedAdmin() {
+		await prisma.admin.create({
+			data: {
+				email: "ceo@admail.com",
+				password:
+					"$2b$10$l3oznciq4HwbPHtHuXrbNuR5gNgz01If.nJJxzmomNw1zYZ.xsytC",
+				photo: faker.internet.avatar(),
+			},
+		});
+	}
 
 	async function seedAnnouncements() {
 		const events = [];
@@ -88,10 +98,20 @@ export default async function seedDb() {
 				data: {
 					title: faker.internet.displayName(),
 					bannerImage: faker.internet.avatar(),
+
 					startTime: faker.date.future(),
 					endTime: faker.date.future(),
 					description: faker.lorem.sentence(),
 					location: faker.location.secondaryAddress(),
+					type: ["Seminar", "Examination", "Result", "Tutorials"][
+						Math.floor(Math.random() * 4)
+					],
+					organisedBy: [
+						"Pbcambrige",
+						"School of arts",
+						"UNN school",
+						"Precious",
+					][Math.floor(Math.random() * 4)],
 				},
 			});
 			events.push(event);
@@ -124,7 +144,11 @@ export default async function seedDb() {
 			const user = await prisma.student.create({
 				data: {
 					firstName: faker.person.firstName(),
-					email: faker.internet.email(),
+					email: faker.internet.email({
+						provider: "gmail.com",
+						firstName: faker.person.firstName(),
+						lastName: faker.person.lastName(),
+					}),
 					lastName: faker.person.lastName(),
 					address: faker.location.streetAddress(),
 					school: { connect: { id: randomSchoool.id } },

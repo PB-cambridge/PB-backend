@@ -44,10 +44,22 @@ function dropAllTable() {
 }
 function seedDb() {
     return __awaiter(this, void 0, void 0, function* () {
+        yield seedAdmin();
         const competitions = yield seedCompetition();
         yield seedEvent();
         yield seedAnnouncements();
         const students = yield seedStudent();
+        function seedAdmin() {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield index_1.default.admin.create({
+                    data: {
+                        email: "ceo@admail.com",
+                        password: "$2b$10$l3oznciq4HwbPHtHuXrbNuR5gNgz01If.nJJxzmomNw1zYZ.xsytC",
+                        photo: faker_1.faker.internet.avatar(),
+                    },
+                });
+            });
+        }
         function seedAnnouncements() {
             return __awaiter(this, void 0, void 0, function* () {
                 const events = [];
@@ -98,6 +110,13 @@ function seedDb() {
                             endTime: faker_1.faker.date.future(),
                             description: faker_1.faker.lorem.sentence(),
                             location: faker_1.faker.location.secondaryAddress(),
+                            type: ["Seminar", "Examination", "Result", "Tutorials"][Math.floor(Math.random() * 4)],
+                            organisedBy: [
+                                "Pbcambrige",
+                                "School of arts",
+                                "UNN school",
+                                "Precious",
+                            ][Math.floor(Math.random() * 4)],
                         },
                     });
                     events.push(event);
@@ -129,7 +148,11 @@ function seedDb() {
                     const user = yield index_1.default.student.create({
                         data: {
                             firstName: faker_1.faker.person.firstName(),
-                            email: faker_1.faker.internet.email(),
+                            email: faker_1.faker.internet.email({
+                                provider: "gmail.com",
+                                firstName: faker_1.faker.person.firstName(),
+                                lastName: faker_1.faker.person.lastName(),
+                            }),
                             lastName: faker_1.faker.person.lastName(),
                             address: faker_1.faker.location.streetAddress(),
                             school: { connect: { id: randomSchoool.id } },

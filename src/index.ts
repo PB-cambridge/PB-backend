@@ -12,6 +12,7 @@ import { getAllSchools } from "./controllers/school.controller";
 import { getAnnouncements, getEvents } from "./controllers/admin.controller";
 import { handleDropTable, handleSeedDB } from "../prisma/seed";
 import { protectedRoute } from "./controllers/middleware.controller";
+import formidableMiddleware from "express-formidable";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
@@ -29,6 +30,8 @@ app.use(
 );
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(formidableMiddleware());
 
 app.get("/", (req, res) => {
 	res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
