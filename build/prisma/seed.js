@@ -105,7 +105,7 @@ function seedDb() {
                     const event = yield index_1.default.event.create({
                         data: {
                             title: faker_1.faker.internet.displayName(),
-                            bannerImage: faker_1.faker.internet.avatar(),
+                            bannerImage: faker_1.faker.image.urlPlaceholder(),
                             startTime: faker_1.faker.date.future(),
                             endTime: faker_1.faker.date.future(),
                             description: faker_1.faker.lorem.sentence(),

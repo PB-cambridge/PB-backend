@@ -17,6 +17,7 @@ import {
 	uploadResultFile,
 } from "../controllers/admin.controller";
 import { changePassword } from "../controllers/auth.controller";
+import formidableMiddleware from "express-formidable";
 
 const adminRoute = Router();
 
@@ -27,8 +28,6 @@ adminRoute.get("/", (req: Request, res: Response) => {
 		data: {},
 	});
 });
-
-adminRoute.post("/create-event", tryCatchWapper(createEvent));
 
 adminRoute.post("/create-announcement", tryCatchWapper(createAnnouncement));
 
@@ -62,5 +61,11 @@ adminRoute.get(
 );
 
 adminRoute.put("/password", tryCatchWapper(changePassword));
+
+adminRoute.use(formidableMiddleware()).post(
+	"/create-event",
+
+	tryCatchWapper(createEvent)
+);
 
 export default adminRoute;

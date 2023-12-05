@@ -225,7 +225,7 @@ const checkAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         throw new AppError_1.default("API key has expired", error_controller_1.resCode.UNAUTHORIZED);
     const admin = yield prisma_1.default.admin.findFirst({ where: { id } });
     if (!admin)
-        throw new AppError_1.default("Invalid auth cookie", error_controller_1.resCode.UNAUTHORIZED);
+        throw new AppError_1.default("Not an admin", error_controller_1.resCode.UNAUTHORIZED);
     res.locals.user = admin;
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,
@@ -234,13 +234,13 @@ const checkAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.checkAuth = checkAuth;
 const obj = {
-    "title": "3 ore more",
-    "description": "3 ore more",
-    "location": "Aba",
-    "bannerImage": "Aba",
-    "organisedBy": "Precious",
-    "type": "Seminar",
-    "startTime": "12/12/23",
-    "endTime": "12/13/23",
+    title: "3 ore more",
+    description: "3 ore more",
+    location: "Aba",
+    bannerImage: "Aba",
+    organisedBy: "Precious",
+    type: "Seminar",
+    startTime: "12/12/23",
+    endTime: "12/13/23",
 };
 //# sourceMappingURL=auth.controller.js.map

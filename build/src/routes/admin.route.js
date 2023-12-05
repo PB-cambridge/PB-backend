@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const error_controller_1 = require("../controllers/error.controller");
 const admin_controller_1 = require("../controllers/admin.controller");
 const auth_controller_1 = require("../controllers/auth.controller");
+const express_formidable_1 = __importDefault(require("express-formidable"));
 const adminRoute = (0, express_1.Router)();
 adminRoute.get("/", (req, res) => {
     return res.status(error_controller_1.resCode.ACCEPTED).json({
@@ -12,7 +16,7 @@ adminRoute.get("/", (req, res) => {
         data: {},
     });
 });
-adminRoute.post("/create-event", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createEvent));
+adminRoute.post("/create-event", (0, express_formidable_1.default)(), (0, error_controller_1.tryCatchWapper)(admin_controller_1.createEvent));
 adminRoute.post("/create-announcement", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createAnnouncement));
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));

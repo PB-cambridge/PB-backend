@@ -25,7 +25,7 @@ import { UploadApiResponse } from "cloudinary";
 export const createEvent = async (req: Request, res: Response) => {
 	// console.log(fd.get("title"));
 	// req.body.forEach((v, k) => console.log({k:v}));
-	console.log((req.files?.bannerImage as any)?.path);
+	// console.log((req.files?.bannerImage as any)?.path);
 	// return
 
 	const safeInput = z
@@ -33,17 +33,17 @@ export const createEvent = async (req: Request, res: Response) => {
 			title: getStringValidation("title"),
 			description: getStringValidation("description"),
 			location: getStringValidation("location"),
-			bannerImage: getStringValidation("bannerImage"),
+			// bannerImage: getStringValidation("bannerImage"),
 			type: getStringValidation("type"),
 			organisedBy: getStringValidation("organisedBy"),
 			startTime: dateSchema,
 			endTime: dateSchema,
 		})
-		.safeParse(req.body);
+		.safeParse(req.fields);
 
 	const safeImg = z
 		.object({
-			bannerImage: z.custom<File>(),
+			bannerImage: z.custom<any>(),
 		})
 		.safeParse(req.files);
 
@@ -65,8 +65,8 @@ export const createEvent = async (req: Request, res: Response) => {
 
 	// console.log();
 
-	const { startTime, endTime, bannerImage: bi, ...others } = safeInput.data;
-	const uploadImageRes = await uploadImage(imgFile.toString());
+	const { startTime, endTime, ...others } = safeInput.data;
+	const uploadImageRes = await uploadImage(imgFile.path);
 	if (uploadImageRes.error)
 		throw new AppError(
 			"An error Occoured",
@@ -76,8 +76,7 @@ export const createEvent = async (req: Request, res: Response) => {
 
 	const bannerImage = (uploadImageRes as UploadApiResponse).url;
 
-	console.log(bannerImage);
-
+	// console.log(bannerImage);
 	if (!validateDateRange(startTime, endTime))
 		throw new AppError(
 			"endDate must be later than startDate",
@@ -88,7 +87,7 @@ export const createEvent = async (req: Request, res: Response) => {
 		...others,
 		startTime,
 		endTime,
-		bannerImage: faker.image.urlPicsumPhotos(),
+		bannerImage,
 	};
 
 	const event = await prisma.event.create({

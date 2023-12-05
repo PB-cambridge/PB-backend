@@ -97,7 +97,7 @@ export default async function seedDb() {
 			const event = await prisma.event.create({
 				data: {
 					title: faker.internet.displayName(),
-					bannerImage: faker.internet.avatar(),
+					bannerImage: faker.image.urlPlaceholder(),
 
 					startTime: faker.date.future(),
 					endTime: faker.date.future(),

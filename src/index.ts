@@ -28,10 +28,9 @@ app.use(
 		credentials: true,
 	})
 );
-app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use(formidableMiddleware());
+app.use(express.json({ limit: "2mb" }));
 
 app.get("/", (req, res) => {
 	res.status(300).json({ msg: "welcome to the PB-Cambridge api" });

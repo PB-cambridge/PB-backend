@@ -32,22 +32,18 @@ const fs_1 = __importDefault(require("fs"));
 const xlsx_1 = __importDefault(require("xlsx"));
 const helpers_controller_1 = require("./helpers.controller");
 const index_1 = __importDefault(require("./../../prisma/index"));
-const faker_1 = require("@faker-js/faker");
 const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    console.log((_b = (_a = req.files) === null || _a === void 0 ? void 0 : _a.bannerImage) === null || _b === void 0 ? void 0 : _b.filepath);
     const safeInput = zod_1.z
         .object({
         title: (0, reqSchemas_1.getStringValidation)("title"),
         description: (0, reqSchemas_1.getStringValidation)("description"),
         location: (0, reqSchemas_1.getStringValidation)("location"),
-        bannerImage: (0, reqSchemas_1.getStringValidation)("bannerImage"),
         type: (0, reqSchemas_1.getStringValidation)("type"),
         organisedBy: (0, reqSchemas_1.getStringValidation)("organisedBy"),
         startTime: reqSchemas_1.dateSchema,
         endTime: reqSchemas_1.dateSchema,
     })
-        .safeParse(req.body);
+        .safeParse(req.fields);
     const safeImg = zod_1.z
         .object({
         bannerImage: zod_1.z.custom(),
@@ -58,16 +54,16 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (!safeImg.success)
         throw new AppError_1.default(safeImg.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeImg.error);
     const { bannerImage: imgFile } = safeImg.data;
-    const _c = safeInput.data, { startTime, endTime, bannerImage: bi } = _c, others = __rest(_c, ["startTime", "endTime", "bannerImage"]);
-    const uploadImageRes = yield (0, helpers_controller_1.uploadImage)(imgFile.toString());
+    const _a = safeInput.data, { startTime, endTime } = _a, others = __rest(_a, ["startTime", "endTime"]);
+    const uploadImageRes = yield (0, helpers_controller_1.uploadImage)(imgFile.path);
     if (uploadImageRes.error)
         throw new AppError_1.default("An error Occoured", error_controller_1.resCode.BAD_GATEWAY, uploadImageRes.error);
     const bannerImage = uploadImageRes.url;
-    console.log(bannerImage);
     if (!(0, helpers_controller_1.validateDateRange)(startTime, endTime))
         throw new AppError_1.default("endDate must be later than startDate", error_controller_1.resCode.BAD_REQUEST);
     const data = Object.assign(Object.assign({}, others), { startTime,
-        endTime, bannerImage: faker_1.faker.image.urlPicsumPhotos() });
+        endTime,
+        bannerImage });
     const event = yield index_1.default.event.create({
         data,
     });
@@ -121,7 +117,7 @@ const createCompetion = (req, res) => __awaiter(void 0, void 0, void 0, function
         .safeParse(req.body);
     if (!safeInput.success)
         throw new AppError_1.default(safeInput.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safeInput.error);
-    const _d = safeInput.data, { schoolsId, startDate, endDate } = _d, others = __rest(_d, ["schoolsId", "startDate", "endDate"]);
+    const _b = safeInput.data, { schoolsId, startDate, endDate } = _b, others = __rest(_b, ["schoolsId", "startDate", "endDate"]);
     if (!(0, helpers_controller_1.validateDateRange)(startDate, endDate))
         throw new AppError_1.default("endDate must be later than startDate", error_controller_1.resCode.BAD_REQUEST);
     const competition = yield index_1.default.competition.create({

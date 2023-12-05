@@ -348,7 +348,7 @@ export const checkAuth = async (req: Request, res: Response) => {
 
 	const admin = await prisma.admin.findFirst({ where: { id } });
 
-	if (!admin) throw new AppError("Invalid auth cookie", resCode.UNAUTHORIZED);
+	if (!admin) throw new AppError("Not an admin", resCode.UNAUTHORIZED);
 
 	res.locals.user = admin;
 	// console.log(admin.email);
@@ -360,12 +360,12 @@ export const checkAuth = async (req: Request, res: Response) => {
 };
 
 const obj = {
-	"title": "3 ore more",
-	"description": "3 ore more",
-	"location": "Aba",
-	"bannerImage": "Aba",
-	"organisedBy": "Precious",
-	"type": "Seminar",
-	"startTime": "12/12/23",
-	"endTime": "12/13/23",
+	title: "3 ore more",
+	description: "3 ore more",
+	location: "Aba",
+	bannerImage: "Aba",
+	organisedBy: "Precious",
+	type: "Seminar",
+	startTime: "12/12/23",
+	endTime: "12/13/23",
 };

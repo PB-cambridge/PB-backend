@@ -45,17 +45,15 @@ const school_controller_1 = require("./controllers/school.controller");
 const admin_controller_1 = require("./controllers/admin.controller");
 const seed_1 = require("../prisma/seed");
 const middleware_controller_1 = require("./controllers/middleware.controller");
-const express_formidable_1 = __importDefault(require("express-formidable"));
 const app = (0, express_1.default)();
 const PORT = +env_1.default.PORT || 3000;
 app.use((0, cors_1.default)({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
 }));
-app.use(express_1.default.json({ limit: "2mb" }));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, express_formidable_1.default)());
+app.use(express_1.default.json({ limit: "2mb" }));
 app.get("/", (req, res) => {
     res.status(300).json({ msg: "welcome to the PB-Cambridge api" });
 });
