@@ -13,6 +13,7 @@ import {
 	getResultsByCompetitionSchool,
 	getStudentDetails,
 	getStudents,
+	removeAnnouncement,
 	toggleCompetitionActive,
 	uploadResultFile,
 } from "../controllers/admin.controller";
@@ -30,6 +31,8 @@ adminRoute.get("/", (req: Request, res: Response) => {
 });
 
 adminRoute.post("/create-announcement", tryCatchWapper(createAnnouncement));
+
+adminRoute.lock("/announcement/:id", tryCatchWapper(removeAnnouncement));
 
 adminRoute.post("/create-competition", tryCatchWapper(createCompetion));
 

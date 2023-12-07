@@ -48,7 +48,7 @@ const middleware_controller_1 = require("./controllers/middleware.controller");
 const app = (0, express_1.default)();
 const PORT = +env_1.default.PORT || 3000;
 app.use((0, cors_1.default)({
-    origin: process.env.CORS_ORIGIN,
+    origin: env_1.default.CORS_ORIGIN.split(","),
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());

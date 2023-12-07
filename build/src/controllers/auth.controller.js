@@ -53,6 +53,8 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     res.cookie("authed", token, {
         httpOnly: true,
         maxAge: 5 * 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
     });
     return res.status(error_controller_1.resCode.ACCEPTED).json({
         ok: true,

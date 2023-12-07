@@ -17,6 +17,7 @@ adminRoute.get("/", (req, res) => {
     });
 });
 adminRoute.post("/create-announcement", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createAnnouncement));
+adminRoute.lock("/announcement/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.removeAnnouncement));
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
 adminRoute.post("/update-results", (0, error_controller_1.tryCatchWapper)(admin_controller_1.uploadResultFile));
 adminRoute.get("/competitions", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAllCompetions));

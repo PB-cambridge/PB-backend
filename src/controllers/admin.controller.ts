@@ -402,6 +402,34 @@ export const getAnnouncements = async (req: Request, res: Response) => {
 	});
 };
 
+export const removeAnnouncement = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			id: getStringValidation("id"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+	const id = +safe.data.id;
+
+	const removed = await prisma.announcements.update({
+		where: { id },
+		data: { ended: true },
+	});
+
+	if (!removed) throw new AppError("Not found", resCode.NOT_FOUND);
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Announcement removed",
+	});
+};
+
 export const getEvents = async (req: Request, res: Response) => {
 	const event = await prisma.event.findMany({});
 
