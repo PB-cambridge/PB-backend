@@ -317,6 +317,8 @@ export const AdminLogout = async (req: Request, res: Response) => {
 		.cookie("authed", "token", {
 			httpOnly: true,
 			maxAge: 5,
+			sameSite: "none",
+			secure: true,
 		})
 		.status(resCode.ACCEPTED)
 		.json(<SuccessResponse<any>>{
