@@ -203,6 +203,8 @@ const AdminLogout = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         .cookie("authed", "token", {
         httpOnly: true,
         maxAge: 5,
+        sameSite: "none",
+        secure: true,
     })
         .status(error_controller_1.resCode.ACCEPTED)
         .json({
