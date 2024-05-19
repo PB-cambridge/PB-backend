@@ -51,8 +51,8 @@ app.use("/api/admin", protectedRoute, adminRoute);
 
 // authenticate secured routes
 
-app.get("/api/db/seed", protectedRoute, tryCatchWapper(handleSeedDB));
-app.get("/api/db/drop-table", protectedRoute, tryCatchWapper(handleDropTable));
+// app.get("/api/db/seed", protectedRoute, tryCatchWapper(handleSeedDB));
+// app.get("/api/db/drop-table", protectedRoute, tryCatchWapper(handleDropTable));
 app.get("/api/schools", tryCatchWapper(getAllSchools));
 app.get("/api/events", tryCatchWapper(getEvents));
 app.get("/api/announcements", tryCatchWapper(getAnnouncements));
