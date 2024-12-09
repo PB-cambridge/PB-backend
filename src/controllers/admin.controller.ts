@@ -23,11 +23,6 @@ import { UploadApiResponse } from "cloudinary";
 
 // Example usage
 export const createEvent = async (req: Request, res: Response) => {
-	// console.log(fd.get("title"));
-	// req.body.forEach((v, k) => console.log({k:v}));
-	// console.log((req.files?.bannerImage as any)?.path);
-	// return
-
 	const safeInput = z
 		.object({
 			title: getStringValidation("title"),
@@ -439,6 +434,28 @@ export const getEvents = async (req: Request, res: Response) => {
 		data: { event },
 	});
 };
+export const getEventsDetails = async (req: Request, res: Response) => {
+	const safe = z
+		.object({
+			id: getStringValidation("id"),
+		})
+		.safeParse(req.params);
+
+	if (!safe.success)
+		throw new AppError(
+			safe.error.issues.map((d) => d.message).join(", "),
+			resCode.BAD_REQUEST,
+			safe.error
+		);
+	const { id } = safe.data;
+	const event = await prisma.event.findFirst({ where: { id } });
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: event,
+	});
+};
 
 export const getCompetionsDetails = async (req: Request, res: Response) => {
 	const safe = z
@@ -650,5 +667,21 @@ export const getResultsByCompetitionSchool = async (
 		ok: true,
 		message: "Fetch successful",
 		data: { results },
+	});
+};
+
+export const adminStats = async (req: Request, res: Response) => {
+	const schools = await prisma.school.count();
+	const student = await prisma.student.count();
+	const competition = await prisma.competition.count();
+
+	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
+		ok: true,
+		message: "Fetch successful",
+		data: {
+			schools,
+			student,
+			competition,
+		},
 	});
 };

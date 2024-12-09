@@ -8,14 +8,9 @@ const error_controller_1 = require("../controllers/error.controller");
 const admin_controller_1 = require("../controllers/admin.controller");
 const auth_controller_1 = require("../controllers/auth.controller");
 const express_formidable_1 = __importDefault(require("express-formidable"));
+const school_controller_1 = require("../controllers/school.controller");
 const adminRoute = (0, express_1.Router)();
-adminRoute.get("/", (req, res) => {
-    return res.status(error_controller_1.resCode.ACCEPTED).json({
-        ok: true,
-        message: "this is the admin route",
-        data: {},
-    });
-});
+adminRoute.get("/", admin_controller_1.adminStats);
 adminRoute.post("/create-announcement", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createAnnouncement));
 adminRoute.lock("/announcement/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.removeAnnouncement));
 adminRoute.post("/create-competition", (0, error_controller_1.tryCatchWapper)(admin_controller_1.createCompetion));
@@ -24,6 +19,8 @@ adminRoute.get("/competitions", (0, error_controller_1.tryCatchWapper)(admin_con
 adminRoute.get("/ongoing-competitions", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getActiveCompetion));
 adminRoute.get("/competition/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getCompetionsDetails));
 adminRoute.get("/students/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudents));
+adminRoute.get("/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
+adminRoute.post("/school", (0, error_controller_1.tryCatchWapper)(school_controller_1.createSchool));
 adminRoute.get("/student/:regNo", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getStudentDetails));
 adminRoute.lock("/competition/:id/:active", (0, error_controller_1.tryCatchWapper)(admin_controller_1.toggleCompetitionActive));
 adminRoute.get("/results/:schoolId/:competitionId", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getResultsByCompetitionSchool));

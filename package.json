@@ -4,11 +4,11 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "node build/src",
+		"start": "node --import tsx src",
 		"test": "ts-node src/test",
 		"seed": "ts-node src/models/seed",
 		"postinstall": "prisma generate",
-		"dev": "tsc && node build/src",
+		"dev": "tsx watch src",
 		"build": "npx tsc",
 		"db:seed": "ts-node prisma/seed",
 		"db:sync": "npx prisma db push",
@@ -34,6 +34,7 @@
 		"paystack": "^2.0.1",
 		"reflect-metadata": "^0.1.13",
 		"sqlite3": "^5.1.6",
+		"tsx": "^4.17.0",
 		"xlsx": "^0.18.5",
 		"zod": "^3.22.4"
 	},

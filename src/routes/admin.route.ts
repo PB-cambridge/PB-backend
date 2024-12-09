@@ -3,6 +3,7 @@ import { Router, Request, Response } from "express";
 import { resCode, tryCatchWapper } from "../controllers/error.controller";
 import { SuccessResponse } from "../types";
 import {
+	adminStats,
 	createAnnouncement,
 	createCompetion,
 	createEvent,
@@ -19,16 +20,11 @@ import {
 } from "../controllers/admin.controller";
 import { changePassword } from "../controllers/auth.controller";
 import formidableMiddleware from "express-formidable";
+import { createSchool, getAllSchools } from "../controllers/school.controller";
 
 const adminRoute = Router();
 
-adminRoute.get("/", (req: Request, res: Response) => {
-	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
-		ok: true,
-		message: "this is the admin route",
-		data: {},
-	});
-});
+adminRoute.get("/", adminStats);
 
 adminRoute.post("/create-announcement", tryCatchWapper(createAnnouncement));
 
@@ -45,6 +41,10 @@ adminRoute.get("/ongoing-competitions", tryCatchWapper(getActiveCompetion));
 adminRoute.get("/competition/:id", tryCatchWapper(getCompetionsDetails));
 
 adminRoute.get("/students/:competitionId", tryCatchWapper(getStudents));
+
+adminRoute.get("/schools", tryCatchWapper(getAllSchools));
+
+adminRoute.post("/school", tryCatchWapper(createSchool));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
 

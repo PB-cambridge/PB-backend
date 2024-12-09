@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.toggleCompetitionActive = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getEvents = exports.removeAnnouncement = exports.getAnnouncements = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = exports.createAnnouncement = exports.createEvent = void 0;
+exports.adminStats = exports.getResultsByCompetitionSchool = exports.getStudentDetails = exports.toggleCompetitionActive = exports.getStudentsWithFilter = exports.getStudents = exports.getActiveCompetion = exports.getCompetionsDetails = exports.getEventsDetails = exports.getEvents = exports.removeAnnouncement = exports.getAnnouncements = exports.getAllCompetions = exports.downloadResultTemp = exports.uploadResultFile = exports.createCompetion = exports.createAnnouncement = exports.createEvent = void 0;
 const error_controller_1 = require("./error.controller");
 const zod_1 = require("zod");
 const reqSchemas_1 = require("../validation/reqSchemas");
@@ -312,6 +312,23 @@ const getEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.getEvents = getEvents;
+const getEventsDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const safe = zod_1.z
+        .object({
+        id: (0, reqSchemas_1.getStringValidation)("id"),
+    })
+        .safeParse(req.params);
+    if (!safe.success)
+        throw new AppError_1.default(safe.error.issues.map((d) => d.message).join(", "), error_controller_1.resCode.BAD_REQUEST, safe.error);
+    const { id } = safe.data;
+    const event = yield index_1.default.event.findFirst({ where: { id } });
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: event,
+    });
+});
+exports.getEventsDetails = getEventsDetails;
 const getCompetionsDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safe = zod_1.z
         .object({
@@ -456,4 +473,19 @@ const getResultsByCompetitionSchool = (req, res) => __awaiter(void 0, void 0, vo
     });
 });
 exports.getResultsByCompetitionSchool = getResultsByCompetitionSchool;
+const adminStats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const schools = yield index_1.default.school.count();
+    const student = yield index_1.default.student.count();
+    const competition = yield index_1.default.competition.count();
+    return res.status(error_controller_1.resCode.ACCEPTED).json({
+        ok: true,
+        message: "Fetch successful",
+        data: {
+            schools,
+            student,
+            competition,
+        },
+    });
+});
+exports.adminStats = adminStats;
 //# sourceMappingURL=admin.controller.js.map

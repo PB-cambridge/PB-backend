@@ -104,3 +104,4 @@ export const registerStudentReqSchema = z.object({
 
 	whatsappNumber: getOptionalStringValidation("whatsappNumber"),
 });
+

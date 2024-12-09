@@ -43,7 +43,6 @@ const routes_1 = require("./routes");
 const error_controller_1 = __importStar(require("./controllers/error.controller"));
 const school_controller_1 = require("./controllers/school.controller");
 const admin_controller_1 = require("./controllers/admin.controller");
-const seed_1 = require("../prisma/seed");
 const middleware_controller_1 = require("./controllers/middleware.controller");
 const app = (0, express_1.default)();
 const PORT = +env_1.default.PORT || 3000;
@@ -60,10 +59,9 @@ app.get("/", (req, res) => {
 app.use("/api/auth", routes_1.authRoute);
 app.use("/api/user", routes_1.userRoute);
 app.use("/api/admin", middleware_controller_1.protectedRoute, routes_1.adminRoute);
-app.get("/api/db/seed", middleware_controller_1.protectedRoute, (0, error_controller_1.tryCatchWapper)(seed_1.handleSeedDB));
-app.get("/api/db/drop-table", middleware_controller_1.protectedRoute, (0, error_controller_1.tryCatchWapper)(seed_1.handleDropTable));
 app.get("/api/schools", (0, error_controller_1.tryCatchWapper)(school_controller_1.getAllSchools));
 app.get("/api/events", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getEvents));
+app.get("/api/event/:id", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getEventsDetails));
 app.get("/api/announcements", (0, error_controller_1.tryCatchWapper)(admin_controller_1.getAnnouncements));
 app.use(error_controller_1.default);
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {

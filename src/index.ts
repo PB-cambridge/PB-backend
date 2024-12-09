@@ -9,7 +9,11 @@ import errorController, {
 	tryCatchWapper,
 } from "./controllers/error.controller";
 import { getAllSchools } from "./controllers/school.controller";
-import { getAnnouncements, getEvents } from "./controllers/admin.controller";
+import {
+	getAnnouncements,
+	getEvents,
+	getEventsDetails,
+} from "./controllers/admin.controller";
 import { handleDropTable, handleSeedDB } from "../prisma/seed";
 import { protectedRoute } from "./controllers/middleware.controller";
 import formidableMiddleware from "express-formidable";
@@ -55,6 +59,7 @@ app.use("/api/admin", protectedRoute, adminRoute);
 // app.get("/api/db/drop-table", protectedRoute, tryCatchWapper(handleDropTable));
 app.get("/api/schools", tryCatchWapper(getAllSchools));
 app.get("/api/events", tryCatchWapper(getEvents));
+app.get("/api/event/:id", tryCatchWapper(getEventsDetails));
 app.get("/api/announcements", tryCatchWapper(getAnnouncements));
 
 // error handler
