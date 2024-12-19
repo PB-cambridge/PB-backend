@@ -94,14 +94,11 @@ export const registerStudentReqSchema = z.object({
 	phoneNumber: getStringValidation("phoneNumber"),
 	schoolId: getStringValidation("schoolId"),
 	// registeredCompetitionId: getStringValidation("registeredCompetitionId"),
-	level: z.enum(["Junior", "Senior", "Graduated"], {
+	level: z.enum(["Tertiary", "Secondary"], {
 		invalid_type_error: "Please enter etiher 'Junior', 'Senior' or 'Graduated'",
 	}),
-	scienceOrArt: z.enum(["Science", "Art"], {
-		invalid_type_error: "Science or Art expected",
-	}),
+	state: getStringValidation("state"),
 	passport: getStringValidation("passport"),
 
 	whatsappNumber: getOptionalStringValidation("whatsappNumber"),
 });
-

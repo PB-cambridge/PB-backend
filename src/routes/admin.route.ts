@@ -20,7 +20,12 @@ import {
 } from "../controllers/admin.controller";
 import { changePassword } from "../controllers/auth.controller";
 import formidableMiddleware from "express-formidable";
-import { createSchool, getAllSchools } from "../controllers/school.controller";
+import {
+	createSchool,
+	deleteSchool,
+	getAllSchools,
+	updateSchool,
+} from "../controllers/school.controller";
 
 const adminRoute = Router();
 
@@ -45,6 +50,10 @@ adminRoute.get("/students/:competitionId", tryCatchWapper(getStudents));
 adminRoute.get("/schools", tryCatchWapper(getAllSchools));
 
 adminRoute.post("/school", tryCatchWapper(createSchool));
+
+adminRoute.put("/school/:id", tryCatchWapper(updateSchool));
+
+adminRoute.delete("/school/:id", tryCatchWapper(deleteSchool));
 
 adminRoute.get("/student/:regNo", tryCatchWapper(getStudentDetails));
 

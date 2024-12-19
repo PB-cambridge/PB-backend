@@ -78,7 +78,8 @@ model Student {
   phoneNumber              String?
   schoolId                 String
   level                    String
-  scienceOrArt             String
+  scienceOrArt             String?
+  state             String
   hasInternationalPassport Boolean
   passport                 String
   whatsappNumber           String?

@@ -176,9 +176,9 @@ export const registerUser = async (req: Request, res: Response) => {
 		);
 
 	const requiredFee =
-		others.level == "Senior"
+		others.level == "Tertiary"
 			? competion.seniorRegFee
-			: others.level == "Junior"
+			: others.level == "Secondary"
 			? competion.juniorRegFee
 			: competion.graduateRegFee;
 
@@ -192,11 +192,11 @@ export const registerUser = async (req: Request, res: Response) => {
 		(item, i) => item.id == schoolId
 	);
 
-	if (!selectedSchool)
-		throw new AppError(
-			"This competion is not hosted for your school",
-			resCode.NOT_FOUND
-		);
+	// if (!selectedSchool)
+	// 	throw new AppError(
+	// 		"This competion is not hosted for your school",
+	// 		resCode.NOT_FOUND
+	// 	);
 
 	//  passport to file
 

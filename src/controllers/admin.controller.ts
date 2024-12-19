@@ -426,7 +426,9 @@ export const removeAnnouncement = async (req: Request, res: Response) => {
 };
 
 export const getEvents = async (req: Request, res: Response) => {
-	const event = await prisma.event.findMany({});
+	const event = await prisma.event.findMany({
+		orderBy: { createdAt: "asc" },
+	});
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
