@@ -149,6 +149,7 @@ export default async function seedDb() {
 						firstName: faker.person.firstName(),
 						lastName: faker.person.lastName(),
 					}),
+					state: "",
 					lastName: faker.person.lastName(),
 					address: faker.location.streetAddress(),
 					school: { connect: { id: randomSchoool.id } },

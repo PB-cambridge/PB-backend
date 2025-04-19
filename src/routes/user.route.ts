@@ -6,6 +6,7 @@ import {
 	reprintAcknowledgementSlip,
 	viewResult,
 } from "../controllers/student.controller";
+import { getActiveCompetion } from "../controllers/admin.controller";
 
 const userRoute = Router();
 
@@ -21,6 +22,7 @@ userRoute.get(
 );
 
 userRoute.get("/view-result/:regNo", tryCatchWapper(viewResult));
+userRoute.get("/ongoing-competitions", tryCatchWapper(getActiveCompetion));
 
 userRoute.get(
 	"/reprint-slip/:reference",
