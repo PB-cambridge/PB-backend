@@ -142,6 +142,7 @@ export const registerUser = async (req: Request, res: Response) => {
 			resCode.BAD_REQUEST,
 			safe.error
 		);
+
 	const {
 		passport: _passport,
 		schoolId,
@@ -220,7 +221,7 @@ export const registerUser = async (req: Request, res: Response) => {
 	});
 
 	// Add to payment
-	const addedPay = await prisma.payments.create({
+	await prisma.payments.create({
 		data: {
 			amount: paidAmt,
 			competitionId,
