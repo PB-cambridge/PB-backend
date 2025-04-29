@@ -161,6 +161,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	const passport = (uploadImageRes as UploadApiResponse).url;
 
+	// const paymentDetails = { amount: 1150000, reference: "ews" };
 	const paymentDetails = res.locals.paymentDetails;
 
 	const paidAmt = (paymentDetails.amount / 100) as number;

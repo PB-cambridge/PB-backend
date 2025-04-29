@@ -228,17 +228,13 @@ export const generateAcknowledgementSlip = (
 	            <td>Level</td>
 	            <td>${details.level}</td>
 	          </tr>
-	          <tr>
-	            <td>Class</td>
-	            <td>${details.scienceOrArt}</td>
-	          </tr>
 	        </table>
 	      </section>
 
 	      <section class="personal-details">
 	        <table>
 	          <caption>
-	            Competition Information
+	            Payment for international Competition
 	          </caption>
 	          <tr>
 	            <td>Date</td>
@@ -249,15 +245,6 @@ export const generateAcknowledgementSlip = (
 	            <td><span>&#8358;</span>${details.paidAmount}</td>
 	          </tr>
 	        </table>
-	      </section>
-	      <section class="other-info">
-	        <h4>Other Informations</h4>
-	        <ul>
-	          <li>Come with writing materials to the exam</li>
-	          <li>Do not enter the exam hall with any gadget</li>
-	          <li>Bring a copy of the acknownledgemwnt slip</li>
-	          <li>Come early to the venue</li>
-	        </ul>
 	      </section>
 	    </main>
 	  </body>
