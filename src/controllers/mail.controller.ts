@@ -3,9 +3,10 @@ import env from "../../env";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 export const transporter = mailer.createTransport({
-	// host: env.MAIL_HOST,
+	host: env.MAIL_HOST,
 	service: "gmail",
-	// port: 587,
+	// secure: true,
+	port: 587,
 	auth: {
 		user: env.MAIL_USER,
 		pass: env.MAIL_PASSWORD,

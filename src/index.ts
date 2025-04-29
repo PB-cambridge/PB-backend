@@ -17,6 +17,7 @@ import {
 import { handleDropTable, handleSeedDB } from "../prisma/seed";
 import { protectedRoute } from "./controllers/middleware.controller";
 import formidableMiddleware from "express-formidable";
+// import "./text";
 // import { authenticate } from "./controllers/middleWare";
 // import { rateLimit } from "express-rate-limit";
 
