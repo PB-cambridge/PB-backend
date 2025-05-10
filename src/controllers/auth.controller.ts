@@ -179,14 +179,14 @@ export const registerUser = async (req: Request, res: Response) => {
 
 	const requiredFee =
 		others.level == "Tertiary"
-			? competion.seniorRegFee
+			? competion.graduateRegFee
 			: others.level == "Secondary"
-			? competion.juniorRegFee
-			: competion.graduateRegFee;
+			? competion.seniorRegFee
+			: 0;
 
 	if (paidAmt < requiredFee)
 		throw new AppError(
-			`The required amount for ${others.level} is #${requiredFee}`,
+			`The required amount for ${others.level} is ₦${requiredFee}`,
 			resCode.NOT_ACCEPTED
 		);
 

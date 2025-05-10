@@ -491,13 +491,14 @@ export const getCompetionsDetails = async (req: Request, res: Response) => {
 export const getActiveCompetion = async (req: Request, res: Response) => {
 	const ongoingCompetitions = await prisma.competition.findMany({
 		where: { active: true },
-		include: { schools: true },
 	});
+
+	const schools = await prisma.school.findMany({});
 
 	return res.status(resCode.ACCEPTED).json(<SuccessResponse<any>>{
 		ok: true,
 		message: "Fetch successful",
-		data: { ongoingCompetitions },
+		data: { ongoingCompetitions, schools },
 	});
 };
 
