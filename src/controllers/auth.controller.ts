@@ -108,6 +108,10 @@ export const verifyPaystackPayment = async (
 			);
 		const { passport, schoolId, firstName, ...others } = safe.data;
 
+		// res.locals.paymentDetails = { amount: 1150000, reference, ...others };
+		// next();
+		// return;
+
 		// verify payment for the competition using paystack
 		const response = await paystack.transaction.verify("" + reference);
 		if (!response.status)
